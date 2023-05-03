@@ -8,23 +8,21 @@ import { FunctionComponent } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import AuthorizationService from '../../api/services/AuthorizationService';
-import DoctorsService from '../../api/services/DoctorsService';
-import ReceptionistsService from '../../api/services/ReceptionistsService';
 import EmailAddressInput from '../../components/EmailAddressInput/EmailAddressInput';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import { PopupData } from '../../components/Popup/Popup';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
+import { EventType } from '../../events/eventTypes';
+import { eventEmitter } from '../../events/events';
 import { useAppDispatch } from '../../hooks/store';
-import { IAuthorizationState, setAuthorization } from '../../store/authorizationSlice';
-import { EventType } from '../../store/eventTypes';
-import { eventEmitter } from '../../store/events';
 import { IProfileState, setProfile } from '../../store/profileSlice';
+import { setRole } from '../../store/roleSlice';
 import '../../styles/ModalForm.css';
 import IJwtToken from '../../types/common/IJwtToken';
-import { Roles } from '../../types/enums/Roles';
 import { ILoginRequest } from '../../types/request/AuthorizationAPI_requests';
 import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses';
 import { IDoctorResponse, IReceptionistsResponse } from '../../types/response/ProfilesAPI_responses';
+import { getProfile, getRoleByName } from '../../utils/functions';
 
 const validationSchema = yup.object().shape({
     email: yup.string().required('Please, enter the email').email(`You've entered an invalid email`),
@@ -61,14 +59,7 @@ const Login: FunctionComponent = () => {
         retry: false,
         onSuccess(data) {
             const decoded = jwt<IJwtToken>(data.accessToken as string);
-            dispatch(
-                setAuthorization({
-                    accessToken: data.accessToken,
-                    refreshToken: data.refreshToken,
-                    role: decoded.role,
-                    expirationTime: decoded.exp,
-                } as IAuthorizationState)
-            );
+            dispatch(setRole(getRoleByName(decoded.role)));
         },
         onError(error) {
             if (error instanceof AxiosError) {
@@ -87,42 +78,14 @@ const Login: FunctionComponent = () => {
         },
     });
 
-    const getProfile = useQuery<any, Error, IDoctorResponse | IReceptionistsResponse>({
+    useQuery<any, Error, IDoctorResponse | IReceptionistsResponse>({
         queryKey: ['profile'],
         queryFn: async () => {
             const decoded = jwt<IJwtToken>(tokenResponse?.accessToken as string);
+            const profile = await getProfile(decoded.role, decoded.sub);
 
-            switch (decoded.role.toLowerCase()) {
-                case Roles.Doctor.toLowerCase():
-                    const doctor = await DoctorsService.getById(decoded.sub);
-                    return dispatch(
-                        setProfile({
-                            id: decoded.sub,
-                            photoId: doctor.photoId,
-                            firstName: doctor.firstName,
-                            lastName: doctor.lastName,
-                            middleName: doctor.middleName,
-                            officeAddress: doctor.officeAddress,
-                            dateOfBirth: doctor.dateOfBirth,
-                            specializationName: doctor.specializationName,
-                            status: doctor.status,
-                        } as IProfileState)
-                    );
-                case Roles.Receptionist.toLowerCase():
-                    const receptionist = await ReceptionistsService.getById(decoded.sub);
-                    return dispatch(
-                        setProfile({
-                            id: decoded.sub,
-                            photoId: receptionist.photoId,
-                            firstName: receptionist.firstName,
-                            lastName: receptionist.lastName,
-                            middleName: receptionist.middleName,
-                            officeAddress: receptionist.officeAddress,
-                        } as IProfileState)
-                    );
-                default:
-                    console.log('invalid role');
-                    break;
+            if (profile) {
+                return dispatch(setProfile(profile as IProfileState));
             }
         },
         enabled: !!tokenResponse,

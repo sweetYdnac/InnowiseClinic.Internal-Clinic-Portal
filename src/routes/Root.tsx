@@ -1,18 +1,35 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Provider } from 'react-redux';
-import { store } from '../store/store';
-import Router from './Router';
+import { useEffect } from 'react';
+import AuthorizationService from '../api/services/AuthorizationService';
+import { useAppDispatch } from '../hooks/store';
+import { IProfileState, setProfile } from '../store/profileSlice';
+import { setRole } from '../store/roleSlice';
+import { getProfile, getRoleByName } from '../utils/functions';
 
 const Root = () => {
-    const queryClient = new QueryClient();
+    const dispatch = useAppDispatch();
 
-    return (
-        <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-                <Router />
-            </QueryClientProvider>
-        </Provider>
-    );
+    useEffect(() => {
+        const initializeRole = async () => {
+            if (!AuthorizationService.isAuthorized()) {
+                await AuthorizationService.refresh();
+            }
+
+            const role = getRoleByName(AuthorizationService.getRoleName());
+            dispatch(setRole(role));
+
+            const accountId = AuthorizationService.getAccountId();
+            if (accountId) {
+                const profile = await getProfile(AuthorizationService.getRoleName(), accountId);
+                if (profile) {
+                    dispatch(setProfile(profile as IProfileState));
+                }
+            }
+        };
+
+        console.log('called root');
+        initializeRole();
+    }, []);
+    return <></>;
 };
 
 export default Root;

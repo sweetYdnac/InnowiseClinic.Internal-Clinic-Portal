@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosRequestHeaders } from 'axios';
 import { PopupData } from '../components/Popup/Popup';
-import { EventType } from '../store/eventTypes';
-import { eventEmitter } from '../store/events';
+import { EventType } from '../events/eventTypes';
+import { eventEmitter } from '../events/events';
 import AuthorizationService from './services/AuthorizationService';
 
 const axiosInstance = axios.create({

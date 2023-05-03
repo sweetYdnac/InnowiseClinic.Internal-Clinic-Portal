@@ -6,7 +6,7 @@ import Popup from '../../components/Popup/Popup';
 import Header from './Header';
 
 const Layout = () => {
-    const [isAuthorizated, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
+    const [isAuthorized, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
 
     useEffect(() => {
         const handleStorageChange = () => {
@@ -22,7 +22,7 @@ const Layout = () => {
 
     return (
         <Box style={{ display: 'flex', flexDirection: 'column' }}>
-            <Header />
+            <Header isAuthorized={isAuthorized} />
             <Box sx={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
                 {/* {isAuthorizated && <Aside />} */}
                 <Box component='main' sx={{ flexGrow: 1, p: 3 }}>

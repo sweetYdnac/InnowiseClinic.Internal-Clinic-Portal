@@ -6,32 +6,21 @@ import Toolbar from '@mui/material/Toolbar';
 import { FunctionComponent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthorizationService from '../../api/services/AuthorizationService';
-import { EventType } from '../../store/eventTypes';
-import { eventEmitter } from '../../store/events';
+import { EventType } from '../../events/eventTypes';
+import { eventEmitter } from '../../events/events';
 
 export enum LoginMessage {
     LOGIN = 'Login',
     LOGOUT = 'Logout',
 }
 
-const Header: FunctionComponent = () => {
-    const [isAuthorizated, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
+interface HeaderProps {
+    isAuthorized: boolean;
+}
+
+const Header: FunctionComponent<HeaderProps> = ({ isAuthorized }) => {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-    const [loginMessage, setLoginMessage] = useState<LoginMessage>(isAuthorizated ? LoginMessage.LOGOUT : LoginMessage.LOGIN);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const handleStorageChange = () => {
-            setIsAuthorized(AuthorizationService.isAuthorized());
-            setLoginMessage(AuthorizationService.isAuthorized() ? LoginMessage.LOGOUT : LoginMessage.LOGIN);
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
 
     useEffect(() => {
         const switchLoginModal = () => {
@@ -43,10 +32,10 @@ const Header: FunctionComponent = () => {
         return () => {
             eventEmitter.removeListener(`${EventType.CLICK_CLOSE_MODAL} ${LoginMessage.LOGIN}`, switchLoginModal);
         };
-    }, [isLoginModalOpen, setIsLoginModalOpen, isAuthorizated]);
+    }, [isLoginModalOpen, setIsLoginModalOpen, isAuthorized]);
 
     const handleLogin = () => {
-        isAuthorizated ? AuthorizationService.logout() : setIsLoginModalOpen(true);
+        isAuthorized ? AuthorizationService.logout() : setIsLoginModalOpen(true);
     };
 
     const handleAsideToggle = () => {
@@ -63,7 +52,7 @@ const Header: FunctionComponent = () => {
                 }}
             >
                 <Toolbar>
-                    {isAuthorizated && (
+                    {isAuthorized && (
                         <IconButton color='inherit' edge='start' onClick={handleAsideToggle} sx={{ mr: 2, display: { sm: 'none' } }}>
                             <MenuIcon />
                         </IconButton>
@@ -74,7 +63,7 @@ const Header: FunctionComponent = () => {
                     </Button>
 
                     <Button onClick={() => handleLogin()} color='inherit' sx={{ marginLeft: 'auto' }}>
-                        {loginMessage}
+                        {isAuthorized ? LoginMessage.LOGOUT : LoginMessage.LOGIN}
                     </Button>
                 </Toolbar>
             </AppBar>

@@ -1,7 +1,7 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import jwt from 'jwt-decode';
-import { EventType } from '../../store/eventTypes';
-import { eventEmitter } from '../../store/events';
+import { EventType } from '../../events/eventTypes';
+import { eventEmitter } from '../../events/events';
 import IJwtToken from '../../types/common/IJwtToken';
 import { Modals } from '../../types/enums/Modals';
 import { Roles } from '../../types/enums/Roles';
@@ -10,14 +10,34 @@ import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses'
 import { ICreatedResponse } from '../../types/response/common';
 import axiosInstance from '../axiosConfig';
 
-const getAccessToken = () => localStorage.getItem('accessToken');
+function setAuthData(accessToken: string, refreshToken: string) {
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('accessToken', accessToken);
 
-const getAccountId = () => jwt<IJwtToken>(getAccessToken() as string).sub;
+    const decoded = jwt<IJwtToken>(accessToken);
+    localStorage.setItem('expiration', decoded.exp.toString());
+
+    dispatchEvent(new Event('storage'));
+}
+
+const getAccessToken = () => localStorage.getItem('accessToken');
 
 const isAuthorized = () => {
     const accessToken = getAccessToken();
 
-    return !!accessToken && jwt<IJwtToken>(accessToken).exp * 1000 > Date.now();
+    return !!accessToken && Number(localStorage.getItem('expiration')) * 1000 > Date.now();
+};
+
+const getRoleName = () => {
+    const accessToken = getAccessToken();
+
+    return !!accessToken ? jwt<IJwtToken>(getAccessToken() as string).role : '';
+};
+
+const getAccountId = () => {
+    const accessToken = getAccessToken();
+
+    return !!accessToken ? jwt<IJwtToken>(getAccessToken() as string).sub : '';
 };
 
 const signIn = async (data: ILoginRequest) => {
@@ -28,6 +48,7 @@ const signIn = async (data: ILoginRequest) => {
             return Promise.reject(new Error('Invalid role.'));
         }
 
+        setAuthData(response.data.accessToken, response.data.refreshToken);
         return response.data;
     });
 };
@@ -41,16 +62,21 @@ const signUp = async (data: IRegisterRequest) => {
 const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('expiration');
     dispatchEvent(new Event('storage'));
 };
 
 const refresh = async (config?: AxiosRequestConfig<any>) => {
     const refreshToken = localStorage.getItem('refreshToken');
 
+    if (!refreshToken) {
+        return;
+    }
+
     return await axiosInstance
         .post<ITokenResponse>('/authorization/refresh', { refreshToken })
         .then(async (response: AxiosResponse<ITokenResponse, any>) => {
-            // setAuthData(response.data.accessToken ?? '', response.data.refreshToken ?? '');
+            setAuthData(response.data.accessToken ?? '', response.data.refreshToken ?? '');
 
             if (!response.data.accessToken || !response.data.refreshToken) {
                 logout();
@@ -69,8 +95,9 @@ const AuthorizationService = {
     logout,
     refresh,
     isAuthorized,
-    getAccountId,
     getAccessToken,
+    getRoleName,
+    getAccountId,
 };
 
 export default AuthorizationService;

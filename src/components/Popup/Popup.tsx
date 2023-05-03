@@ -1,8 +1,8 @@
 import Alert, { AlertColor } from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { EventType } from '../../store/eventTypes';
-import { eventEmitter } from '../../store/events';
+import { EventType } from '../../events/eventTypes';
+import { eventEmitter } from '../../events/events';
 
 export interface PopupData {
     color?: AlertColor;
