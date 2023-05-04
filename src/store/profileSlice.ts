@@ -7,6 +7,7 @@ export interface IProfileState {
     firstName: string;
     lastName: string;
     middleName: string;
+    officeId: string;
     officeAddress: string;
     dateOfBirth: string;
     specializationName: string;
@@ -14,12 +15,13 @@ export interface IProfileState {
     status: number;
 }
 
-const initialState: IProfileState = {
+export const defaultProfile: IProfileState = {
     id: '',
     photoId: '',
     firstName: '',
     lastName: '',
     middleName: '',
+    officeId: '',
     officeAddress: '',
     dateOfBirth: '',
     specializationName: '',
@@ -29,7 +31,7 @@ const initialState: IProfileState = {
 
 export const userSlice = createSlice({
     name: 'profile',
-    initialState,
+    initialState: defaultProfile,
     reducers: {
         setProfile: (state, action: PayloadAction<IProfileState>) => action.payload,
     },

@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import AuthorizationService from '../../api/services/AuthorizationService';
 import Popup from '../../components/Popup/Popup';
 import Header from './Header';
+import Aside from './aside/Aside';
 
 const Layout = () => {
     const [isAuthorized, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
@@ -24,7 +25,7 @@ const Layout = () => {
         <Box style={{ display: 'flex', flexDirection: 'column' }}>
             <Header isAuthorized={isAuthorized} />
             <Box sx={{ display: 'flex', flexDirection: 'row', height: '100%' }}>
-                {/* {isAuthorizated && <Aside />} */}
+                {isAuthorized && <Aside />}
                 <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
                     <Outlet />
                 </Box>

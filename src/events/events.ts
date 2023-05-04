@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
 
-let eventEmitter = new EventEmitter().setMaxListeners(20);
+const eventEmitter = new EventEmitter();
 
 export { eventEmitter };

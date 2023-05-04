@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import AuthorizationService from '../api/services/AuthorizationService';
-import { useAppDispatch } from '../hooks/store';
-import { IProfileState, setProfile } from '../store/profileSlice';
-import { setRole } from '../store/roleSlice';
-import { getProfile, getRoleByName } from '../utils/functions';
+import AuthorizationService from './api/services/AuthorizationService';
+import { useAppDispatch } from './hooks/store';
+import { IProfileState, setProfile } from './store/profileSlice';
+import { setRole } from './store/roleSlice';
+import { getProfile, getRoleByName } from './utils/functions';
 
 const Root = () => {
     const dispatch = useAppDispatch();
@@ -26,7 +26,6 @@ const Root = () => {
             }
         };
 
-        console.log('called root');
         initializeRole();
     }, []);
     return <></>;

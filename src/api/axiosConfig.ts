@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestHeaders } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { PopupData } from '../components/Popup/Popup';
 import { EventType } from '../events/eventTypes';
 import { eventEmitter } from '../events/events';
@@ -26,13 +27,15 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
+        const navigate = useNavigate();
+
         switch (error.response?.status) {
             case 400: {
                 // Bad request is handling in specific validator for request;
                 throw error;
             }
             case 401: {
-                return await AuthorizationService.refresh((error as AxiosError).config);
+                return await AuthorizationService.refresh((error as AxiosError).config, navigate);
             }
             case 403: {
                 eventEmitter.emit(`${EventType.SHOW_POPUP}`, {

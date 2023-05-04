@@ -6,35 +6,26 @@ import { AxiosError } from 'axios';
 import jwt from 'jwt-decode';
 import { FunctionComponent } from 'react';
 import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import AuthorizationService from '../../api/services/AuthorizationService';
 import EmailAddressInput from '../../components/EmailAddressInput/EmailAddressInput';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
-import { PopupData } from '../../components/Popup/Popup';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
-import { EventType } from '../../events/eventTypes';
-import { eventEmitter } from '../../events/events';
 import { useAppDispatch } from '../../hooks/store';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import '../../styles/ModalForm.css';
 import IJwtToken from '../../types/common/IJwtToken';
+import { AppRoutes } from '../../types/enums/AppRoutes';
 import { ILoginRequest } from '../../types/request/AuthorizationAPI_requests';
 import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses';
 import { IDoctorResponse, IReceptionistsResponse } from '../../types/response/ProfilesAPI_responses';
-import { getProfile, getRoleByName } from '../../utils/functions';
-
-const validationSchema = yup.object().shape({
-    email: yup.string().required('Please, enter the email').email(`You've entered an invalid email`),
-    password: yup
-        .string()
-        .min(6, 'Password must be at least 6 characters')
-        .max(15, 'Password must be less than 15 characters')
-        .required('Please, enter the password'),
-});
+import { getProfile, getRoleByName, showPopup } from '../../utils/functions';
+import { LOGIN_VALIDATOR } from '../../validators/AuthorizationAPI';
 
 const Login: FunctionComponent = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const {
         register,
@@ -45,7 +36,7 @@ const Login: FunctionComponent = () => {
         getValues,
     } = useForm<ILoginRequest>({
         mode: 'onBlur',
-        resolver: yupResolver(validationSchema),
+        resolver: yupResolver(LOGIN_VALIDATOR),
         defaultValues: {
             email: '',
             password: '',
@@ -60,6 +51,7 @@ const Login: FunctionComponent = () => {
         onSuccess(data) {
             const decoded = jwt<IJwtToken>(data.accessToken as string);
             dispatch(setRole(getRoleByName(decoded.role)));
+            navigate(AppRoutes.Home);
         },
         onError(error) {
             if (error instanceof AxiosError) {
@@ -71,9 +63,7 @@ const Login: FunctionComponent = () => {
                     message: error?.response?.data.errors?.Password?.[0] || error?.response?.data.Message || '',
                 });
             } else {
-                eventEmitter.emit(`${EventType.SHOW_POPUP}`, {
-                    message: `You are not allowed to perform this action. ${error.message}`,
-                } as PopupData);
+                showPopup(`You are not allowed to perform this action. ${error.message}`);
             }
         },
     });
@@ -95,45 +85,39 @@ const Login: FunctionComponent = () => {
         refetchOnReconnect: false,
         refetchOnWindowFocus: false,
         onError(error) {
-            eventEmitter.emit(`${EventType.SHOW_POPUP}`, {
-                message: `Something goes wrong. ${error.message}`,
-            } as PopupData);
+            showPopup(`Something goes wrong. ${error.message}`);
+        },
+        onSuccess() {
+            showPopup('You signed in successfully!');
         },
     });
 
     return (
-        <div
-            style={{
+        <Box
+            onSubmit={handleSubmit(() => refetch())}
+            component='form'
+            sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
             }}
+            noValidate
+            autoComplete='off'
         >
-            <Box
-                onSubmit={handleSubmit(() => refetch())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='off'
-            >
-                <Typography variant='h4' gutterBottom>
-                    Login
-                </Typography>
+            <Typography variant='h4' sx={{ marginBottom: '50px' }} gutterBottom>
+                Login
+            </Typography>
 
-                <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
-                <PasswordInput id={register('password').name} control={control} displayName='Password' />
+            <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
+            <PasswordInput id={register('password').name} control={control} displayName='Password' />
 
-                <SubmitButton errors={errors} touchedFields={touchedFields} defaultValues={defaultValues}>
-                    Enter
-                </SubmitButton>
-            </Box>
-        </div>
+            <SubmitButton errors={errors} touchedFields={touchedFields} defaultValues={defaultValues}>
+                Enter
+            </SubmitButton>
+        </Box>
     );
 };
 

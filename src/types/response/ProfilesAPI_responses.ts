@@ -3,6 +3,7 @@ interface IProfile {
     firstName: string;
     lastName: string;
     middleName: string;
+    officeId: string;
     officeAddress: string;
 }
 

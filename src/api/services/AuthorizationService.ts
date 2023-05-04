@@ -1,13 +1,12 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import jwt from 'jwt-decode';
-import { EventType } from '../../events/eventTypes';
-import { eventEmitter } from '../../events/events';
+import { NavigateFunction } from 'react-router-dom';
 import IJwtToken from '../../types/common/IJwtToken';
-import { Modals } from '../../types/enums/Modals';
+import { ICreatedResponse } from '../../types/common/responses/ICreatedResponse';
+import { AppRoutes } from '../../types/enums/AppRoutes';
 import { Roles } from '../../types/enums/Roles';
 import { ILoginRequest, IRegisterRequest } from '../../types/request/AuthorizationAPI_requests';
 import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses';
-import { ICreatedResponse } from '../../types/response/common';
 import axiosInstance from '../axiosConfig';
 
 function setAuthData(accessToken: string, refreshToken: string) {
@@ -66,10 +65,10 @@ const logout = () => {
     dispatchEvent(new Event('storage'));
 };
 
-const refresh = async (config?: AxiosRequestConfig<any>) => {
+const refresh = async (config?: AxiosRequestConfig<any>, navigate?: NavigateFunction) => {
     const refreshToken = localStorage.getItem('refreshToken');
-
     if (!refreshToken) {
+        navigate?.(AppRoutes.Login);
         return;
     }
 
@@ -80,7 +79,7 @@ const refresh = async (config?: AxiosRequestConfig<any>) => {
 
             if (!response.data.accessToken || !response.data.refreshToken) {
                 logout();
-                eventEmitter.emit(`${EventType.CLICK_CLOSE_MODAL} ${Modals.Login}`);
+                navigate?.(AppRoutes.Login);
             } else {
                 if (config) {
                     return await axiosInstance(config);
