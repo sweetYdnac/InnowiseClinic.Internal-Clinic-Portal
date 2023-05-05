@@ -1,9 +1,9 @@
-import IPagedRequest from '../common/requests/IPagedRequest';
+import { IPagedRequest } from '../common/Requests';
 
 export interface IGetAppointmentsRequest extends IPagedRequest {
     date: string;
     doctorFullName: string;
-    serviceName: string;
+    serviceId: string;
     officeId: string;
     isApproved: boolean | null;
 }

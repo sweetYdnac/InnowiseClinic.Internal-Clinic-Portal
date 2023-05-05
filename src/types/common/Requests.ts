@@ -1,4 +1,4 @@
-export default interface IPagedRequest {
+export interface IPagedRequest {
     currentPage: number;
     pageSize: number;
 }

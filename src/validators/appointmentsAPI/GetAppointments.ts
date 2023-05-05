@@ -6,7 +6,10 @@ export interface IGetAppointmentsForm {
     pageSize: number;
     date: dayjs.Dayjs;
     doctorFullName: string;
-    serviceName: string;
+    service: {
+        id: string;
+        input: string;
+    };
     officeId: string;
     isApproved: boolean | null;
 }
@@ -16,7 +19,10 @@ export const initialValues: IGetAppointmentsForm = {
     pageSize: 20,
     date: dayjs(),
     doctorFullName: '',
-    serviceName: '',
+    service: {
+        id: '',
+        input: '',
+    },
     officeId: '',
     isApproved: null,
 };
@@ -28,9 +34,12 @@ export const GET_APPOINTMENTS_VALIDATOR = yup.object().shape({
         .moreThan(0, 'Page size should be greater that 0')
         .max(50, 'Max page size is equals to 50')
         .required('Please, enter a page size'),
-    date: yup.date().min(Date.now, 'Date should be greater or equal than today').required('Please, enter a date'),
+    date: yup.date().min(dayjs(), 'Date should be greater or equal than today').required('Please, enter a date'),
     doctorFullName: yup.string().notRequired(),
-    serviceName: yup.string().notRequired(),
+    service: yup.object().shape({
+        id: yup.string().notRequired(),
+        input: yup.string().notRequired(),
+    }),
     officeId: yup.string().notRequired(),
     isApproved: yup.bool().notRequired(),
 });

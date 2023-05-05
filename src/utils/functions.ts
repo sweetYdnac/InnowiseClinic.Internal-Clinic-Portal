@@ -14,6 +14,8 @@ export const getQueryString = (data: { [key: string]: any }) => {
             value.forEach((val, index) => {
                 params.push(`${key}[${index}]=${encodeURIComponent(val)}`);
             });
+        } else if (value === null) {
+            params.push(`${key}=`);
         } else {
             params.push(`${key}=${encodeURIComponent(value)}`);
         }
