@@ -4,7 +4,7 @@ import AuthorizationService from '../api/services/AuthorizationService';
 import Loader from '../components/Loader/Loader';
 import { useAppSelector } from '../hooks/store';
 import { selectRole } from '../store/roleSlice';
-import { AppRoutes } from '../types/enums/AppRoutes';
+import { AppRoutes } from '../constants/AppRoutes';
 import { Roles } from '../types/enums/Roles';
 import { showPopup } from '../utils/functions';
 

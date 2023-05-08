@@ -10,7 +10,7 @@ import { useAppDispatch } from '../../hooks/store';
 import { switchAside } from '../../store/layoutSlice';
 import { defaultProfile, setProfile } from '../../store/profileSlice';
 import { defaultRole, setRole } from '../../store/roleSlice';
-import { AppRoutes } from '../../types/enums/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 
 interface HeaderProps {
     isAuthorized: boolean;

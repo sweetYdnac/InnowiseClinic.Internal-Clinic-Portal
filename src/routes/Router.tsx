@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AppRoutes } from '../constants/AppRoutes';
+import { Roles } from '../constants/Roles';
 import Home from '../pages/Home';
-import Appointments from '../pages/appointments/Appointments';
+import AppointmentsPage from '../pages/appointments/AppointmentsPage';
 import Layout from '../pages/layout/Layout';
 import Login from '../pages/login/Login';
-import { AppRoutes } from '../types/enums/AppRoutes';
-import { Roles } from '../types/enums/Roles';
 import ProtectedRoute from './ProtectedRoute';
 
 const AppRouter = () => {
@@ -16,10 +16,10 @@ const AppRouter = () => {
                 <Route element={<Layout />}>
                     <Route path='/' element={<Home />} />
                     <Route
-                        path='appointments'
+                        path='/appointments'
                         element={
                             <ProtectedRoute roles={[Roles.Receptionist]}>
-                                <Appointments />
+                                <AppointmentsPage />
                             </ProtectedRoute>
                         }
                     />

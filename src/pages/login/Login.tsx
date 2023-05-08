@@ -16,7 +16,7 @@ import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import '../../styles/ModalForm.css';
 import IJwtToken from '../../types/common/IJwtToken';
-import { AppRoutes } from '../../types/enums/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { ILoginRequest } from '../../types/request/AuthorizationAPI_requests';
 import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses';
 import { IDoctorResponse, IReceptionistsResponse } from '../../types/response/ProfilesAPI_responses';

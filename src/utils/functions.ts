@@ -2,10 +2,10 @@ import { AlertColor } from '@mui/material';
 import DoctorsService from '../api/services/DoctorsService';
 import ReceptionistsService from '../api/services/ReceptionistsService';
 import { PopupData } from '../components/Popup/Popup';
+import { Roles } from '../constants/Roles';
 import { EventType } from '../events/eventTypes';
 import { eventEmitter } from '../events/events';
 import { IProfileState } from '../store/profileSlice';
-import { Roles } from '../types/enums/Roles';
 
 export const getQueryString = (data: { [key: string]: any }) => {
     const params = [];

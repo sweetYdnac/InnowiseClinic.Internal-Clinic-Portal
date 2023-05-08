@@ -12,3 +12,5 @@ export interface IPagedResponse<T> extends IPagingData {
 export interface ICreatedResponse {
     id: string;
 }
+
+export interface INoContentResponse {}

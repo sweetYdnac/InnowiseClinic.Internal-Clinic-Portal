@@ -1,10 +1,10 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import jwt from 'jwt-decode';
 import { NavigateFunction } from 'react-router-dom';
+import { AppRoutes } from '../../constants/AppRoutes';
+import { Roles } from '../../constants/Roles';
 import IJwtToken from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
-import { AppRoutes } from '../../types/enums/AppRoutes';
-import { Roles } from '../../types/enums/Roles';
 import { ILoginRequest, IRegisterRequest } from '../../types/request/AuthorizationAPI_requests';
 import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses';
 import axiosInstance from '../axiosConfig';
