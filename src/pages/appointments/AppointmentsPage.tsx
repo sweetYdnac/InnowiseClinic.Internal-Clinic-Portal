@@ -12,13 +12,13 @@ import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { IPagingData } from '../../types/common/Responses';
-import { GET_APPOINTMENTS_VALIDATOR, IGetAppointmentsForm, initialValues } from '../../validators/appointmentsAPI/GetAppointments';
+import { getAppointments_ValidationScheme, IGetAppointmentsForm, initialValues } from '../../validators/appointmentsAPI/GetAppointments';
 import AppointmentsTable from './AppointmentsTable';
 
 const AppointmentsPage: FunctionComponent = () => {
     const { register, handleSubmit, setError, control, getValues, watch } = useForm<IGetAppointmentsForm>({
         mode: 'onBlur',
-        resolver: yupResolver(GET_APPOINTMENTS_VALIDATOR),
+        resolver: yupResolver(getAppointments_ValidationScheme),
         defaultValues: initialValues,
     });
 

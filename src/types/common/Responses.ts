@@ -14,3 +14,12 @@ export interface ICreatedResponse {
 }
 
 export interface INoContentResponse {}
+
+export interface IProfile {
+    photoId: string;
+    firstName: string;
+    lastName: string;
+    middleName: string;
+    officeId: string;
+    officeAddress: string;
+}

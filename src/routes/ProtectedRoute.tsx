@@ -2,10 +2,10 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthorizationService from '../api/services/AuthorizationService';
 import Loader from '../components/Loader/Loader';
+import { AppRoutes } from '../constants/AppRoutes';
+import { Roles } from '../constants/Roles';
 import { useAppSelector } from '../hooks/store';
 import { selectRole } from '../store/roleSlice';
-import { AppRoutes } from '../constants/AppRoutes';
-import { Roles } from '../types/enums/Roles';
 import { showPopup } from '../utils/functions';
 
 interface ProtectedRouteProps {

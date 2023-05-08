@@ -9,3 +9,7 @@ export enum OfficesQueries {
 export enum ServicesQueries {
     getServices = 'getServices',
 }
+
+export enum SpecializationsQueries {
+    getSpecializations = 'getSpecializations',
+}

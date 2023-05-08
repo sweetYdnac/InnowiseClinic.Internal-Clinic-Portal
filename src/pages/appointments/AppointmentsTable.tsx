@@ -7,7 +7,7 @@ import DialogWindow from '../../components/Dialog/DialogWindow';
 import Loader from '../../components/Loader/Loader';
 import { timeViewFormat } from '../../constants/formats';
 import { IPagingData } from '../../types/common/Responses';
-import { IAppointmentResponse } from '../../types/response/AppointmentsAPI_responses';
+import { IAppointmentResponse } from '../../types/response/appointments';
 
 interface AppointmentsListProps {
     appointments: IAppointmentResponse[];

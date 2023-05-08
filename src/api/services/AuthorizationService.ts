@@ -5,8 +5,8 @@ import { AppRoutes } from '../../constants/AppRoutes';
 import { Roles } from '../../constants/Roles';
 import IJwtToken from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
-import { ILoginRequest, IRegisterRequest } from '../../types/request/AuthorizationAPI_requests';
-import { ITokenResponse } from '../../types/response/AuthorizationAPI_responses';
+import { ILoginRequest, IRegisterRequest } from '../../types/request/authorization';
+import { ITokenResponse } from '../../types/response/authorization';
 import axiosInstance from '../axiosConfig';
 
 function setAuthData(accessToken: string, refreshToken: string) {

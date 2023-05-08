@@ -1,6 +1,6 @@
 import { IPagedResponse } from '../../types/common/Responses';
-import { IGetPagedServicesRequest } from '../../types/request/ServicesAPI';
-import { IServiceInformationResponse } from '../../types/response/ServicesAPI';
+import { IGetPagedServicesRequest } from '../../types/request/services';
+import { IServiceInformationResponse } from '../../types/response/services';
 import { getQueryString } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 

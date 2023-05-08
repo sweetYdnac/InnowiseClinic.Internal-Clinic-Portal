@@ -1,37 +1,37 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ServicesService from '../api/services/ServicesService';
-import { ServicesQueries } from '../constants/queries';
-import { IPagingData } from '../types/common/Responses';
+import SpecializationsService from '../api/services/SpecializationsService';
 import { AppRoutes } from '../constants/AppRoutes';
-import { IGetPagedServicesRequest } from '../types/request/services';
-import { IServiceInformationResponse } from '../types/response/services';
+import { SpecializationsQueries } from '../constants/queries';
+import { IPagingData } from '../types/common/Responses';
+import { IGetPagedSpecializationsRequest } from '../types/request/specializations';
+import { ISpecializationResponse } from '../types/response/specializations';
 import { showPopup } from '../utils/functions';
 
-export const usePagedServices = (initialPagingData: IPagingData, title: string) => {
+export const usePagedSpecializations = (initialPagingData: IPagingData, title: string, enabled = true) => {
     const navigate = useNavigate();
     const [pagingData, setPagingData] = useState(initialPagingData);
 
-    const query = useQuery<IServiceInformationResponse[], Error, IServiceInformationResponse[], QueryKey>({
+    const query = useQuery<ISpecializationResponse[], Error, ISpecializationResponse[], QueryKey>({
         queryKey: [
-            ServicesQueries.getServices,
-            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, title: title } as IGetPagedServicesRequest,
+            SpecializationsQueries.getSpecializations,
+            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, title: title },
         ],
         queryFn: async () => {
-            const request: IGetPagedServicesRequest = {
+            const request: IGetPagedSpecializationsRequest = {
                 currentPage: pagingData.currentPage,
                 pageSize: pagingData.pageSize,
                 title: title,
                 isActive: true,
             };
 
-            const { items, ...paging } = await ServicesService.getPaged(request);
+            const { items, ...paging } = await SpecializationsService.getPaged(request);
             setPagingData(paging as IPagingData);
 
             return items;
         },
-        enabled: true,
+        enabled: enabled,
         retry: false,
         keepPreviousData: true,
         onError: () => {

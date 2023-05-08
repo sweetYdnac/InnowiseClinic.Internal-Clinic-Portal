@@ -1,4 +1,4 @@
-import { IReceptionistsResponse } from '../../types/response/ProfilesAPI_responses';
+import { IReceptionistsResponse } from '../../types/response/receptionists';
 import axiosInstance from '../axiosConfig';
 
 const getById = async (id: string) => {

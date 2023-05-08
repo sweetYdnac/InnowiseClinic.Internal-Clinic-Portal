@@ -1,5 +1,5 @@
-import { IGetPagedOfficesRequest } from '../../types/request/OfficesAPI';
-import { IPagedOfficeResponse } from '../../types/response/OfficesAPI';
+import { IGetPagedOfficesRequest } from '../../types/request/offices';
+import { IPagedOfficeResponse } from '../../types/response/offices';
 import { getQueryString } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 

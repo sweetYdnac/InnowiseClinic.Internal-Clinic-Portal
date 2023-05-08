@@ -3,6 +3,7 @@ import { AppRoutes } from '../constants/AppRoutes';
 import { Roles } from '../constants/Roles';
 import Home from '../pages/Home';
 import AppointmentsPage from '../pages/appointments/AppointmentsPage';
+import CreateAppointment from '../pages/appointments/CreateAppointment';
 import Layout from '../pages/layout/Layout';
 import Login from '../pages/login/Login';
 import ProtectedRoute from './ProtectedRoute';
@@ -18,8 +19,16 @@ const AppRouter = () => {
                     <Route
                         path='/appointments'
                         element={
-                            <ProtectedRoute roles={[Roles.Receptionist]}>
+                            <ProtectedRoute roles={[Roles.Receptionist, Roles.Admin]}>
                                 <AppointmentsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path='/appointments/create'
+                        element={
+                            <ProtectedRoute roles={[Roles.Receptionist, Roles.Admin]}>
+                                <CreateAppointment />
                             </ProtectedRoute>
                         }
                     />

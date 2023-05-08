@@ -24,7 +24,7 @@ export const initialValues: IGetAppointmentsForm = {
     isApproved: null,
 };
 
-export const GET_APPOINTMENTS_VALIDATOR = yup.object().shape({
+export const getAppointments_ValidationScheme = yup.object().shape({
     date: yup.date().min(dayjs(), 'Date should be greater or equal than today').required('Please, enter a date'),
     doctorFullName: yup.string().notRequired(),
     service: yup.object().shape({

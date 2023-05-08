@@ -5,12 +5,12 @@ import { useState } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import AppointmentsService from '../api/services/AppointmentsService';
+import { AppRoutes } from '../constants/AppRoutes';
 import { dateApiFormat } from '../constants/formats';
 import { ApppointmentsQueries } from '../constants/queries';
 import { IPagingData } from '../types/common/Responses';
-import { AppRoutes } from '../constants/AppRoutes';
-import { IGetAppointmentsRequest } from '../types/request/AppointmentsAPI_requests';
-import { IAppointmentResponse } from '../types/response/AppointmentsAPI_responses';
+import { IGetAppointmentsRequest } from '../types/request/appointments';
+import { IAppointmentResponse } from '../types/response/appointments';
 import { showPopup } from '../utils/functions';
 import { IGetAppointmentsForm } from '../validators/appointmentsAPI/GetAppointments';
 
@@ -27,8 +27,8 @@ export const usePagedAppointments = (
         pageSize: pagingData.pageSize,
         date: dayjs(values.date).format(dateApiFormat),
         doctorFullName: values.doctorFullName,
-        officeId: values.office.id,
-        serviceId: values.service.id,
+        officeId: values.office.id ?? '',
+        serviceId: values.service.id ?? '',
         isApproved: values.isApproved,
     };
 

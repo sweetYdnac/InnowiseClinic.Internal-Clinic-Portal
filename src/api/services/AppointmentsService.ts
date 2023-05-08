@@ -1,6 +1,6 @@
 import { INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { IGetAppointmentsRequest } from '../../types/request/AppointmentsAPI_requests';
-import { IAppointmentResponse } from '../../types/response/AppointmentsAPI_responses';
+import { IGetAppointmentsRequest } from '../../types/request/appointments';
+import { IAppointmentResponse } from '../../types/response/appointments';
 import { getQueryString } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 

@@ -5,8 +5,8 @@ import OfficesService from '../api/services/OfficesService';
 import { OfficesQueries } from '../constants/queries';
 import { IPagingData } from '../types/common/Responses';
 import { AppRoutes } from '../constants/AppRoutes';
-import { IGetPagedOfficesRequest } from '../types/request/OfficesAPI';
-import { IOfficeInformationResponse } from '../types/response/OfficesAPI';
+import { IGetPagedOfficesRequest } from '../types/request/offices';
+import { IOfficeInformationResponse } from '../types/response/offices';
 import { showPopup } from '../utils/functions';
 
 export const usePagedOffices = (initialPagingData: IPagingData) => {
