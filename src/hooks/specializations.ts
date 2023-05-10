@@ -4,26 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import SpecializationsService from '../api/services/SpecializationsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { SpecializationsQueries } from '../constants/queries';
+import { IPagedRequest } from '../types/common/Requests';
 import { IPagingData } from '../types/common/Responses';
-import { IGetPagedSpecializationsRequest } from '../types/request/specializations';
+import { IGetPagedSpecializationsFilters, IGetPagedSpecializationsRequest } from '../types/request/specializations';
 import { ISpecializationResponse } from '../types/response/specializations';
 import { showPopup } from '../utils/functions';
 
-export const usePagedSpecializations = (initialPagingData: IPagingData, title: string, enabled = true) => {
+export const usePagedSpecializations = (initialPagingData: IPagedRequest, filters: IGetPagedSpecializationsFilters, enabled = false) => {
     const navigate = useNavigate();
-    const [pagingData, setPagingData] = useState(initialPagingData);
+    const [pagingData, setPagingData] = useState({
+        ...initialPagingData,
+    } as IPagingData);
 
     const query = useQuery<ISpecializationResponse[], Error, ISpecializationResponse[], QueryKey>({
+        initialData: enabled ? undefined : [],
         queryKey: [
             SpecializationsQueries.getSpecializations,
-            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, title: title },
+            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...filters },
         ],
         queryFn: async () => {
             const request: IGetPagedSpecializationsRequest = {
                 currentPage: pagingData.currentPage,
                 pageSize: pagingData.pageSize,
-                title: title,
-                isActive: true,
+                ...filters,
             };
 
             const { items, ...paging } = await SpecializationsService.getPaged(request);

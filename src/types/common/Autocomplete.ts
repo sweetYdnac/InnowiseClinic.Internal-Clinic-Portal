@@ -4,6 +4,6 @@ export interface IAutoCompleteItem {
 }
 
 export interface IAutoCompleteInput {
-    id: string | null;
+    id: string;
     input: string;
 }

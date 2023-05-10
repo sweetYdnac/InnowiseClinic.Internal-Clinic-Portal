@@ -13,3 +13,7 @@ export enum ServicesQueries {
 export enum SpecializationsQueries {
     getSpecializations = 'getSpecializations',
 }
+
+export enum DoctorsQueries {
+    getDoctors = 'getDoctors',
+}

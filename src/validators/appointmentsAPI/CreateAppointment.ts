@@ -1,55 +1,42 @@
 import dayjs from 'dayjs';
 import * as yup from 'yup';
-import { IAutoCompleteInput } from '../../types/common/Autocomplete';
 
 interface ICreateAppointmentForm {
-    office: IAutoCompleteInput;
-    doctor: IAutoCompleteInput;
-    specialization: IAutoCompleteInput;
-    service: IAutoCompleteInput;
+    officeId: string;
+    officeInput: string;
+    doctorId: string;
+    doctorInput: string;
+    specializationId: string;
+    specializationInput: string;
+    serviceId: string;
+    serviceInput: string;
     date: dayjs.Dayjs;
     time: dayjs.Dayjs | null;
 }
 
 export const useCreateAppointmentValidator = () => {
     const initialValues: ICreateAppointmentForm = {
-        office: {
-            id: null,
-            input: '',
-        },
-        doctor: {
-            id: null,
-            input: '',
-        },
-        specialization: {
-            id: null,
-            input: '',
-        },
-        service: {
-            id: null,
-            input: '',
-        },
+        officeId: '',
+        officeInput: '',
+        doctorId: '',
+        doctorInput: '',
+        specializationId: '',
+        specializationInput: '',
+        serviceId: '',
+        serviceInput: '',
         date: dayjs(),
         time: null,
     };
 
     const validationScheme = yup.object().shape({
-        office: yup.object().shape({
-            id: yup.string().required('Please, choose the office'),
-            input: yup.string().notRequired(),
-        }),
-        doctor: yup.object().shape({
-            id: yup.string().required('Please, choose the doctor'),
-            input: yup.string().notRequired(),
-        }),
-        specialization: yup.object().shape({
-            id: yup.string().required('Please, choose the specialization'),
-            input: yup.string().notRequired(),
-        }),
-        service: yup.object().shape({
-            id: yup.string().required('Please, choose the service'),
-            input: yup.string().notRequired(),
-        }),
+        officeId: yup.string().required('Please, choose the office'),
+        officeInput: yup.string().notRequired(),
+        doctorId: yup.string().required('Please, choose the doctor'),
+        doctorInput: yup.string().notRequired(),
+        specializationId: yup.string().required('Please, choose the specialization'),
+        specializationInput: yup.string().notRequired(),
+        serviceId: yup.string().required('Please, choose the service'),
+        serviceInput: yup.string().notRequired(),
         date: yup.date().required('Please, enter a valid date').typeError('Please, enter a valid date'),
         time: yup.date().required('Please, enter a valid timeslot').typeError('Please, enter a valid timeslot'),
     });

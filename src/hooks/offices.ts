@@ -2,18 +2,22 @@ import { QueryKey, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OfficesService from '../api/services/OfficesService';
-import { OfficesQueries } from '../constants/queries';
-import { IPagingData } from '../types/common/Responses';
 import { AppRoutes } from '../constants/AppRoutes';
+import { OfficesQueries } from '../constants/queries';
+import { IPagedRequest } from '../types/common/Requests';
+import { IPagingData } from '../types/common/Responses';
 import { IGetPagedOfficesRequest } from '../types/request/offices';
 import { IOfficeInformationResponse } from '../types/response/offices';
 import { showPopup } from '../utils/functions';
 
-export const usePagedOffices = (initialPagingData: IPagingData) => {
+export const usePagedOffices = (initialPagingData: IPagedRequest, enabled = false) => {
     const navigate = useNavigate();
-    const [pagingData, setPagingData] = useState(initialPagingData);
+    const [pagingData, setPagingData] = useState({
+        ...initialPagingData,
+    } as IPagingData);
 
     const query = useQuery<IOfficeInformationResponse[], Error, IOfficeInformationResponse[], QueryKey>({
+        initialData: enabled ? undefined : [],
         queryKey: [
             OfficesQueries.getOffices,
             { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize } as IGetPagedOfficesRequest,
@@ -29,7 +33,7 @@ export const usePagedOffices = (initialPagingData: IPagingData) => {
 
             return items;
         },
-        enabled: true,
+        enabled: enabled,
         retry: false,
         keepPreviousData: true,
         onError: () => {

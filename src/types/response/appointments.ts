@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export interface IAppointmentResponse {
     id: string;
     startTime: string;
@@ -7,4 +9,10 @@ export interface IAppointmentResponse {
     doctorFullName: string;
     serviceName: string;
     isApproved: boolean;
+}
+
+export interface ITimeSlot {
+    doctors: string[];
+    time: string;
+    // parsedTime: dayjs.Dayjs;
 }

@@ -12,7 +12,7 @@ import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { IPagingData } from '../../types/common/Responses';
-import { getAppointments_ValidationScheme, IGetAppointmentsForm, initialValues } from '../../validators/appointmentsAPI/GetAppointments';
+import { IGetAppointmentsForm, getAppointments_ValidationScheme, initialValues } from '../../validators/appointmentsAPI/GetAppointments';
 import AppointmentsTable from './AppointmentsTable';
 
 const AppointmentsPage: FunctionComponent = () => {
@@ -31,10 +31,10 @@ const AppointmentsPage: FunctionComponent = () => {
     } = usePagedAppointments({ currentPage: 1, pageSize: 50 } as IPagingData, getValues(), setError);
 
     const { data: offices, isFetching: isFetchingOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 } as IPagingData);
-    const { data: services, isFetching: isFetchingServices } = usePagedServices(
-        { currentPage: 1, pageSize: 20 } as IPagingData,
-        watch('service').input
-    );
+    const { data: services, isFetching: isFetchingServices } = usePagedServices({ currentPage: 1, pageSize: 20 } as IPagingData, {
+        title: watch('service').input,
+        isActive: true,
+    });
 
     const date = useWatch({
         control,
@@ -49,7 +49,7 @@ const AppointmentsPage: FunctionComponent = () => {
             <Box component={'form'} onSubmit={handleSubmit(() => fetchAppointments())} sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <FilterTextfield id={register('doctorFullName').name} control={control} displayName='Doctor' />
-                    <AutoComplete
+                    {/* <AutoComplete
                         id={register('office').name}
                         control={control}
                         displayName='Office'
@@ -61,8 +61,8 @@ const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                    />
-                    <AutoComplete
+                    /> */}
+                    {/* <AutoComplete
                         id={register('service').name}
                         control={control}
                         displayName='Service'
@@ -74,10 +74,10 @@ const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                    />
+                    /> */}
 
                     <SelectBoolean id={register('isApproved').name} control={control} displayName='Status' />
-                    <Datepicker id={register('date').name} control={control} displayName='Date' disablePast={false} />
+                    <Datepicker id={register('date').name} control={control} displayName='Date' />
                 </Box>
                 <Button type='submit'>Generate</Button>
                 <Box>

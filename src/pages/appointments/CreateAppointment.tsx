@@ -1,9 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { Box, Typography } from '@mui/material';
+import { useCallback, useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import AutoComplete from '../../components/AutoComplete/AutoComplete';
+import { usePagedDoctors } from '../../hooks/doctors';
 import { usePagedOffices } from '../../hooks/offices';
+import { usePagedServices } from '../../hooks/services';
 import { usePagedSpecializations } from '../../hooks/specializations';
-import { IPagingData } from '../../types/common/Responses';
+import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { ISpecializationResponse } from '../../types/response/specializations';
 import { useCreateAppointmentValidator } from '../../validators/appointmentsAPI/CreateAppointment';
+import Datepicker from '../../components/DatePicker/Datepicker';
 
 const CreateAppointment = () => {
     const { validationScheme, initialValues } = useCreateAppointmentValidator();
@@ -23,15 +30,103 @@ const CreateAppointment = () => {
         defaultValues: initialValues,
     });
 
-    const { data: offices, isFetching: isFetchingOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 } as IPagingData);
-    const { data: specializations, isLoading: isLoadingSpecializations } = usePagedSpecializations(
-        { currentPage: 1, pageSize: 50 } as IPagingData,
-        watch('specialization').input
+    const { data: offices, isFetching: isOfficesFetching, refetch: fetchOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 });
+
+    const {
+        data: specializations,
+        isFetching: isSpecializationsFetching,
+        refetch: fetchSpecializations,
+    } = usePagedSpecializations(
+        { currentPage: 1, pageSize: 2 },
+        {
+            isActive: true,
+            title: getValues('specializationInput'),
+        }
     );
+
+    const {
+        data: doctors,
+        isFetching: isDoctorsFetching,
+        refetch: fetchDoctors,
+    } = usePagedDoctors(
+        { currentPage: 1, pageSize: 2 },
+        {
+            onlyAtWork: true,
+            officeId: getValues('officeId'),
+            specializationId: getValues('specializationId'),
+            fullName: getValues('doctorInput'),
+        }
+    );
+
+    const {
+        data: services,
+        isFetching: isServicesFetching,
+        refetch: fetchServices,
+    } = usePagedServices(
+        { currentPage: 1, pageSize: 2 },
+        {
+            isActive: true,
+            title: getValues('serviceInput'),
+            specializationId: getValues('specializationId'),
+        }
+    );
+
+    const handleSpecializationInputChange = useCallback(() => {
+        fetchSpecializations();
+    }, [fetchSpecializations]);
+
+    const handleDoctorInputChange = useCallback(() => {
+        fetchDoctors();
+    }, [fetchDoctors]);
+
+    const handleServiceInputChange = useCallback(() => {
+        fetchServices();
+    }, [fetchServices]);
+
+    const specializationId = useWatch({ control: control, name: 'specializationId' });
+    useEffect(() => {
+        if (specializationId === '') {
+            setValue('serviceId', '', { shouldValidate: true });
+        }
+    }, [specializationId]);
+
+    const doctorId = useWatch({ control: control, name: 'doctorId' });
+    useEffect(() => {
+        if (doctorId === '') {
+            setValue('specializationId', '', { shouldValidate: true });
+            return;
+        }
+
+        const doctor = doctors?.find((item) => item.id === doctorId);
+
+        if (doctor) {
+            const spec: ISpecializationResponse = {
+                id: doctor.specializationId,
+                title: doctor.specializationName,
+                isActive: true,
+            };
+
+            specializations?.push(spec);
+            setValue('specializationId', doctor.specializationId, { shouldTouch: true, shouldValidate: true });
+        }
+    }, [doctorId]);
+
+    const serviceId = useWatch({ control: control, name: 'serviceId' });
+    useEffect(() => {
+        if (serviceId === '') {
+            return;
+        }
+
+        const service = services?.find((item) => item.id === serviceId);
+
+        if (service) {
+            // get specialization by id
+        }
+    }, [doctorId]);
 
     return (
         <>
-            {/* <Box
+            <Box
                 // onSubmit={handleSubmit()}
                 component='form'
                 sx={{
@@ -49,7 +144,7 @@ const CreateAppointment = () => {
                 </Typography>
 
                 <AutoComplete
-                    id={register('office').name}
+                    id={register('officeId').name}
                     displayName='Office'
                     control={control}
                     options={
@@ -60,59 +155,78 @@ const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
+                    handleOpen={() => fetchOffices()}
+                    isLoading={isOfficesFetching}
                 />
 
                 <AutoComplete
-                    disabled={!getValues('officeId')}
                     id={register('specializationId').name}
+                    control={control}
                     displayName='Specialization'
-                    control={control}
-                    options={options.specializations.map((item) => {
-                        return {
-                            label: item.title,
-                            id: item.id,
-                        } as IAutoCompleteItem;
-                    })}
+                    options={
+                        specializations?.map((item) => {
+                            return {
+                                label: item.title,
+                                id: item.id,
+                            } as IAutoCompleteItem;
+                        }) ?? []
+                    }
+                    handleOpen={() => fetchSpecializations()}
+                    disabled={!getValues('officeId')}
+                    isLoading={isSpecializationsFetching}
+                    inputName={register('specializationInput').name}
+                    delay={2000}
+                    handleInputChange={handleSpecializationInputChange}
                 />
 
                 <AutoComplete
-                    disabled={!getValues('officeId')}
                     id={register('doctorId').name}
-                    displayName='Doctor'
                     control={control}
-                    options={options.doctors.map((item) => {
-                        return {
-                            label: item.fullName,
-                            id: item.id,
-                        } as IAutoCompleteItem;
-                    })}
+                    displayName='Doctor'
+                    options={
+                        doctors?.map((item) => {
+                            return {
+                                label: item.fullName,
+                                id: item.id,
+                            } as IAutoCompleteItem;
+                        }) ?? []
+                    }
+                    handleOpen={() => fetchDoctors()}
+                    disabled={!getValues('officeId')}
+                    isLoading={isDoctorsFetching}
+                    inputName={register('doctorInput').name}
+                    delay={2000}
+                    handleInputChange={handleDoctorInputChange}
                 />
 
                 <AutoComplete
-                    disabled={!getValues('officeId')}
                     id={register('serviceId').name}
-                    displayName='Service'
                     control={control}
-                    options={options.services.map((item) => {
-                        return {
-                            label: item.title,
-                            id: item.id,
-                        } as IAutoCompleteItem;
-                    })}
+                    displayName='Service'
+                    options={
+                        services?.map((item) => {
+                            return {
+                                label: item.title,
+                                id: item.id,
+                            } as IAutoCompleteItem;
+                        }) ?? []
+                    }
+                    handleOpen={() => fetchServices()}
+                    disabled={!getValues('officeId')}
+                    isLoading={isServicesFetching}
+                    inputName={register('serviceInput').name}
+                    delay={2000}
+                    handleInputChange={handleServiceInputChange}
                 />
 
                 <Datepicker
-                    readOnly={(options.doctors.length === 0 || !getValues('doctorId')) && !getValues('serviceId')}
-                    disabled={(options.doctors.length === 0 || !getValues('doctorId')) && !getValues('serviceId')}
+                    disabled={!getValues('serviceId') || (!doctors && !getValues('doctorId'))}
                     id={register('date').name}
-                    displayName='Date'
                     control={control}
-                    disableFuture={false}
-                    disablePast={true}
-                    openTo={'day'}
+                    displayName='Date'
                 />
 
-                <TimePicker
+                {/*<TimePicker
                     readOnly={
                         (options.doctors.length === 0 && getValues('doctorId') === null) ||
                         getValues('serviceId') === null ||
@@ -127,14 +241,14 @@ const CreateAppointment = () => {
                     displayName='Time slot'
                     control={control}
                     timeSlots={timeSlots}
-                />
+                /> */}
 
-                <SubmitButton errors={errors} touchedFields={touchedFields}>
+                {/* <SubmitButton errors={errors} touchedFields={touchedFields}>
                     Create
-                </SubmitButton>
+                </SubmitButton> */}
             </Box>
 
-            <CustomDialog
+            {/* <CustomDialog
                 isOpen={isCancelDialogOpen}
                 name={modalName}
                 title='Discard changes?'

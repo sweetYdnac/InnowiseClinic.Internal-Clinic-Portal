@@ -1,32 +1,31 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SpecializationsService from '../api/services/SpecializationsService';
+import DoctorsService from '../api/services/DoctorsService';
 import { AppRoutes } from '../constants/AppRoutes';
-import { SpecializationsQueries } from '../constants/queries';
+import { DoctorsQueries } from '../constants/queries';
+import { IPagedRequest } from '../types/common/Requests';
 import { IPagingData } from '../types/common/Responses';
-import { IGetPagedSpecializationsRequest } from '../types/request/specializations';
-import { ISpecializationResponse } from '../types/response/specializations';
+import { IGetPagedDoctorsFiltes, IGetPagedDoctorsRequest } from '../types/request/doctors';
+import { IDoctorInformationResponse } from '../types/response/doctors';
 import { showPopup } from '../utils/functions';
 
-export const usePagedSpecializations = (initialPagingData: IPagingData, title: string, enabled = true) => {
+export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetPagedDoctorsFiltes, enabled = false) => {
     const navigate = useNavigate();
-    const [pagingData, setPagingData] = useState(initialPagingData);
+    const [pagingData, setPagingData] = useState({
+        ...initialPagingData,
+    } as IPagingData);
 
-    const query = useQuery<ISpecializationResponse[], Error, ISpecializationResponse[], QueryKey>({
-        queryKey: [
-            SpecializationsQueries.getSpecializations,
-            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, title: title },
-        ],
+    const query = useQuery<IDoctorInformationResponse[], Error, IDoctorInformationResponse[], QueryKey>({
+        queryKey: [DoctorsQueries.getDoctors, { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...filters }],
         queryFn: async () => {
-            const request: IGetPagedSpecializationsRequest = {
+            const request: IGetPagedDoctorsRequest = {
                 currentPage: pagingData.currentPage,
                 pageSize: pagingData.pageSize,
-                title: title,
-                isActive: true,
+                ...filters,
             };
 
-            const { items, ...paging } = await SpecializationsService.getPaged(request);
+            const { items, ...paging } = await DoctorsService.getPaged(request);
             setPagingData(paging as IPagingData);
 
             return items;
