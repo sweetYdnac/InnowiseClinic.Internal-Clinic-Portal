@@ -1,8 +1,15 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Typography } from '@mui/material';
 import { useCallback, useEffect } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import SpecializationsService from '../../api/services/SpecializationsService';
 import AutoComplete from '../../components/AutoComplete/AutoComplete';
+import Datepicker from '../../components/DatePicker/Datepicker';
+import Loader from '../../components/Loader/Loader';
+import TimeSlotPicker from '../../components/TimeSlotPicker/TimeSlotPicker';
+import { endTime, startTime } from '../../constants/WorkingDay';
+import { dateApiFormat, timeViewFormat } from '../../constants/formats';
+import { useTimeSlots } from '../../hooks/appointments';
 import { usePagedDoctors } from '../../hooks/doctors';
 import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
@@ -10,7 +17,6 @@ import { usePagedSpecializations } from '../../hooks/specializations';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { ISpecializationResponse } from '../../types/response/specializations';
 import { useCreateAppointmentValidator } from '../../validators/appointmentsAPI/CreateAppointment';
-import Datepicker from '../../components/DatePicker/Datepicker';
 
 const CreateAppointment = () => {
     const { validationScheme, initialValues } = useCreateAppointmentValidator();
@@ -40,7 +46,7 @@ const CreateAppointment = () => {
         { currentPage: 1, pageSize: 2 },
         {
             isActive: true,
-            title: getValues('specializationInput'),
+            title: watch('specializationInput'),
         }
     );
 
@@ -52,9 +58,9 @@ const CreateAppointment = () => {
         { currentPage: 1, pageSize: 2 },
         {
             onlyAtWork: true,
-            officeId: getValues('officeId'),
-            specializationId: getValues('specializationId'),
-            fullName: getValues('doctorInput'),
+            officeId: watch('officeId'),
+            specializationId: watch('specializationId'),
+            fullName: watch('doctorInput'),
         }
     );
 
@@ -66,8 +72,8 @@ const CreateAppointment = () => {
         { currentPage: 1, pageSize: 2 },
         {
             isActive: true,
-            title: getValues('serviceInput'),
-            specializationId: getValues('specializationId'),
+            title: watch('serviceInput'),
+            specializationId: watch('specializationId'),
         }
     );
 
@@ -83,46 +89,89 @@ const CreateAppointment = () => {
         fetchServices();
     }, [fetchServices]);
 
-    const specializationId = useWatch({ control: control, name: 'specializationId' });
     useEffect(() => {
-        if (specializationId === '') {
+        if (getValues('specializationId') === '') {
             setValue('serviceId', '', { shouldValidate: true });
         }
-    }, [specializationId]);
+    }, [getValues('specializationId')]);
 
-    const doctorId = useWatch({ control: control, name: 'doctorId' });
     useEffect(() => {
-        if (doctorId === '') {
+        if (getValues('doctorId') === '') {
             setValue('specializationId', '', { shouldValidate: true });
             return;
         }
 
-        const doctor = doctors?.find((item) => item.id === doctorId);
+        const doctor = doctors?.find((item) => item.id === getValues('doctorId'));
 
         if (doctor) {
-            const spec: ISpecializationResponse = {
+            const specialization: ISpecializationResponse = {
                 id: doctor.specializationId,
                 title: doctor.specializationName,
                 isActive: true,
             };
 
-            specializations?.push(spec);
+            specializations?.push(specialization);
             setValue('specializationId', doctor.specializationId, { shouldTouch: true, shouldValidate: true });
         }
-    }, [doctorId]);
+    }, [getValues('doctorId')]);
 
-    const serviceId = useWatch({ control: control, name: 'serviceId' });
     useEffect(() => {
-        if (serviceId === '') {
+        if (getValues('serviceId') === '') {
+            setValue('time', null, { shouldValidate: true });
             return;
         }
 
-        const service = services?.find((item) => item.id === serviceId);
+        const getSpecialization = async () => {
+            const id = services?.find((item) => item.id === watch('serviceId'))?.specializationId;
+            let specialization = specializations?.find((item) => item.id === id);
 
-        if (service) {
-            // get specialization by id
-        }
-    }, [doctorId]);
+            if (!specialization) {
+                if (id) {
+                    specialization = await SpecializationsService.getById(id);
+                    setValue('specializationId', specialization.id, { shouldValidate: true, shouldTouch: true });
+                    specializations?.push(specialization);
+                }
+            } else {
+                setValue('specializationId', specialization.id, { shouldValidate: true, shouldTouch: true });
+            }
+        };
+
+        getSpecialization();
+    }, [getValues('serviceId')]);
+
+    useEffect(() => {
+        setValue('time', null, { shouldValidate: true });
+    }, [watch('date')]);
+
+    const {
+        data: timeSlots,
+        isFetching: isTimeSlotsFetching,
+        refetch: fetchTimeSlots,
+    } = useTimeSlots({
+        date: watch('date')?.format(dateApiFormat) ?? '',
+        doctors: watch('doctorId') ? [watch('doctorId')] : doctors?.map((item) => item.id) ?? [],
+        duration: services?.find((item) => item.id === watch('serviceId'))?.duration ?? 10,
+        startTime: startTime.format(timeViewFormat),
+        endTime: endTime.format(timeViewFormat),
+    });
+
+    const getDoctorsFromTimeSlot = () => {
+        const selectedTime = getValues('time')?.format(timeViewFormat);
+        const filteredDoctors = doctors?.filter((doctor) => {
+            const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
+            return !timeslot || timeslot.doctors.includes(doctor.id);
+        });
+
+        return (
+            filteredDoctors?.map(
+                (doctor) =>
+                    ({
+                        label: doctor.fullName,
+                        id: doctor.id,
+                    } as IAutoCompleteItem)
+            ) || []
+        );
+    };
 
     return (
         <>
@@ -137,7 +186,7 @@ const CreateAppointment = () => {
                     width: '100%',
                 }}
                 noValidate
-                autoComplete='off'
+                autoComplete='on'
             >
                 <Typography variant='h5' gutterBottom>
                     Create Appointment
@@ -171,7 +220,11 @@ const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => fetchSpecializations()}
+                    handleOpen={() => {
+                        if (!getValues('specializationId')) {
+                            fetchSpecializations();
+                        }
+                    }}
                     disabled={!getValues('officeId')}
                     isLoading={isSpecializationsFetching}
                     inputName={register('specializationInput').name}
@@ -183,15 +236,12 @@ const CreateAppointment = () => {
                     id={register('doctorId').name}
                     control={control}
                     displayName='Doctor'
-                    options={
-                        doctors?.map((item) => {
-                            return {
-                                label: item.fullName,
-                                id: item.id,
-                            } as IAutoCompleteItem;
-                        }) ?? []
-                    }
-                    handleOpen={() => fetchDoctors()}
+                    options={getDoctorsFromTimeSlot() ?? []}
+                    handleOpen={() => {
+                        if (!getValues('time') && !getValues('doctorId')) {
+                            fetchDoctors();
+                        }
+                    }}
                     disabled={!getValues('officeId')}
                     isLoading={isDoctorsFetching}
                     inputName={register('doctorInput').name}
@@ -211,7 +261,11 @@ const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => fetchServices()}
+                    handleOpen={() => {
+                        if (!getValues('serviceId')) {
+                            fetchServices();
+                        }
+                    }}
                     disabled={!getValues('officeId')}
                     isLoading={isServicesFetching}
                     inputName={register('serviceInput').name}
@@ -226,22 +280,25 @@ const CreateAppointment = () => {
                     displayName='Date'
                 />
 
-                {/*<TimePicker
+                <TimeSlotPicker
+                    id={register('time').name}
+                    control={control}
+                    displayName='Time slot'
+                    timeSlots={timeSlots ?? []}
+                    handleOpen={() => fetchTimeSlots()}
                     readOnly={
-                        (options.doctors.length === 0 && getValues('doctorId') === null) ||
-                        getValues('serviceId') === null ||
-                        !getValues('date')?.isValid()
+                        (doctors?.length === 0 && !getValues('doctorId')) ||
+                        !getValues('serviceId') ||
+                        !getValues('date')?.isValid() ||
+                        isTimeSlotsFetching
                     }
                     disabled={
-                        (options.doctors.length === 0 && getValues('doctorId') === null) ||
-                        getValues('serviceId') === null ||
-                        !getValues('date')?.isValid()
+                        (doctors?.length === 0 && !getValues('doctorId')) ||
+                        !getValues('serviceId') ||
+                        !getValues('date')?.isValid() ||
+                        isTimeSlotsFetching
                     }
-                    id={register('time').name}
-                    displayName='Time slot'
-                    control={control}
-                    timeSlots={timeSlots}
-                /> */}
+                />
 
                 {/* <SubmitButton errors={errors} touchedFields={touchedFields}>
                     Create
@@ -254,6 +311,8 @@ const CreateAppointment = () => {
                 title='Discard changes?'
                 content='Do you really want to exit? Your appointment will not be saved.'
             /> */}
+
+            {isTimeSlotsFetching && <Loader />}
         </>
     );
 };

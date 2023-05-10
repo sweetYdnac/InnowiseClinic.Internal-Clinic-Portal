@@ -1,4 +1,5 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DoctorsService from '../api/services/DoctorsService';
@@ -16,7 +17,7 @@ export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetP
         ...initialPagingData,
     } as IPagingData);
 
-    const query = useQuery<IDoctorInformationResponse[], Error, IDoctorInformationResponse[], QueryKey>({
+    const query = useQuery<IDoctorInformationResponse[], AxiosError, IDoctorInformationResponse[], QueryKey>({
         queryKey: [DoctorsQueries.getDoctors, { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...filters }],
         queryFn: async () => {
             const request: IGetPagedDoctorsRequest = {
@@ -33,9 +34,11 @@ export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetP
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
-        onError: () => {
-            navigate(AppRoutes.Home);
-            showPopup('Something went wrong.');
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
         },
     });
 

@@ -1,6 +1,6 @@
 import { INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { IGetAppointmentsRequest } from '../../types/request/appointments';
-import { IAppointmentResponse } from '../../types/response/appointments';
+import { IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../../types/request/appointments';
+import { IAppointmentResponse, ITimeSlotsResponse } from '../../types/response/appointments';
 import { getQueryString } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 
@@ -14,10 +14,17 @@ const cancelAppointment = async (id: string) => (await axiosInstance.delete<INoC
 
 const approveAppointment = async (id: string) => (await axiosInstance.patch<INoContentResponse>(`/appointments/${id}`)).data;
 
+const getTimeSlots = async (data: IGetTimeSlotsRequest) => {
+    const path = 'appointments/timeslots?' + getQueryString(data);
+
+    return (await axiosInstance.get<ITimeSlotsResponse>(path)).data;
+};
+
 const AppointmentsService = {
     getAppointments,
     cancelAppointment,
     approveAppointment,
+    getTimeSlots,
 };
 
 export default AppointmentsService;

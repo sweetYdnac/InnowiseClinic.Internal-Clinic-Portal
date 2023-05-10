@@ -1,4 +1,5 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SpecializationsService from '../api/services/SpecializationsService';
@@ -16,11 +17,13 @@ export const usePagedSpecializations = (initialPagingData: IPagedRequest, filter
         ...initialPagingData,
     } as IPagingData);
 
-    const query = useQuery<ISpecializationResponse[], Error, ISpecializationResponse[], QueryKey>({
+    const { title, ...rest } = filters;
+
+    const query = useQuery<ISpecializationResponse[], AxiosError, ISpecializationResponse[], QueryKey>({
         initialData: enabled ? undefined : [],
         queryKey: [
             SpecializationsQueries.getSpecializations,
-            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...filters },
+            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...rest },
         ],
         queryFn: async () => {
             const request: IGetPagedSpecializationsRequest = {
@@ -37,9 +40,11 @@ export const usePagedSpecializations = (initialPagingData: IPagedRequest, filter
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
-        onError: () => {
-            navigate(AppRoutes.Home);
-            showPopup('Something went wrong.');
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
         },
     });
 
@@ -48,4 +53,21 @@ export const usePagedSpecializations = (initialPagingData: IPagedRequest, filter
         setPagingData,
         ...query,
     };
+};
+
+export const useSpecialization = (id: string, enabled = false) => {
+    const navigate = useNavigate();
+
+    return useQuery<ISpecializationResponse, AxiosError, ISpecializationResponse, QueryKey>({
+        queryKey: [SpecializationsQueries.getSpecializationById, id],
+        queryFn: async () => await SpecializationsService.getById(id),
+        enabled: enabled,
+        retry: false,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
+        },
+    });
 };

@@ -8,16 +8,25 @@ import { Control, Controller } from 'react-hook-form';
 import { timeViewFormat } from '../../constants/formats';
 import { ITimeSlot } from '../../types/response/appointments';
 
-interface TimePickerProps {
+interface TimeSlotPickerProps {
     id: string;
     control: Control<any, any>;
     displayName: string;
+    timeSlots: ITimeSlot[];
+    handleOpen: () => void;
     readOnly: boolean;
     disabled?: boolean;
-    timeSlots: ITimeSlot[];
 }
 
-const TimePicker: FunctionComponent<TimePickerProps> = ({ id, control, displayName, readOnly, disabled, timeSlots }) => {
+const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
+    id,
+    control,
+    displayName,
+    timeSlots,
+    handleOpen,
+    readOnly,
+    disabled,
+}) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Controller
@@ -27,7 +36,7 @@ const TimePicker: FunctionComponent<TimePickerProps> = ({ id, control, displayNa
                     <>
                         <MobileTimePicker
                             {...field}
-                            // onOpen={() => eventEmitter.emit(`${EventType.OPEN_TIMEPICKER} ${id}`)}
+                            onOpen={handleOpen}
                             disabled={disabled}
                             readOnly={readOnly}
                             label={displayName}
@@ -37,7 +46,7 @@ const TimePicker: FunctionComponent<TimePickerProps> = ({ id, control, displayNa
                             closeOnSelect={true}
                             shouldDisableTime={(value: dayjs.Dayjs, view) => {
                                 if (view === 'hours') {
-                                    return !timeSlots.some((slot) => dayjs(slot.time).hour() === value.hour());
+                                    return !timeSlots.some((slot) => dayjs(slot.time, timeViewFormat).hour() === value.hour());
                                 } else if (view === 'minutes') {
                                     return !timeSlots.some((slot) => slot.time === value.format(timeViewFormat));
                                 }
@@ -47,10 +56,7 @@ const TimePicker: FunctionComponent<TimePickerProps> = ({ id, control, displayNa
                             defaultValue={field?.value ?? null}
                             value={field?.value ?? null}
                             onChange={(time) => field.onChange(time)}
-                            onAccept={(time) => {
-                                field.onBlur();
-                                // eventEmitter.emit(`${EventType.TIMEPICKER_VALUE_CHANGE} ${id}`, time);
-                            }}
+                            onAccept={(time) => field.onBlur()}
                             onSelectedSectionsChange={() => field.onBlur()}
                             slotProps={{
                                 textField: {
@@ -77,4 +83,4 @@ const TimePicker: FunctionComponent<TimePickerProps> = ({ id, control, displayNa
     );
 };
 
-export default TimePicker;
+export default TimeSlotPicker;

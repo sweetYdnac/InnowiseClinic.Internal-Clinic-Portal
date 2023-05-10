@@ -4,6 +4,10 @@ import { ISpecializationResponse } from '../../types/response/specializations';
 import { getQueryString } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 
+const getById = async (id: string) => {
+    return (await axiosInstance.get<ISpecializationResponse>(`/specializations/${id}`)).data;
+};
+
 const getPaged = async (data: IGetPagedSpecializationsRequest) => {
     const path = '/specializations?' + getQueryString(data);
 
@@ -11,6 +15,7 @@ const getPaged = async (data: IGetPagedSpecializationsRequest) => {
 };
 
 const SpecializationsService = {
+    getById,
     getPaged,
 };
 

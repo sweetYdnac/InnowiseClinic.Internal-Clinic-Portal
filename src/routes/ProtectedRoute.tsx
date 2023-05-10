@@ -20,7 +20,7 @@ const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
 
     useEffect(() => {
         const refresh = async () => {
-            await AuthorizationService.refresh(undefined, navigate).then(() => {
+            await AuthorizationService.refresh(undefined).then(() => {
                 setDisplay(true);
             });
         };

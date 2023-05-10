@@ -1,5 +1,6 @@
 export enum ApppointmentsQueries {
     getAppointments = 'getAppointments',
+    getTimeSlots = 'getTimeSlots',
 }
 
 export enum OfficesQueries {
@@ -11,6 +12,7 @@ export enum ServicesQueries {
 }
 
 export enum SpecializationsQueries {
+    getSpecializationById = 'getSpecializationById',
     getSpecializations = 'getSpecializations',
 }
 

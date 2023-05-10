@@ -9,8 +9,8 @@ import { AppRoutes } from '../constants/AppRoutes';
 import { dateApiFormat } from '../constants/formats';
 import { ApppointmentsQueries } from '../constants/queries';
 import { IPagingData } from '../types/common/Responses';
-import { IGetAppointmentsRequest } from '../types/request/appointments';
-import { IAppointmentResponse } from '../types/response/appointments';
+import { IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../types/request/appointments';
+import { IAppointmentResponse, ITimeSlot } from '../types/response/appointments';
 import { showPopup } from '../utils/functions';
 import { IGetAppointmentsForm } from '../validators/appointmentsAPI/GetAppointments';
 
@@ -32,7 +32,7 @@ export const usePagedAppointments = (
         isApproved: values.isApproved,
     };
 
-    const query = useQuery<IAppointmentResponse[], Error, IAppointmentResponse[], QueryKey>({
+    const query = useQuery<IAppointmentResponse[], AxiosError, IAppointmentResponse[], QueryKey>({
         queryKey: [ApppointmentsQueries.getAppointments, request],
         queryFn: async () => {
             const { items, ...paging } = await AppointmentsService.getAppointments(request);
@@ -43,12 +43,8 @@ export const usePagedAppointments = (
         enabled: false,
         retry: false,
         keepPreviousData: true,
-        onError: (error: Error) => {
-            if (error instanceof AxiosError) {
-                setError('date', {
-                    message: error?.response?.data.errors?.Date?.[0] || error?.response?.data.Message || '',
-                });
-            } else {
+        onError: (error) => {
+            if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
                 showPopup('Something went wrong.');
             }
@@ -60,4 +56,21 @@ export const usePagedAppointments = (
         setPagingData,
         ...query,
     };
+};
+
+export const useTimeSlots = (queryString: IGetTimeSlotsRequest, enabled = false) => {
+    const navigate = useNavigate();
+
+    return useQuery<ITimeSlot[], AxiosError, ITimeSlot[], QueryKey>({
+        queryKey: [ApppointmentsQueries.getTimeSlots, { ...queryString }],
+        queryFn: async () => (await AppointmentsService.getTimeSlots(queryString)).timeSlots,
+        enabled: enabled,
+        retry: false,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
+        },
+    });
 };

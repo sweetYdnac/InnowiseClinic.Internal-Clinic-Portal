@@ -7,3 +7,11 @@ export interface IGetAppointmentsRequest extends IPagedRequest {
     officeId: string;
     isApproved: boolean | null;
 }
+
+export interface IGetTimeSlotsRequest {
+    date: string;
+    doctors: string[];
+    duration: number;
+    startTime: string;
+    endTime: string;
+}

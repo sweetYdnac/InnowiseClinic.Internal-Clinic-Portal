@@ -1,4 +1,5 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import OfficesService from '../api/services/OfficesService';
@@ -16,7 +17,7 @@ export const usePagedOffices = (initialPagingData: IPagedRequest, enabled = fals
         ...initialPagingData,
     } as IPagingData);
 
-    const query = useQuery<IOfficeInformationResponse[], Error, IOfficeInformationResponse[], QueryKey>({
+    const query = useQuery<IOfficeInformationResponse[], AxiosError, IOfficeInformationResponse[], QueryKey>({
         initialData: enabled ? undefined : [],
         queryKey: [
             OfficesQueries.getOffices,
@@ -36,9 +37,11 @@ export const usePagedOffices = (initialPagingData: IPagedRequest, enabled = fals
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
-        onError: () => {
-            navigate(AppRoutes.Home);
-            showPopup('Something went wrong.');
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
         },
     });
 

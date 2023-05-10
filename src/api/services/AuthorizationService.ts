@@ -1,12 +1,11 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import jwt from 'jwt-decode';
-import { NavigateFunction } from 'react-router-dom';
-import { AppRoutes } from '../../constants/AppRoutes';
 import { Roles } from '../../constants/Roles';
 import IJwtToken from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
 import { ILoginRequest, IRegisterRequest } from '../../types/request/authorization';
 import { ITokenResponse } from '../../types/response/authorization';
+import { showPopup } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 
 function setAuthData(accessToken: string, refreshToken: string) {
@@ -65,10 +64,10 @@ const logout = () => {
     dispatchEvent(new Event('storage'));
 };
 
-const refresh = async (config?: AxiosRequestConfig<any>, navigate?: NavigateFunction) => {
+const refresh = async (config?: AxiosRequestConfig<any>) => {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
-        navigate?.(AppRoutes.Login);
+        showPopup('Your session has expired', 'warning');
         return;
     }
 
@@ -79,7 +78,7 @@ const refresh = async (config?: AxiosRequestConfig<any>, navigate?: NavigateFunc
 
             if (!response.data.accessToken || !response.data.refreshToken) {
                 logout();
-                navigate?.(AppRoutes.Login);
+                showPopup('Your session has expired', 'warning');
             } else {
                 if (config) {
                     return await axiosInstance(config);

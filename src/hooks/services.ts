@@ -1,4 +1,5 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ServicesService from '../api/services/ServicesService';
@@ -16,11 +17,12 @@ export const usePagedServices = (initialPagingData: IPagedRequest, filters: IGet
         ...initialPagingData,
     } as IPagingData);
 
-    const query = useQuery<IServiceInformationResponse[], Error, IServiceInformationResponse[], QueryKey>({
-        initialData: enabled ? undefined : [],
+    const { specializationId, ...rest } = filters;
+
+    const query = useQuery<IServiceInformationResponse[], AxiosError, IServiceInformationResponse[], QueryKey>({
         queryKey: [
             ServicesQueries.getServices,
-            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...filters } as IGetPagedServicesRequest,
+            { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...rest } as IGetPagedServicesRequest,
         ],
         queryFn: async () => {
             const request: IGetPagedServicesRequest = {
@@ -37,9 +39,11 @@ export const usePagedServices = (initialPagingData: IPagedRequest, filters: IGet
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
-        onError: () => {
-            navigate(AppRoutes.Home);
-            showPopup('Something went wrong.');
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
         },
     });
 

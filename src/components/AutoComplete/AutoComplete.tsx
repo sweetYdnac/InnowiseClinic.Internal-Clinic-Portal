@@ -1,7 +1,7 @@
-import { Autocomplete, AutocompleteInputChangeReason, CircularProgress, TextField } from '@mui/material';
-import { debounce } from 'debounce';
+import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import { FunctionComponent, useState } from 'react';
 import { Control, useController } from 'react-hook-form';
+import { useDebouncedCallback } from 'use-debounce';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 interface AutoCompleteProps {
@@ -14,7 +14,7 @@ interface AutoCompleteProps {
     readonly?: boolean;
     isLoading?: boolean;
     inputName?: string;
-    handleInputChange?: () => void;
+    handleInputChange?: Function;
     delay?: number;
 }
 
@@ -29,9 +29,10 @@ const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
     isLoading = false,
     inputName,
     handleInputChange,
-    delay,
+    delay = 0,
 }) => {
     const [open, setOpen] = useState(false);
+    const debounced = useDebouncedCallback(() => handleInputChange?.(), delay);
 
     const { field: idField, fieldState: idFieldState } = useController({
         name: id,
@@ -59,12 +60,17 @@ const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             onChange={(_e, value) => {
                 idField.onChange(value?.id || '');
             }}
-            onInputChange={debounce((_e: React.SyntheticEvent<Element, Event>, value: string, reason: AutocompleteInputChangeReason) => {
+            onInputChange={(_, value, reason) => {
                 if (reason === 'input') {
+                    debounced?.();
                     inputField.onChange(value);
-                    handleInputChange?.();
+                } else if (reason === 'clear') {
+                    inputField.onChange(value);
+                    // } else if (reason === 'reset' && value === '') {
+                } else if (reason === 'reset') {
+                    inputField.onChange(value);
                 }
-            }, delay)}
+            }}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             getOptionLabel={(option: IAutoCompleteItem) => option.label}
             options={options}

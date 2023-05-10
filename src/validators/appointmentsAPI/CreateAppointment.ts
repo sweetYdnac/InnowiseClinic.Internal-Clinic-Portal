@@ -10,7 +10,7 @@ interface ICreateAppointmentForm {
     specializationInput: string;
     serviceId: string;
     serviceInput: string;
-    date: dayjs.Dayjs;
+    date: dayjs.Dayjs | null;
     time: dayjs.Dayjs | null;
 }
 
@@ -24,7 +24,7 @@ export const useCreateAppointmentValidator = () => {
         specializationInput: '',
         serviceId: '',
         serviceInput: '',
-        date: dayjs(),
+        date: null,
         time: null,
     };
 

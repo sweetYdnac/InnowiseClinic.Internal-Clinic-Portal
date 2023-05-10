@@ -1,8 +1,5 @@
 import axios, { AxiosError, AxiosRequestHeaders } from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { PopupData } from '../components/Popup/Popup';
-import { EventType } from '../events/eventTypes';
-import { eventEmitter } from '../events/events';
+import { showPopup } from '../utils/functions';
 import AuthorizationService from './services/AuthorizationService';
 
 const axiosInstance = axios.create({
@@ -27,34 +24,26 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const navigate = useNavigate();
-
         switch (error.response?.status) {
             case 400: {
                 // Bad request is handling in specific validator for request;
                 throw error;
             }
             case 401: {
-                return await AuthorizationService.refresh((error as AxiosError).config, navigate);
+                return await AuthorizationService.refresh((error as AxiosError).config);
             }
             case 403: {
-                eventEmitter.emit(`${EventType.SHOW_POPUP}`, {
-                    message: 'You are not allowed to perform this action',
-                } as PopupData);
+                showPopup('You are not allowed to perform this action');
                 break;
             }
             case 404:
             case 409:
-                eventEmitter.emit(`${EventType.SHOW_POPUP}`, {
-                    message: error.response.data.Message,
-                } as PopupData);
+                showPopup(error.response.data.Message);
                 break;
             case 500:
             default: {
                 console.log(error);
-                eventEmitter.emit(`${EventType.SHOW_POPUP}`, {
-                    message: 'Unknown error occurred',
-                } as PopupData);
+                showPopup('Unknown error occurred');
             }
         }
     }
