@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button } from '@mui/material';
 import { FunctionComponent, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import AutoComplete from '../../components/AutoComplete/AutoComplete';
 import Datepicker from '../../components/DatePicker/Datepicker';
 import FilterTextfield from '../../components/FilterTextfield/FilterTextfield';
 import Loader from '../../components/Loader/Loader';
@@ -10,15 +9,15 @@ import SelectBoolean from '../../components/Select/SelectBoolean';
 import { usePagedAppointments } from '../../hooks/appointments';
 import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
-import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { useAppointmentsValidator } from '../../hooks/validators/appointmentsAPI/GetAppointments';
 import { IPagingData } from '../../types/common/Responses';
-import { IGetAppointmentsForm, getAppointments_ValidationScheme, initialValues } from '../../validators/appointmentsAPI/GetAppointments';
 import AppointmentsTable from './AppointmentsTable';
-
 const AppointmentsPage: FunctionComponent = () => {
-    const { register, handleSubmit, setError, control, getValues, watch } = useForm<IGetAppointmentsForm>({
+    const { validationScheme, initialValues } = useAppointmentsValidator();
+
+    const { register, handleSubmit, setError, control, getValues, watch } = useForm({
         mode: 'onBlur',
-        resolver: yupResolver(getAppointments_ValidationScheme),
+        resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
     });
 
@@ -30,11 +29,14 @@ const AppointmentsPage: FunctionComponent = () => {
         setPagingData,
     } = usePagedAppointments({ currentPage: 1, pageSize: 50 } as IPagingData, getValues(), setError);
 
-    const { data: offices, isFetching: isFetchingOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 } as IPagingData);
-    const { data: services, isFetching: isFetchingServices } = usePagedServices({ currentPage: 1, pageSize: 20 } as IPagingData, {
-        title: watch('service').input,
-        isActive: true,
-    });
+    const { data: offices, isFetching: isFetchingOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 }, { isActive: true });
+    const { data: services, isFetching: isFetchingServices } = usePagedServices(
+        { currentPage: 1, pageSize: 20 },
+        {
+            title: watch('service').input,
+            isActive: true,
+        }
+    );
 
     const date = useWatch({
         control,

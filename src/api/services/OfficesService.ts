@@ -4,9 +4,9 @@ import { getQueryString } from '../../utils/functions';
 import axiosInstance from '../axiosConfig';
 
 const getPaged = async (request: IGetPagedOfficesRequest) => {
-    const queryString = '/offices?' + getQueryString(request);
+    const path = '/offices?' + getQueryString(request);
 
-    return (await axiosInstance.get<IPagedOfficeResponse>(queryString)).data;
+    return (await axiosInstance.get<IPagedOfficeResponse>(path)).data;
 };
 
 const OfficesService = {

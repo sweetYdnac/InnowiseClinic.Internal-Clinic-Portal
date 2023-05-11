@@ -19,3 +19,7 @@ export enum SpecializationsQueries {
 export enum DoctorsQueries {
     getDoctors = 'getDoctors',
 }
+
+export enum PatientsQueries {
+    getPatients = 'getPatients',
+}

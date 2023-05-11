@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 
-interface ICreateAppointmentForm {
+export interface ICreateAppointmentForm {
+    patientId: string;
+    patientInput: string;
     officeId: string;
     officeInput: string;
     doctorId: string;
@@ -16,6 +18,8 @@ interface ICreateAppointmentForm {
 
 export const useCreateAppointmentValidator = () => {
     const initialValues: ICreateAppointmentForm = {
+        patientId: '',
+        patientInput: '',
         officeId: '',
         officeInput: '',
         doctorId: '',
@@ -29,6 +33,8 @@ export const useCreateAppointmentValidator = () => {
     };
 
     const validationScheme = yup.object().shape({
+        patientId: yup.string().required('Please, choose the patient'),
+        patientInput: yup.string().notRequired(),
         officeId: yup.string().required('Please, choose the office'),
         officeInput: yup.string().notRequired(),
         doctorId: yup.string().required('Please, choose the doctor'),

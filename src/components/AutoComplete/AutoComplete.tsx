@@ -46,6 +46,7 @@ const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
 
     return (
         <Autocomplete
+            clearOnBlur={true}
             {...idField}
             disabled={disabled}
             loading={isLoading}
@@ -62,12 +63,10 @@ const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             }}
             onInputChange={(_, value, reason) => {
                 if (reason === 'input') {
+                    console.log('input');
+                    inputField.onChange(value);
                     debounced?.();
-                    inputField.onChange(value);
-                } else if (reason === 'clear') {
-                    inputField.onChange(value);
-                    // } else if (reason === 'reset' && value === '') {
-                } else if (reason === 'reset') {
+                } else if ((reason = 'clear')) {
                     inputField.onChange(value);
                 }
             }}

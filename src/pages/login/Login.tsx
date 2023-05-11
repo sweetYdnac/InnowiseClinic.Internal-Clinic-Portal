@@ -13,6 +13,7 @@ import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import SubmitButton from '../../components/SubmitButton/SubmitButton';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { useAppDispatch } from '../../hooks/store';
+import { LOGIN_VALIDATOR } from '../../hooks/validators/AuthorizationAPI';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import '../../styles/ModalForm.css';
@@ -22,7 +23,6 @@ import { ITokenResponse } from '../../types/response/authorization';
 import { IDoctorResponse } from '../../types/response/doctors';
 import { IReceptionistsResponse } from '../../types/response/receptionists';
 import { getProfile, getRoleByName, showPopup } from '../../utils/functions';
-import { LOGIN_VALIDATOR } from '../../validators/AuthorizationAPI';
 
 const Login: FunctionComponent = () => {
     const dispatch = useAppDispatch();
@@ -115,9 +115,9 @@ const Login: FunctionComponent = () => {
             <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
             <PasswordInput id={register('password').name} control={control} displayName='Password' />
 
-            <SubmitButton errors={errors} touchedFields={touchedFields} defaultValues={defaultValues}>
+            {/* <SubmitButton errors={errors} touchedFields={touchedFields} defaultValues={defaultValues}>
                 Enter
-            </SubmitButton>
+            </SubmitButton> */}
         </Box>
     );
 };

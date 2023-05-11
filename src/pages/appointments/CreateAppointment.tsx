@@ -1,24 +1,28 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Typography } from '@mui/material';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import SpecializationsService from '../../api/services/SpecializationsService';
 import AutoComplete from '../../components/AutoComplete/AutoComplete';
 import Datepicker from '../../components/DatePicker/Datepicker';
 import Loader from '../../components/Loader/Loader';
+import SubmitButton from '../../components/SubmitButton/SubmitButton';
 import TimeSlotPicker from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
-import { dateApiFormat, timeViewFormat } from '../../constants/formats';
-import { useTimeSlots } from '../../hooks/appointments';
+import { dateApiFormat, timeApiFormat, timeViewFormat } from '../../constants/formats';
+import { useCreateAppointmentCommand, useTimeSlots } from '../../hooks/appointments';
 import { usePagedDoctors } from '../../hooks/doctors';
 import { usePagedOffices } from '../../hooks/offices';
+import { usePagedPatients } from '../../hooks/patients';
 import { usePagedServices } from '../../hooks/services';
 import { usePagedSpecializations } from '../../hooks/specializations';
+import { useCreateAppointmentValidator } from '../../hooks/validators/appointmentsAPI/CreateAppointment';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { ISpecializationResponse } from '../../types/response/specializations';
-import { useCreateAppointmentValidator } from '../../validators/appointmentsAPI/CreateAppointment';
 
 const CreateAppointment = () => {
+    const navigate = useNavigate();
     const { validationScheme, initialValues } = useCreateAppointmentValidator();
 
     const {
@@ -28,7 +32,7 @@ const CreateAppointment = () => {
         setValue,
         getValues,
         watch,
-        formState: { errors, touchedFields },
+        formState: { errors, touchedFields, defaultValues },
         control,
     } = useForm({
         mode: 'onBlur',
@@ -36,14 +40,24 @@ const CreateAppointment = () => {
         defaultValues: initialValues,
     });
 
-    const { data: offices, isFetching: isOfficesFetching, refetch: fetchOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 });
+    const {
+        data: patients,
+        isFetching: isPatientsFetching,
+        refetch: fetchPatients,
+    } = usePagedPatients({ currentPage: 1, pageSize: 20 }, { fullName: watch('patientInput') });
+
+    const {
+        data: offices,
+        isFetching: isOfficesFetching,
+        refetch: fetchOffices,
+    } = usePagedOffices({ currentPage: 1, pageSize: 50 }, { isActive: true });
 
     const {
         data: specializations,
         isFetching: isSpecializationsFetching,
         refetch: fetchSpecializations,
     } = usePagedSpecializations(
-        { currentPage: 1, pageSize: 2 },
+        { currentPage: 1, pageSize: 20 },
         {
             isActive: true,
             title: watch('specializationInput'),
@@ -55,7 +69,7 @@ const CreateAppointment = () => {
         isFetching: isDoctorsFetching,
         refetch: fetchDoctors,
     } = usePagedDoctors(
-        { currentPage: 1, pageSize: 2 },
+        { currentPage: 1, pageSize: 20 },
         {
             onlyAtWork: true,
             officeId: watch('officeId'),
@@ -69,7 +83,7 @@ const CreateAppointment = () => {
         isFetching: isServicesFetching,
         refetch: fetchServices,
     } = usePagedServices(
-        { currentPage: 1, pageSize: 2 },
+        { currentPage: 1, pageSize: 20 },
         {
             isActive: true,
             title: watch('serviceInput'),
@@ -77,17 +91,27 @@ const CreateAppointment = () => {
         }
     );
 
-    const handleSpecializationInputChange = useCallback(() => {
-        fetchSpecializations();
-    }, [fetchSpecializations]);
-
-    const handleDoctorInputChange = useCallback(() => {
-        fetchDoctors();
-    }, [fetchDoctors]);
-
-    const handleServiceInputChange = useCallback(() => {
-        fetchServices();
-    }, [fetchServices]);
+    const { mutate: createAppointment, isLoading: isCreateAppointmentLoading } = useCreateAppointmentCommand(
+        {
+            patientId: getValues('patientId'),
+            patientFullName: patients?.find((item) => item.id === getValues('patientId'))?.fullName as string,
+            patientPhoneNumber: patients?.find((item) => item.id === getValues('patientId'))?.phoneNumber as string,
+            patientDateOfBirth: patients?.find((item) => item.id === getValues('patientId'))?.dateOfBirth as string,
+            doctorId: getValues('doctorId'),
+            doctorFullName: doctors?.find((item) => item.id === getValues('doctorId'))?.fullName as string,
+            specializationId: getValues('specializationId'),
+            doctorSpecializationName: specializations?.find((item) => item.id === getValues('specializationId'))?.title as string,
+            serviceId: getValues('serviceId'),
+            serviceName: services?.find((item) => item.id === getValues('serviceId'))?.title as string,
+            duration: services?.find((item) => item.id === getValues('serviceId'))?.duration as number,
+            officeId: getValues('officeId'),
+            officeAddress: offices?.find((item) => item.id === getValues('officeId'))?.address as string,
+            date: getValues('date')?.format(dateApiFormat) as string,
+            time: getValues('time')?.format(timeApiFormat) as string,
+        },
+        navigate,
+        setError
+    );
 
     useEffect(() => {
         if (getValues('specializationId') === '') {
@@ -141,7 +165,7 @@ const CreateAppointment = () => {
 
     useEffect(() => {
         setValue('time', null, { shouldValidate: true });
-    }, [watch('date')]);
+    }, [getValues('date')]);
 
     const {
         data: timeSlots,
@@ -176,7 +200,7 @@ const CreateAppointment = () => {
     return (
         <>
             <Box
-                // onSubmit={handleSubmit()}
+                onSubmit={handleSubmit(() => createAppointment())}
                 component='form'
                 sx={{
                     display: 'flex',
@@ -191,6 +215,29 @@ const CreateAppointment = () => {
                 <Typography variant='h5' gutterBottom>
                     Create Appointment
                 </Typography>
+
+                <AutoComplete
+                    id={register('patientId').name}
+                    control={control}
+                    displayName='Patient'
+                    options={
+                        patients?.map((item) => {
+                            return {
+                                label: item.fullName,
+                                id: item.id,
+                            } as IAutoCompleteItem;
+                        }) ?? []
+                    }
+                    handleOpen={() => {
+                        if (!getValues('patientId')) {
+                            fetchPatients();
+                        }
+                    }}
+                    isLoading={isPatientsFetching}
+                    inputName={register('patientInput').name}
+                    delay={2000}
+                    handleInputChange={fetchPatients}
+                />
 
                 <AutoComplete
                     id={register('officeId').name}
@@ -229,7 +276,7 @@ const CreateAppointment = () => {
                     isLoading={isSpecializationsFetching}
                     inputName={register('specializationInput').name}
                     delay={2000}
-                    handleInputChange={handleSpecializationInputChange}
+                    handleInputChange={fetchSpecializations}
                 />
 
                 <AutoComplete
@@ -246,7 +293,7 @@ const CreateAppointment = () => {
                     isLoading={isDoctorsFetching}
                     inputName={register('doctorInput').name}
                     delay={2000}
-                    handleInputChange={handleDoctorInputChange}
+                    handleInputChange={fetchDoctors}
                 />
 
                 <AutoComplete
@@ -270,7 +317,7 @@ const CreateAppointment = () => {
                     isLoading={isServicesFetching}
                     inputName={register('serviceInput').name}
                     delay={2000}
-                    handleInputChange={handleServiceInputChange}
+                    handleInputChange={fetchServices}
                 />
 
                 <Datepicker
@@ -286,33 +333,33 @@ const CreateAppointment = () => {
                     displayName='Time slot'
                     timeSlots={timeSlots ?? []}
                     handleOpen={() => fetchTimeSlots()}
-                    readOnly={
-                        (doctors?.length === 0 && !getValues('doctorId')) ||
-                        !getValues('serviceId') ||
-                        !getValues('date')?.isValid() ||
-                        isTimeSlotsFetching
-                    }
                     disabled={
                         (doctors?.length === 0 && !getValues('doctorId')) ||
                         !getValues('serviceId') ||
                         !getValues('date')?.isValid() ||
                         isTimeSlotsFetching
                     }
+                    isLoading={isTimeSlotsFetching}
                 />
 
-                {/* <SubmitButton errors={errors} touchedFields={touchedFields}>
+                <SubmitButton
+                    errors={errors}
+                    touchedFields={touchedFields}
+                    shouldBeTouched={[
+                        touchedFields.patientId,
+                        touchedFields.officeId,
+                        touchedFields.specializationId,
+                        touchedFields.doctorId,
+                        touchedFields.serviceId,
+                        touchedFields.date as boolean,
+                        touchedFields.time as boolean,
+                    ]}
+                >
                     Create
-                </SubmitButton> */}
+                </SubmitButton>
             </Box>
 
-            {/* <CustomDialog
-                isOpen={isCancelDialogOpen}
-                name={modalName}
-                title='Discard changes?'
-                content='Do you really want to exit? Your appointment will not be saved.'
-            /> */}
-
-            {isTimeSlotsFetching && <Loader />}
+            {isCreateAppointmentLoading && <Loader />}
         </>
     );
 };

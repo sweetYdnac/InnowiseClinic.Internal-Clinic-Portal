@@ -3,7 +3,7 @@ import { InputAdornment } from '@mui/material';
 import { LocalizationProvider, MobileTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { timeViewFormat } from '../../constants/formats';
 import { ITimeSlot } from '../../types/response/appointments';
@@ -14,8 +14,8 @@ interface TimeSlotPickerProps {
     displayName: string;
     timeSlots: ITimeSlot[];
     handleOpen: () => void;
-    readOnly: boolean;
-    disabled?: boolean;
+    disabled: boolean;
+    isLoading: boolean;
 }
 
 const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
@@ -24,9 +24,11 @@ const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
     displayName,
     timeSlots,
     handleOpen,
-    readOnly,
     disabled,
+    isLoading,
 }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Controller
@@ -36,9 +38,14 @@ const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                     <>
                         <MobileTimePicker
                             {...field}
-                            onOpen={handleOpen}
+                            open={isOpen && !isLoading}
+                            onClose={() => setIsOpen(false)}
+                            onOpen={() => {
+                                setIsOpen(true);
+                                handleOpen();
+                            }}
                             disabled={disabled}
-                            readOnly={readOnly}
+                            readOnly={disabled}
                             label={displayName}
                             format={timeViewFormat}
                             minutesStep={10}
@@ -64,7 +71,7 @@ const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                                     variant: 'standard',
                                     color: fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success',
                                     focused: !fieldState.error?.message && (fieldState.isTouched || !!field.value),
-                                    helperText: fieldState.error?.message,
+                                    helperText: fieldState.isTouched ? fieldState.error?.message : '',
                                     error: !!fieldState.error?.message && (fieldState.isTouched || !!field.value),
                                     InputProps: {
                                         endAdornment: (

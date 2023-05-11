@@ -23,7 +23,7 @@ const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointme
     const closeDialog = () => setCancelAppointmentId(null);
 
     const { mutate: cancelAppointment, isLoading: cancelAppointmentLoading } = useMutation({
-        mutationFn: async () => await AppointmentsService.cancelAppointment(cancelAppointmentId as string),
+        mutationFn: async () => await AppointmentsService.cancel(cancelAppointmentId as string),
         onSuccess: () => {
             closeDialog();
             fetchAppointments();
@@ -32,7 +32,7 @@ const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointme
     });
 
     const { mutate: approveAppointment, isLoading: approveAppointmentLoading } = useMutation({
-        mutationFn: async (id: string) => await AppointmentsService.approveAppointment(id),
+        mutationFn: async (id: string) => await AppointmentsService.approve(id),
         onSuccess: () => fetchAppointments(),
         retry: false,
     });
