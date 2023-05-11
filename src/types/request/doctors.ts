@@ -2,8 +2,8 @@ import { IPagedRequest } from '../common/Requests';
 
 export interface IGetPagedDoctorsFiltes {
     onlyAtWork: boolean;
-    officeId: string | null;
-    specializationId: string | null;
+    officeId?: string | null;
+    specializationId?: string | null;
     fullName?: string;
 }
 

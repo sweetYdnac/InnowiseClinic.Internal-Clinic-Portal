@@ -10,14 +10,14 @@ import { useNavigate } from 'react-router-dom';
 import { AuthorizationService } from '../../api/services/AuthorizationService';
 import { EmailAddressInput } from '../../components/EmailAddressInput/EmailAddressInput';
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
+import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { useAppDispatch } from '../../hooks/store';
-import { LOGIN_VALIDATOR } from '../../hooks/validators/authorization/login';
+import { useLoginValidator } from '../../hooks/validators/authorization/login';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import '../../styles/ModalForm.css';
 import { IJwtToken } from '../../types/common/IJwtToken';
-import { ILoginRequest } from '../../types/request/authorization';
 import { ITokenResponse } from '../../types/response/authorization';
 import { IDoctorResponse } from '../../types/response/doctors';
 import { IReceptionistsResponse } from '../../types/response/receptionists';
@@ -27,25 +27,24 @@ export const Login: FunctionComponent = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
+    const { validationScheme, initialValues } = useLoginValidator();
+
     const {
         register,
         handleSubmit,
         setError,
         control,
-        formState: { errors, touchedFields, defaultValues },
+        formState: { errors, touchedFields },
         getValues,
-    } = useForm<ILoginRequest>({
+    } = useForm({
         mode: 'onBlur',
-        resolver: yupResolver(LOGIN_VALIDATOR),
-        defaultValues: {
-            email: '',
-            password: '',
-        },
+        resolver: yupResolver(validationScheme),
+        defaultValues: initialValues,
     });
 
     const { data: tokenResponse, refetch } = useQuery<any, Error, ITokenResponse>({
         queryKey: ['signIn'],
-        queryFn: async () => await AuthorizationService.signIn(getValues()),
+        queryFn: async () => await AuthorizationService.signIn({ ...getValues() }),
         enabled: false,
         retry: false,
         onSuccess(data) {
@@ -114,9 +113,9 @@ export const Login: FunctionComponent = () => {
             <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
             <PasswordInput id={register('password').name} control={control} displayName='Password' />
 
-            {/* <SubmitButton errors={errors} touchedFields={touchedFields} defaultValues={defaultValues}>
+            <SubmitButton errors={errors} touchedFields={touchedFields} shouldBeTouched={[touchedFields.email, touchedFields.password]}>
                 Enter
-            </SubmitButton> */}
+            </SubmitButton>
         </Box>
     );
 };

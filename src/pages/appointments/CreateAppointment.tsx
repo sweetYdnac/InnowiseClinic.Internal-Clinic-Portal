@@ -32,7 +32,7 @@ export const CreateAppointment = () => {
         setValue,
         getValues,
         watch,
-        formState: { errors, touchedFields, defaultValues },
+        formState: { errors, touchedFields },
         control,
     } = useForm({
         mode: 'onBlur',
@@ -94,18 +94,18 @@ export const CreateAppointment = () => {
     const { mutate: createAppointment, isLoading: isCreateAppointmentLoading } = useCreateAppointmentCommand(
         {
             patientId: getValues('patientId'),
-            patientFullName: patients?.find((item) => item.id === getValues('patientId'))?.fullName as string,
+            patientFullName: getValues('patientInput'),
             patientPhoneNumber: patients?.find((item) => item.id === getValues('patientId'))?.phoneNumber as string,
             patientDateOfBirth: patients?.find((item) => item.id === getValues('patientId'))?.dateOfBirth as string,
             doctorId: getValues('doctorId'),
-            doctorFullName: doctors?.find((item) => item.id === getValues('doctorId'))?.fullName as string,
+            doctorFullName: getValues('doctorInput'),
             specializationId: getValues('specializationId'),
-            doctorSpecializationName: specializations?.find((item) => item.id === getValues('specializationId'))?.title as string,
+            doctorSpecializationName: getValues('specializationInput'),
             serviceId: getValues('serviceId'),
-            serviceName: services?.find((item) => item.id === getValues('serviceId'))?.title as string,
+            serviceName: getValues('serviceInput'),
             duration: services?.find((item) => item.id === getValues('serviceId'))?.duration as number,
             officeId: getValues('officeId'),
-            officeAddress: offices?.find((item) => item.id === getValues('officeId'))?.address as string,
+            officeAddress: getValues('officeInput'),
             date: getValues('date')?.format(dateApiFormat) as string,
             time: getValues('time')?.format(timeApiFormat) as string,
         },
@@ -251,8 +251,14 @@ export const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => fetchOffices()}
+                    handleOpen={() => {
+                        if (!getValues('officeId')) {
+                            fetchOffices();
+                        }
+                    }}
                     isLoading={isOfficesFetching}
+                    inputName={register('officeInput').name}
+                    delay={2000}
                 />
 
                 <AutoComplete

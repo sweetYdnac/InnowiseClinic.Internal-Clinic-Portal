@@ -1,40 +1,42 @@
 import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { AppointmentsService } from '../api/services/AppointmentsService';
 import { AppRoutes } from '../constants/AppRoutes';
-import { dateApiFormat } from '../constants/formats';
 import { ApppointmentsQueries } from '../constants/queries';
+import { IPagedRequest } from '../types/common/Requests';
 import { ICreatedResponse, IPagingData } from '../types/common/Responses';
-import { ICreateAppointmentRequest, IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../types/request/appointments';
+import {
+    ICreateAppointmentRequest,
+    IGetAppointmentsFilters,
+    IGetAppointmentsRequest,
+    IGetTimeSlotsRequest,
+} from '../types/request/appointments';
 import { IAppointmentResponse, ITimeSlot } from '../types/response/appointments';
 import { showPopup } from '../utils/functions';
 import { ICreateAppointmentForm } from './validators/appointments/createAppointment';
 import { IGetAppointmentsForm } from './validators/appointments/getAppointments';
 
 export const usePagedAppointments = (
-    initialPagingData: IPagingData,
-    values: IGetAppointmentsForm,
+    initialPagingData: IPagedRequest,
+    filters: IGetAppointmentsFilters,
     setError: UseFormSetError<IGetAppointmentsForm>
 ) => {
     const navigate = useNavigate();
-    const [pagingData, setPagingData] = useState(initialPagingData);
+    const [pagingData, setPagingData] = useState({
+        ...initialPagingData,
+    } as IPagingData);
 
     const request: IGetAppointmentsRequest = {
         currentPage: pagingData.currentPage,
         pageSize: pagingData.pageSize,
-        date: dayjs(values.date).format(dateApiFormat),
-        doctorFullName: values.doctorFullName,
-        officeId: values.office.id ?? '',
-        serviceId: values.service.id ?? '',
-        isApproved: values.isApproved,
+        ...filters,
     };
 
     const query = useQuery<IAppointmentResponse[], AxiosError, IAppointmentResponse[], QueryKey>({
-        queryKey: [ApppointmentsQueries.getAppointments, request],
+        queryKey: [ApppointmentsQueries.getAppointments, { ...request }],
         queryFn: async () => {
             const { items, ...paging } = await AppointmentsService.getAppointments(request);
             setPagingData(paging as IPagingData);

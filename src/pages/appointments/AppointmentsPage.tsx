@@ -1,22 +1,24 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button } from '@mui/material';
 import { FunctionComponent, useEffect } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
-import { FilterTextfield } from '../../components/FilterTextfield/FilterTextfield';
 import { Loader } from '../../components/Loader/Loader';
 import { SelectBoolean } from '../../components/Select/SelectBoolean';
+import { dateApiFormat } from '../../constants/formats';
 import { usePagedAppointments } from '../../hooks/appointments';
+import { usePagedDoctors } from '../../hooks/doctors';
 import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
 import { useAppointmentsValidator } from '../../hooks/validators/appointments/getAppointments';
-import { IPagingData } from '../../types/common/Responses';
+import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { AppointmentsTable } from './AppointmentsTable';
 
 export const AppointmentsPage: FunctionComponent = () => {
     const { validationScheme, initialValues } = useAppointmentsValidator();
 
-    const { register, handleSubmit, setError, control, getValues, watch } = useForm({
+    const { register, handleSubmit, setError, control, getValues, watch, setValue } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
@@ -28,32 +30,103 @@ export const AppointmentsPage: FunctionComponent = () => {
         isFetching: isFetchingAppointments,
         pagingData,
         setPagingData,
-    } = usePagedAppointments({ currentPage: 1, pageSize: 50 } as IPagingData, getValues(), setError);
-
-    const { data: offices, isFetching: isFetchingOffices } = usePagedOffices({ currentPage: 1, pageSize: 50 }, { isActive: true });
-    const { data: services, isFetching: isFetchingServices } = usePagedServices(
+    } = usePagedAppointments(
         { currentPage: 1, pageSize: 20 },
         {
-            title: watch('service').input,
-            isActive: true,
+            date: watch('date')?.format(dateApiFormat) as string,
+            doctorFullName: watch('doctorInput'),
+            serviceId: watch('serviceId'),
+            officeId: watch('officeId'),
+            isApproved: watch('isApproved'),
+        },
+        setError
+    );
+
+    const {
+        data: offices,
+        isFetching: isOfficesFetching,
+        refetch: fetchOffices,
+    } = usePagedOffices({ currentPage: 1, pageSize: 50 }, { isActive: true });
+
+    const {
+        data: doctors,
+        isFetching: isDoctorsFetching,
+        refetch: fetchDoctors,
+    } = usePagedDoctors(
+        { currentPage: 1, pageSize: 20 },
+        {
+            onlyAtWork: true,
+            officeId: watch('officeId'),
+            fullName: watch('doctorInput'),
+            specializationId: watch('specializationId'),
         }
     );
 
-    const date = useWatch({
-        control,
-        name: 'date',
-    });
+    const {
+        data: services,
+        isFetching: isServicesFetching,
+        refetch: fetchServices,
+    } = usePagedServices(
+        { currentPage: 1, pageSize: 20 },
+        {
+            isActive: true,
+            title: watch('serviceInput'),
+            specializationId: watch('specializationId'),
+        }
+    );
+
     useEffect(() => {
         fetchAppointments();
-    }, [date, fetchAppointments]);
+    }, [watch('date'), fetchAppointments]);
+
+    useEffect(() => {
+        if (!getValues('doctorId') && !getValues('serviceId')) {
+            setValue('specializationId', '');
+            return;
+        }
+
+        let specializationId = '';
+
+        if (getValues('doctorId') && !getValues('specializationId')) {
+            specializationId = doctors?.find((item) => item.id === getValues('doctorId'))?.specializationId || '';
+        }
+
+        if (getValues('serviceId') && !getValues('specializationId')) {
+            specializationId = services?.find((item) => item.id === getValues('serviceId'))?.specializationId || '';
+        }
+
+        setValue('specializationId', specializationId);
+    }, [watch('doctorId'), watch('serviceId')]);
 
     return (
         <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
             <Box component={'form'} onSubmit={handleSubmit(() => fetchAppointments())} sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <FilterTextfield id={register('doctorFullName').name} control={control} displayName='Doctor' />
-                    {/* <AutoComplete
-                        id={register('office').name}
+                    <AutoComplete
+                        id={register('doctorId').name}
+                        control={control}
+                        displayName='Doctor'
+                        options={
+                            doctors?.map((item) => {
+                                return {
+                                    label: item.fullName,
+                                    id: item.id,
+                                } as IAutoCompleteItem;
+                            }) ?? []
+                        }
+                        handleOpen={() => {
+                            if (!getValues('doctorId')) {
+                                fetchDoctors();
+                            }
+                        }}
+                        inputName={register('doctorInput').name}
+                        delay={2000}
+                        isLoading={isDoctorsFetching}
+                        handleInputChange={fetchDoctors}
+                    />
+
+                    <AutoComplete
+                        id={register('officeId').name}
                         control={control}
                         displayName='Office'
                         options={
@@ -64,9 +137,18 @@ export const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                    /> */}
-                    {/* <AutoComplete
-                        id={register('service').name}
+                        handleOpen={() => {
+                            if (!getValues('officeId')) {
+                                fetchOffices();
+                            }
+                        }}
+                        inputName={register('officeInput').name}
+                        delay={2000}
+                        isLoading={isOfficesFetching}
+                    />
+
+                    <AutoComplete
+                        id={register('serviceId').name}
                         control={control}
                         displayName='Service'
                         options={
@@ -77,7 +159,16 @@ export const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                    /> */}
+                        handleOpen={() => {
+                            if (!getValues('serviceId')) {
+                                fetchServices();
+                            }
+                        }}
+                        isLoading={isServicesFetching}
+                        inputName={register('serviceInput').name}
+                        delay={2000}
+                        handleInputChange={fetchServices}
+                    />
 
                     <SelectBoolean id={register('isApproved').name} control={control} displayName='Status' />
                     <Datepicker id={register('date').name} control={control} displayName='Date' />
@@ -100,7 +191,7 @@ export const AppointmentsPage: FunctionComponent = () => {
                 </Box>
             </Box>
 
-            {(isFetchingAppointments || isFetchingOffices || isFetchingServices) && <Loader />}
+            {isFetchingAppointments && <Loader />}
         </Box>
     );
 };

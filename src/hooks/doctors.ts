@@ -7,25 +7,25 @@ import { AppRoutes } from '../constants/AppRoutes';
 import { DoctorsQueries } from '../constants/queries';
 import { IPagedRequest } from '../types/common/Requests';
 import { IPagingData } from '../types/common/Responses';
-import { IGetPagedDoctorsFiltes, IGetPagedDoctorsRequest } from '../types/request/doctors';
+import { IGetPagedDoctorsFiltes as IGetPagedDoctorsFilters, IGetPagedDoctorsRequest } from '../types/request/doctors';
 import { IDoctorInformationResponse } from '../types/response/doctors';
 import { showPopup } from '../utils/functions';
 
-export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetPagedDoctorsFiltes, enabled = false) => {
+export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetPagedDoctorsFilters, enabled = false) => {
     const navigate = useNavigate();
     const [pagingData, setPagingData] = useState({
         ...initialPagingData,
     } as IPagingData);
 
-    const query = useQuery<IDoctorInformationResponse[], AxiosError, IDoctorInformationResponse[], QueryKey>({
-        queryKey: [DoctorsQueries.getDoctors, { currentPage: pagingData.currentPage, pageSize: pagingData.pageSize, ...filters }],
-        queryFn: async () => {
-            const request: IGetPagedDoctorsRequest = {
-                currentPage: pagingData.currentPage,
-                pageSize: pagingData.pageSize,
-                ...filters,
-            };
+    const request: IGetPagedDoctorsRequest = {
+        currentPage: pagingData.currentPage,
+        pageSize: pagingData.pageSize,
+        ...filters,
+    };
 
+    const query = useQuery<IDoctorInformationResponse[], AxiosError, IDoctorInformationResponse[], QueryKey>({
+        queryKey: [DoctorsQueries.getDoctors, { ...request }],
+        queryFn: async () => {
             const { items, ...paging } = await DoctorsService.getPaged(request);
             setPagingData(paging as IPagingData);
 

@@ -1,38 +1,40 @@
 import dayjs from 'dayjs';
 import * as yup from 'yup';
-import { IAutoCompleteInput } from '../../../types/common/Autocomplete';
 
 export interface IGetAppointmentsForm {
     date: dayjs.Dayjs;
-    doctorFullName: string;
-    service: IAutoCompleteInput;
-    office: IAutoCompleteInput;
+    doctorId: string;
+    doctorInput: string;
+    serviceId: string;
+    serviceInput: string;
+    officeId: string;
+    officeInput: string;
+    specializationId: string;
     isApproved: boolean | null;
 }
 
 export const useAppointmentsValidator = () => {
     const initialValues: IGetAppointmentsForm = {
         date: dayjs(),
-        doctorFullName: '',
-        service: {
-            id: '',
-            input: '',
-        },
-        office: {
-            id: '',
-            input: '',
-        },
+        doctorId: '',
+        doctorInput: '',
+        serviceId: '',
+        serviceInput: '',
+        officeId: '',
+        officeInput: '',
+        specializationId: '',
         isApproved: null,
     };
 
     const validationScheme = yup.object().shape({
         date: yup.date().min(dayjs(), 'Date should be greater or equal than today').required('Please, enter a date'),
-        doctorFullName: yup.string().notRequired(),
-        service: yup.object().shape({
-            id: yup.string().notRequired(),
-            input: yup.string().notRequired(),
-        }),
+        doctorId: yup.string().notRequired(),
+        doctorInput: yup.string().notRequired(),
+        serviceId: yup.string().notRequired(),
+        serviceInput: yup.string().notRequired(),
         officeId: yup.string().notRequired(),
+        officeInput: yup.string().notRequired(),
+        specializationId: yup.string().notRequired(),
         isApproved: yup.bool().notRequired().nullable(),
     });
 
