@@ -1,14 +1,14 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppRoutes } from '../constants/AppRoutes';
 import { Roles } from '../constants/Roles';
-import Home from '../pages/Home';
-import AppointmentsPage from '../pages/appointments/AppointmentsPage';
-import CreateAppointment from '../pages/appointments/CreateAppointment';
-import Layout from '../pages/layout/Layout';
-import Login from '../pages/login/Login';
-import ProtectedRoute from './ProtectedRoute';
+import { Home } from '../pages/Home';
+import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
+import { CreateAppointment } from '../pages/appointments/CreateAppointment';
+import { Layout } from '../pages/layout/Layout';
+import { Login } from '../pages/login/Login';
+import { ProtectedRoute } from './ProtectedRoute';
 
-const AppRouter = () => {
+export const AppRouter = () => {
     return (
         <BrowserRouter>
             <Routes>
@@ -37,5 +37,3 @@ const AppRouter = () => {
         </BrowserRouter>
     );
 };
-
-export default AppRouter;

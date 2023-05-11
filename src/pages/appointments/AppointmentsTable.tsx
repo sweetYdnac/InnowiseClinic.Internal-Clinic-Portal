@@ -2,9 +2,9 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
-import AppointmentsService from '../../api/services/AppointmentsService';
-import DialogWindow from '../../components/Dialog/DialogWindow';
-import Loader from '../../components/Loader/Loader';
+import { AppointmentsService } from '../../api/services/AppointmentsService';
+import { DialogWindow } from '../../components/Dialog/DialogWindow';
+import { Loader } from '../../components/Loader/Loader';
 import { timeViewFormat } from '../../constants/formats';
 import { IPagingData } from '../../types/common/Responses';
 import { IAppointmentResponse } from '../../types/response/appointments';
@@ -18,7 +18,12 @@ interface AppointmentsListProps {
     ) => Promise<QueryObserverResult<IAppointmentResponse[], Error>>;
 }
 
-const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointments, pagingData, handlePageChange, fetchAppointments }) => {
+export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({
+    appointments,
+    pagingData,
+    handlePageChange,
+    fetchAppointments,
+}) => {
     const [cancelAppointmentId, setCancelAppointmentId] = useState<string | null>(null);
     const closeDialog = () => setCancelAppointmentId(null);
 
@@ -96,5 +101,3 @@ const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointme
         </>
     );
 };
-
-export default AppointmentsTable;

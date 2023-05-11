@@ -9,7 +9,7 @@ interface SubmitButtonProps<T extends FieldValues> {
     children: ReactNode;
 }
 
-const SubmitButton = <T extends FieldValues>({ errors, touchedFields, shouldBeTouched, children }: SubmitButtonProps<T>) => {
+export const SubmitButton = <T extends FieldValues>({ errors, touchedFields, shouldBeTouched, children }: SubmitButtonProps<T>) => {
     return (
         <Button
             type='submit'
@@ -23,5 +23,3 @@ const SubmitButton = <T extends FieldValues>({ errors, touchedFields, shouldBeTo
         </Button>
     );
 };
-
-export default SubmitButton;

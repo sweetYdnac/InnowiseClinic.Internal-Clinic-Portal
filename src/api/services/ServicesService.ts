@@ -2,7 +2,7 @@ import { IPagedResponse } from '../../types/common/Responses';
 import { IGetPagedServicesRequest } from '../../types/request/services';
 import { IServiceInformationResponse } from '../../types/response/services';
 import { getQueryString } from '../../utils/functions';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 const getPaged = async (request: IGetPagedServicesRequest) => {
     const path = '/services?' + getQueryString(request);
@@ -10,8 +10,6 @@ const getPaged = async (request: IGetPagedServicesRequest) => {
     return (await axiosInstance.get<IPagedResponse<IServiceInformationResponse>>(path)).data;
 };
 
-const ServicesService = {
+export const ServicesService = {
     getPaged,
 };
-
-export default ServicesService;

@@ -18,7 +18,7 @@ interface TimeSlotPickerProps {
     isLoading: boolean;
 }
 
-const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
+export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
     id,
     control,
     displayName,
@@ -89,5 +89,3 @@ const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
         </LocalizationProvider>
     );
 };
-
-export default TimeSlotPicker;

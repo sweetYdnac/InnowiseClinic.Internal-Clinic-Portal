@@ -1,12 +1,10 @@
 import { IReceptionistsResponse } from '../../types/response/receptionists';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 const getById = async (id: string) => {
     return (await axiosInstance.get<IReceptionistsResponse>(`/receptionists/${id}`)).data;
 };
 
-const ReceptionistsService = {
+export const ReceptionistsService = {
     getById,
 };
-
-export default ReceptionistsService;

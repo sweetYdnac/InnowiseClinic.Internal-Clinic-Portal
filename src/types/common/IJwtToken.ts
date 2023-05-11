@@ -1,4 +1,4 @@
-export default interface IJwtToken {
+export interface IJwtToken {
     nbf: number;
     exp: number;
     iss: string;

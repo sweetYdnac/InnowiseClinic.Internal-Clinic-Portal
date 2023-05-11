@@ -2,17 +2,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button } from '@mui/material';
 import { FunctionComponent, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
-import Datepicker from '../../components/DatePicker/Datepicker';
-import FilterTextfield from '../../components/FilterTextfield/FilterTextfield';
-import Loader from '../../components/Loader/Loader';
-import SelectBoolean from '../../components/Select/SelectBoolean';
+import { Datepicker } from '../../components/DatePicker/Datepicker';
+import { FilterTextfield } from '../../components/FilterTextfield/FilterTextfield';
+import { Loader } from '../../components/Loader/Loader';
+import { SelectBoolean } from '../../components/Select/SelectBoolean';
 import { usePagedAppointments } from '../../hooks/appointments';
 import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
-import { useAppointmentsValidator } from '../../hooks/validators/appointmentsAPI/GetAppointments';
+import { useAppointmentsValidator } from '../../hooks/validators/appointments/getAppointments';
 import { IPagingData } from '../../types/common/Responses';
-import AppointmentsTable from './AppointmentsTable';
-const AppointmentsPage: FunctionComponent = () => {
+import { AppointmentsTable } from './AppointmentsTable';
+
+export const AppointmentsPage: FunctionComponent = () => {
     const { validationScheme, initialValues } = useAppointmentsValidator();
 
     const { register, handleSubmit, setError, control, getValues, watch } = useForm({
@@ -103,5 +104,3 @@ const AppointmentsPage: FunctionComponent = () => {
         </Box>
     );
 };
-
-export default AppointmentsPage;

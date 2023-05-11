@@ -9,7 +9,7 @@ interface AsideItemProps {
     handleClick: React.MouseEventHandler<HTMLLIElement>;
 }
 
-const AsideItem: FunctionComponent<AsideItemProps> = ({ displayName, children, handleClick }: AsideItemProps) => {
+export const AsideItem: FunctionComponent<AsideItemProps> = ({ displayName, children, handleClick }: AsideItemProps) => {
     const dispatch = useAppDispatch();
 
     const handleOnClick = (e: React.MouseEvent<HTMLLIElement>) => {
@@ -26,5 +26,3 @@ const AsideItem: FunctionComponent<AsideItemProps> = ({ displayName, children, h
         </ListItem>
     );
 };
-
-export default AsideItem;

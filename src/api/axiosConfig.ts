@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosRequestHeaders } from 'axios';
 import { showPopup } from '../utils/functions';
-import AuthorizationService from './services/AuthorizationService';
+import { AuthorizationService } from './services/AuthorizationService';
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: 'https://localhost:10001',
     timeout: 5000,
     headers: {
@@ -48,5 +48,3 @@ axiosInstance.interceptors.response.use(
         }
     }
 );
-
-export default axiosInstance;

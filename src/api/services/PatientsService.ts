@@ -1,7 +1,7 @@
 import { IGetPagedPatientsRequest } from '../../types/request/patients';
 import { IPagedPatientResponse } from '../../types/response/patients';
 import { getQueryString } from '../../utils/functions';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 const getPaged = async (request: IGetPagedPatientsRequest) => {
     const path = '/patients?' + getQueryString(request);
@@ -9,8 +9,6 @@ const getPaged = async (request: IGetPagedPatientsRequest) => {
     return (await axiosInstance.get<IPagedPatientResponse>(path)).data;
 };
 
-const PatientsService = {
+export const PatientsService = {
     getPaged,
 };
-
-export default PatientsService;

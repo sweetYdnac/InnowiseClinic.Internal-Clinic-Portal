@@ -12,7 +12,6 @@ export interface IAppointmentResponse {
 export interface ITimeSlot {
     doctors: string[];
     time: string;
-    // parsedTime: dayjs.Dayjs;
 }
 
 export interface ITimeSlotsResponse {

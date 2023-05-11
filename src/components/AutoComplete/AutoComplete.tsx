@@ -18,7 +18,7 @@ interface AutoCompleteProps {
     delay?: number;
 }
 
-const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
+export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
     id,
     displayName,
     control,
@@ -98,5 +98,3 @@ const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
         />
     );
 };
-
-export default AutoComplete;

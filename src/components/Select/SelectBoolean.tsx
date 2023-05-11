@@ -8,7 +8,7 @@ interface SelectBooleanProps {
     displayName: string;
 }
 
-const SelectBoolean: FunctionComponent<SelectBooleanProps> = ({ id, control, displayName }) => {
+export const SelectBoolean: FunctionComponent<SelectBooleanProps> = ({ id, control, displayName }) => {
     return (
         <Controller
             name={id}
@@ -43,5 +43,3 @@ const SelectBoolean: FunctionComponent<SelectBooleanProps> = ({ id, control, dis
         />
     );
 };
-
-export default SelectBoolean;

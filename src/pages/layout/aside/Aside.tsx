@@ -1,10 +1,10 @@
 import { Box } from '@mui/material';
-import AsideNavigation from './AsideNavigation';
-import CustomDrawer from './CustomDrawer';
+import { AsideNavigation } from './AsideNavigation';
+import { CustomDrawer } from './CustomDrawer';
 
 const drawerWidth = 240;
 
-const Aside = () => {
+export const Aside = () => {
     return (
         <Box component='nav' sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
             <CustomDrawer
@@ -31,5 +31,3 @@ const Aside = () => {
         </Box>
     );
 };
-
-export default Aside;

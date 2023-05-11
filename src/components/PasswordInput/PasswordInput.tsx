@@ -15,7 +15,7 @@ interface PasswordInputProps {
     displayName: string;
 }
 
-const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, control, displayName }: PasswordInputProps) => {
+export const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, control, displayName }: PasswordInputProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -55,5 +55,3 @@ const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, control, dis
         />
     );
 };
-
-export default PasswordInput;

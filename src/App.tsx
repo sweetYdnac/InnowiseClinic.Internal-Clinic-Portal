@@ -1,8 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Provider } from 'react-redux';
-import Root from './Root';
-import AppRouter from './routes/Router';
+import { Root } from './Root';
+import { AppRouter } from './routes/Router';
 import { store } from './store/store';
 
 const App = () => {

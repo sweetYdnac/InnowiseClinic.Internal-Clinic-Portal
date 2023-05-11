@@ -1,7 +1,7 @@
 import { IGetPagedOfficesRequest } from '../../types/request/offices';
 import { IPagedOfficeResponse } from '../../types/response/offices';
 import { getQueryString } from '../../utils/functions';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 const getPaged = async (request: IGetPagedOfficesRequest) => {
     const path = '/offices?' + getQueryString(request);
@@ -9,8 +9,6 @@ const getPaged = async (request: IGetPagedOfficesRequest) => {
     return (await axiosInstance.get<IPagedOfficeResponse>(path)).data;
 };
 
-const OfficesService = {
+export const OfficesService = {
     getPaged,
 };
-
-export default OfficesService;

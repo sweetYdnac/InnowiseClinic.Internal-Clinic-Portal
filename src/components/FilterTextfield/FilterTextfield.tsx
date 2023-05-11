@@ -12,7 +12,7 @@ interface FilterTextfieldProps {
     endAdornment?: ReactNode;
 }
 
-const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
+export const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
     id,
     displayName,
     control,
@@ -49,5 +49,3 @@ const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
         />
     );
 };
-
-export default FilterTextfield;

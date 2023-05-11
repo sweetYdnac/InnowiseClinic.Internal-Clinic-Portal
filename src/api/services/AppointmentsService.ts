@@ -2,7 +2,7 @@ import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../type
 import { ICreateAppointmentRequest, IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../../types/request/appointments';
 import { IAppointmentResponse, ITimeSlotsResponse } from '../../types/response/appointments';
 import { getQueryString } from '../../utils/functions';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 const getAppointments = async (request: IGetAppointmentsRequest) => {
     const queryString = '/appointments?' + getQueryString(request);
@@ -22,12 +22,10 @@ const approve = async (id: string) => (await axiosInstance.patch<INoContentRespo
 
 const create = async (request: ICreateAppointmentRequest) => (await axiosInstance.post<ICreatedResponse>('/appointments', request)).data;
 
-const AppointmentsService = {
+export const AppointmentsService = {
     getAppointments,
     getTimeSlots,
     cancel,
     approve,
     create,
 };
-
-export default AppointmentsService;

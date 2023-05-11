@@ -7,24 +7,23 @@ import jwt from 'jwt-decode';
 import { FunctionComponent } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import AuthorizationService from '../../api/services/AuthorizationService';
-import EmailAddressInput from '../../components/EmailAddressInput/EmailAddressInput';
-import PasswordInput from '../../components/PasswordInput/PasswordInput';
-import SubmitButton from '../../components/SubmitButton/SubmitButton';
+import { AuthorizationService } from '../../api/services/AuthorizationService';
+import { EmailAddressInput } from '../../components/EmailAddressInput/EmailAddressInput';
+import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { useAppDispatch } from '../../hooks/store';
-import { LOGIN_VALIDATOR } from '../../hooks/validators/AuthorizationAPI';
+import { LOGIN_VALIDATOR } from '../../hooks/validators/authorization/login';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import '../../styles/ModalForm.css';
-import IJwtToken from '../../types/common/IJwtToken';
+import { IJwtToken } from '../../types/common/IJwtToken';
 import { ILoginRequest } from '../../types/request/authorization';
 import { ITokenResponse } from '../../types/response/authorization';
 import { IDoctorResponse } from '../../types/response/doctors';
 import { IReceptionistsResponse } from '../../types/response/receptionists';
 import { getProfile, getRoleByName, showPopup } from '../../utils/functions';
 
-const Login: FunctionComponent = () => {
+export const Login: FunctionComponent = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -121,5 +120,3 @@ const Login: FunctionComponent = () => {
         </Box>
     );
 };
-
-export default Login;

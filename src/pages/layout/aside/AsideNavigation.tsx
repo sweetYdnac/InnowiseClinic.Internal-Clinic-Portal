@@ -4,9 +4,9 @@ import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import { Divider, List } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../../constants/AppRoutes';
-import AsideItem from './AsideItem';
+import { AsideItem } from './AsideItem';
 
-const AsideNavigation = () => {
+export const AsideNavigation = () => {
     const navigate = useNavigate();
 
     return (
@@ -33,5 +33,3 @@ const AsideNavigation = () => {
         </>
     );
 };
-
-export default AsideNavigation;

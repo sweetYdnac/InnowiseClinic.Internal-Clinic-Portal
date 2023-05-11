@@ -1,12 +1,12 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import jwt from 'jwt-decode';
 import { Roles } from '../../constants/Roles';
-import IJwtToken from '../../types/common/IJwtToken';
+import { IJwtToken } from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
 import { ILoginRequest, IRegisterRequest } from '../../types/request/authorization';
 import { ITokenResponse } from '../../types/response/authorization';
 import { showPopup } from '../../utils/functions';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 function setAuthData(accessToken: string, refreshToken: string) {
     localStorage.setItem('refreshToken', refreshToken);
@@ -87,7 +87,7 @@ const refresh = async (config?: AxiosRequestConfig<any>) => {
         });
 };
 
-const AuthorizationService = {
+export const AuthorizationService = {
     signIn,
     signUp,
     logout,
@@ -97,5 +97,3 @@ const AuthorizationService = {
     getRoleName,
     getAccountId,
 };
-
-export default AuthorizationService;

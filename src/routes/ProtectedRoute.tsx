@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthorizationService from '../api/services/AuthorizationService';
-import Loader from '../components/Loader/Loader';
+import { AuthorizationService } from '../api/services/AuthorizationService';
+import { Loader } from '../components/Loader/Loader';
 import { AppRoutes } from '../constants/AppRoutes';
 import { Roles } from '../constants/Roles';
 import { useAppSelector } from '../hooks/store';
@@ -13,7 +13,7 @@ interface ProtectedRouteProps {
     children: ReactNode;
 }
 
-const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
     const [display, setDisplay] = useState(false);
     const currentRole = useAppSelector(selectRole);
     const navigate = useNavigate();
@@ -43,5 +43,3 @@ const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
 
     return <>{display ? children : <Loader />}</>;
 };
-
-export default ProtectedRoute;

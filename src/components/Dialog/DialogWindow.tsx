@@ -11,7 +11,7 @@ interface DialogWindowProps {
     declineText?: string;
 }
 
-const DialogWindow: FunctionComponent<DialogWindowProps> = ({
+export const DialogWindow: FunctionComponent<DialogWindowProps> = ({
     isOpen,
     title,
     content,
@@ -35,5 +35,3 @@ const DialogWindow: FunctionComponent<DialogWindowProps> = ({
         </Dialog>
     );
 };
-
-export default DialogWindow;

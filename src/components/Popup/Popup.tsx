@@ -9,7 +9,7 @@ export interface PopupData {
     message: string;
 }
 
-const Popup: FunctionComponent = () => {
+export const Popup: FunctionComponent = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState<PopupData>({
         color: 'error',
@@ -56,5 +56,3 @@ const Popup: FunctionComponent = () => {
         </Snackbar>
     );
 };
-
-export default Popup;

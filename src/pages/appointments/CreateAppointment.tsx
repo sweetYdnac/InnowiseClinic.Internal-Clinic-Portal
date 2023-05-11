@@ -3,12 +3,12 @@ import { Box, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import SpecializationsService from '../../api/services/SpecializationsService';
-import AutoComplete from '../../components/AutoComplete/AutoComplete';
-import Datepicker from '../../components/DatePicker/Datepicker';
-import Loader from '../../components/Loader/Loader';
-import SubmitButton from '../../components/SubmitButton/SubmitButton';
-import TimeSlotPicker from '../../components/TimeSlotPicker/TimeSlotPicker';
+import { SpecializationsService } from '../../api/services/SpecializationsService';
+import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
+import { Datepicker } from '../../components/DatePicker/Datepicker';
+import { Loader } from '../../components/Loader/Loader';
+import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
+import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
 import { dateApiFormat, timeApiFormat, timeViewFormat } from '../../constants/formats';
 import { useCreateAppointmentCommand, useTimeSlots } from '../../hooks/appointments';
@@ -17,11 +17,11 @@ import { usePagedOffices } from '../../hooks/offices';
 import { usePagedPatients } from '../../hooks/patients';
 import { usePagedServices } from '../../hooks/services';
 import { usePagedSpecializations } from '../../hooks/specializations';
-import { useCreateAppointmentValidator } from '../../hooks/validators/appointmentsAPI/CreateAppointment';
+import { useCreateAppointmentValidator } from '../../hooks/validators/appointments/createAppointment';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { ISpecializationResponse } from '../../types/response/specializations';
 
-const CreateAppointment = () => {
+export const CreateAppointment = () => {
     const navigate = useNavigate();
     const { validationScheme, initialValues } = useCreateAppointmentValidator();
 
@@ -363,5 +363,3 @@ const CreateAppointment = () => {
         </>
     );
 };
-
-export default CreateAppointment;

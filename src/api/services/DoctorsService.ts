@@ -1,7 +1,7 @@
 import { IGetPagedDoctorsRequest } from '../../types/request/doctors';
 import { IDoctorResponse, IPagedDoctorsResponse } from '../../types/response/doctors';
 import { getQueryString } from '../../utils/functions';
-import axiosInstance from '../axiosConfig';
+import { axiosInstance } from '../axiosConfig';
 
 const getById = async (id: string) => {
     return (await axiosInstance.get<IDoctorResponse>(`/doctors/${id}`)).data;
@@ -13,9 +13,7 @@ const getPaged = async (data: IGetPagedDoctorsRequest) => {
     return (await axiosInstance.get<IPagedDoctorsResponse>(path)).data;
 };
 
-const DoctorsService = {
+export const DoctorsService = {
     getById,
     getPaged,
 };
-
-export default DoctorsService;

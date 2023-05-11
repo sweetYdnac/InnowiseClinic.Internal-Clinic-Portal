@@ -2,7 +2,7 @@ import { QueryKey, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PatientsService from '../api/services/PatientsService';
+import { PatientsService } from '../api/services/PatientsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { PatientsQueries } from '../constants/queries';
 import { IPagedRequest } from '../types/common/Requests';

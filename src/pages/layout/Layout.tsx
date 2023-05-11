@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import AuthorizationService from '../../api/services/AuthorizationService';
-import Popup from '../../components/Popup/Popup';
-import Header from './Header';
-import Aside from './aside/Aside';
+import { AuthorizationService } from '../../api/services/AuthorizationService';
+import { Popup } from '../../components/Popup/Popup';
+import { Header } from './Header';
+import { Aside } from './aside/Aside';
 
-const Layout = () => {
+export const Layout = () => {
     const [isAuthorized, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
 
     useEffect(() => {
@@ -35,5 +35,3 @@ const Layout = () => {
         </Box>
     );
 };
-
-export default Layout;

@@ -16,7 +16,7 @@ interface DatepickerProps {
     disabled?: boolean;
 }
 
-const Datepicker: FunctionComponent<DatepickerProps> = ({
+export const Datepicker: FunctionComponent<DatepickerProps> = ({
     id,
     control,
     displayName,
@@ -71,5 +71,3 @@ const Datepicker: FunctionComponent<DatepickerProps> = ({
         </LocalizationProvider>
     );
 };
-
-export default Datepicker;
