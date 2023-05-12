@@ -103,7 +103,7 @@ export const AppointmentsPage: FunctionComponent = () => {
             <Box component={'form'} onSubmit={handleSubmit(() => fetchAppointments())} sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     <AutoComplete
-                        id={register('doctorId').name}
+                        valueFieldName={register('doctorId').name}
                         control={control}
                         displayName='Doctor'
                         options={
@@ -114,19 +114,14 @@ export const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleOpen={() => {
-                            if (!getValues('doctorId')) {
-                                fetchDoctors();
-                            }
-                        }}
-                        inputName={register('doctorInput').name}
-                        delay={2000}
-                        isLoading={isDoctorsFetching}
-                        handleInputChange={fetchDoctors}
+                        handleFetchOptions={() => fetchDoctors()}
+                        isFetching={isDoctorsFetching}
+                        inputFieldName={register('doctorInput').name}
+                        debounceDelay={2000}
                     />
 
                     <AutoComplete
-                        id={register('officeId').name}
+                        valueFieldName={register('officeId').name}
                         control={control}
                         displayName='Office'
                         options={
@@ -137,18 +132,14 @@ export const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleOpen={() => {
-                            if (!getValues('officeId')) {
-                                fetchOffices();
-                            }
-                        }}
-                        inputName={register('officeInput').name}
-                        delay={2000}
-                        isLoading={isOfficesFetching}
+                        handleFetchOptions={() => fetchOffices()}
+                        isFetching={isOfficesFetching}
+                        inputFieldName={register('officeInput').name}
+                        debounceDelay={2000}
                     />
 
                     <AutoComplete
-                        id={register('serviceId').name}
+                        valueFieldName={register('serviceId').name}
                         control={control}
                         displayName='Service'
                         options={
@@ -159,15 +150,10 @@ export const AppointmentsPage: FunctionComponent = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleOpen={() => {
-                            if (!getValues('serviceId')) {
-                                fetchServices();
-                            }
-                        }}
-                        isLoading={isServicesFetching}
-                        inputName={register('serviceInput').name}
-                        delay={2000}
-                        handleInputChange={fetchServices}
+                        handleFetchOptions={() => fetchServices()}
+                        isFetching={isServicesFetching}
+                        inputFieldName={register('serviceInput').name}
+                        debounceDelay={2000}
                     />
 
                     <SelectBoolean id={register('isApproved').name} control={control} displayName='Status' />

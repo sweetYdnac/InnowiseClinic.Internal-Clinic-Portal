@@ -5,42 +5,38 @@ import { useDebouncedCallback } from 'use-debounce';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 interface AutoCompleteProps {
-    id: string;
-    displayName: string;
+    valueFieldName: string;
     control: Control<any, any>;
+    displayName: string;
     options: IAutoCompleteItem[];
-    handleOpen: () => void;
+    handleFetchOptions: () => void;
+    isFetching: boolean;
     disabled?: boolean;
-    readonly?: boolean;
-    isLoading?: boolean;
-    inputName?: string;
-    handleInputChange?: Function;
-    delay?: number;
+    inputFieldName?: string;
+    debounceDelay?: number;
 }
 
 export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
-    id,
-    displayName,
+    valueFieldName,
     control,
+    displayName,
     options,
-    handleOpen,
+    handleFetchOptions,
     disabled = false,
-    readonly = false,
-    isLoading = false,
-    inputName,
-    handleInputChange,
-    delay = 0,
+    isFetching = false,
+    inputFieldName,
+    debounceDelay = 0,
 }) => {
     const [open, setOpen] = useState(false);
-    const debounced = useDebouncedCallback(() => handleInputChange?.(), delay);
+    const debounced = useDebouncedCallback(() => handleFetchOptions?.(), debounceDelay);
 
     const { field: idField, fieldState: idFieldState } = useController({
-        name: id,
+        name: valueFieldName,
         control: control,
     });
 
     const { field: inputField } = useController({
-        name: inputName ?? '',
+        name: inputFieldName ?? '',
         control: control,
     });
 
@@ -49,11 +45,13 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             clearOnBlur={true}
             {...idField}
             disabled={disabled}
-            loading={isLoading}
+            loading={isFetching || debounced.isPending()}
             open={open}
             onOpen={() => {
                 setOpen(true);
-                handleOpen();
+                if (!idField.value) {
+                    handleFetchOptions();
+                }
             }}
             onClose={() => setOpen(false)}
             defaultValue={options.find((option) => option.id === idField.value) || null}
@@ -63,9 +61,10 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             }}
             onInputChange={(_, value, reason) => {
                 if (reason === 'input') {
-                    console.log('input');
                     inputField.onChange(value);
-                    debounced?.();
+                    if (debounceDelay > 0) {
+                        debounced?.();
+                    }
                 } else if ((reason = 'clear')) {
                     inputField.onChange(value);
                 }
@@ -88,7 +87,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
                         ...params.InputProps,
                         endAdornment: (
                             <>
-                                {isLoading ? <CircularProgress color='inherit' size={20} /> : null}
+                                {isFetching || debounced.isPending() ? <CircularProgress color='inherit' size={20} /> : null}
                                 {params.InputProps.endAdornment}
                             </>
                         ),

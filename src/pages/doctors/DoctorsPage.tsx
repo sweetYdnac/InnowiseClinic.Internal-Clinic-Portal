@@ -54,7 +54,7 @@ export const DoctorsPage = () => {
                     <FilterTextfield id={register('doctorFullName').name} control={control} displayName='Doctor' />
 
                     <AutoComplete
-                        id={register('officeId').name}
+                        valueFieldName={register('officeId').name}
                         control={control}
                         displayName='Office'
                         options={
@@ -65,18 +65,14 @@ export const DoctorsPage = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleOpen={() => {
-                            if (!getValues('officeId')) {
-                                fetchOffices();
-                            }
-                        }}
-                        inputName={register('officeInput').name}
-                        delay={2000}
-                        isLoading={isOfficesFetching}
+                        handleFetchOptions={() => fetchOffices()}
+                        isFetching={isOfficesFetching}
+                        inputFieldName={register('officeInput').name}
+                        debounceDelay={2000}
                     />
 
                     <AutoComplete
-                        id={register('specializationId').name}
+                        valueFieldName={register('specializationId').name}
                         control={control}
                         displayName='Specialization'
                         options={
@@ -87,15 +83,10 @@ export const DoctorsPage = () => {
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleOpen={() => {
-                            if (!getValues('specializationId')) {
-                                fetchSpecializations();
-                            }
-                        }}
-                        isLoading={isSpecializationsFetching}
-                        inputName={register('specializationInput').name}
-                        delay={2000}
-                        handleInputChange={fetchSpecializations}
+                        handleFetchOptions={() => fetchSpecializations()}
+                        isFetching={isSpecializationsFetching}
+                        inputFieldName={register('specializationInput').name}
+                        debounceDelay={2000}
                     />
                 </Box>
                 {/* <Box>Doctors table</Box> */}

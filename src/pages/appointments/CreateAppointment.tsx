@@ -217,7 +217,7 @@ export const CreateAppointment = () => {
                 </Typography>
 
                 <AutoComplete
-                    id={register('patientId').name}
+                    valueFieldName={register('patientId').name}
                     control={control}
                     displayName='Patient'
                     options={
@@ -228,21 +228,16 @@ export const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => {
-                        if (!getValues('patientId')) {
-                            fetchPatients();
-                        }
-                    }}
-                    isLoading={isPatientsFetching}
-                    inputName={register('patientInput').name}
-                    delay={2000}
-                    handleInputChange={fetchPatients}
+                    handleFetchOptions={() => fetchPatients()}
+                    isFetching={isPatientsFetching}
+                    inputFieldName={register('patientInput').name}
+                    debounceDelay={2000}
                 />
 
                 <AutoComplete
-                    id={register('officeId').name}
-                    displayName='Office'
+                    valueFieldName={register('officeId').name}
                     control={control}
+                    displayName='Office'
                     options={
                         offices?.map((item) => {
                             return {
@@ -251,18 +246,14 @@ export const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => {
-                        if (!getValues('officeId')) {
-                            fetchOffices();
-                        }
-                    }}
-                    isLoading={isOfficesFetching}
-                    inputName={register('officeInput').name}
-                    delay={2000}
+                    handleFetchOptions={() => fetchOffices()}
+                    isFetching={isOfficesFetching}
+                    inputFieldName={register('officeInput').name}
+                    debounceDelay={2000}
                 />
 
                 <AutoComplete
-                    id={register('specializationId').name}
+                    valueFieldName={register('specializationId').name}
                     control={control}
                     displayName='Specialization'
                     options={
@@ -273,37 +264,27 @@ export const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => {
-                        if (!getValues('specializationId')) {
-                            fetchSpecializations();
-                        }
-                    }}
+                    handleFetchOptions={() => fetchSpecializations()}
                     disabled={!getValues('officeId')}
-                    isLoading={isSpecializationsFetching}
-                    inputName={register('specializationInput').name}
-                    delay={2000}
-                    handleInputChange={fetchSpecializations}
+                    isFetching={isSpecializationsFetching}
+                    inputFieldName={register('specializationInput').name}
+                    debounceDelay={2000}
                 />
 
                 <AutoComplete
-                    id={register('doctorId').name}
+                    valueFieldName={register('doctorId').name}
                     control={control}
                     displayName='Doctor'
                     options={getDoctorsFromTimeSlot() ?? []}
-                    handleOpen={() => {
-                        if (!getValues('time') && !getValues('doctorId')) {
-                            fetchDoctors();
-                        }
-                    }}
+                    handleFetchOptions={() => fetchDoctors()}
                     disabled={!getValues('officeId')}
-                    isLoading={isDoctorsFetching}
-                    inputName={register('doctorInput').name}
-                    delay={2000}
-                    handleInputChange={fetchDoctors}
+                    isFetching={isDoctorsFetching}
+                    inputFieldName={register('doctorInput').name}
+                    debounceDelay={2000}
                 />
 
                 <AutoComplete
-                    id={register('serviceId').name}
+                    valueFieldName={register('serviceId').name}
                     control={control}
                     displayName='Service'
                     options={
@@ -314,16 +295,11 @@ export const CreateAppointment = () => {
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleOpen={() => {
-                        if (!getValues('serviceId')) {
-                            fetchServices();
-                        }
-                    }}
+                    handleFetchOptions={() => fetchServices()}
                     disabled={!getValues('officeId')}
-                    isLoading={isServicesFetching}
-                    inputName={register('serviceInput').name}
-                    delay={2000}
-                    handleInputChange={fetchServices}
+                    isFetching={isServicesFetching}
+                    inputFieldName={register('serviceInput').name}
+                    debounceDelay={2000}
                 />
 
                 <Datepicker
