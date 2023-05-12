@@ -1,10 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { FilterTextfield } from '../../components/FilterTextfield/FilterTextfield';
 import { Loader } from '../../components/Loader/Loader';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { usePagedDoctors } from '../../hooks/doctors';
 import { usePagedOffices } from '../../hooks/offices';
 import { usePagedSpecializations } from '../../hooks/specializations';
@@ -13,6 +15,7 @@ import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { DoctorsTable } from './DoctorsTable';
 
 export const DoctorsPage = () => {
+    const navigate = useNavigate();
     const { validationScheme, initialValues } = useDoctorsValidator();
     const { register, control, watch, getValues, setValue } = useForm({
         mode: 'onBlur',
@@ -41,7 +44,7 @@ export const DoctorsPage = () => {
         {
             currentPage: watch('currentPage'),
             pageSize: watch('pageSize'),
-            onlyAtWork: true,
+            onlyAtWork: false,
             officeId: watch('officeId'),
             specializationId: watch('specializationId'),
             fullName: watch('doctorValue'),
@@ -57,6 +60,7 @@ export const DoctorsPage = () => {
         <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
             <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Button onClick={() => navigate(AppRoutes.CreateDoctor)}>Create</Button>
                     <FilterTextfield
                         valueFieldName={register('doctorValue').name}
                         inputFieldName={register('doctorInput').name}

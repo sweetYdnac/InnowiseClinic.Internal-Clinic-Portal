@@ -75,7 +75,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label={displayName}
+                    label={idFieldState.error?.message && idFieldState.isTouched ? 'Error' : displayName}
                     variant='standard'
                     color={idFieldState.error?.message && (idFieldState.isTouched || idField.value) ? 'error' : 'success'}
                     focused={!idFieldState.error?.message && (idFieldState.isTouched || !!idField.value)}

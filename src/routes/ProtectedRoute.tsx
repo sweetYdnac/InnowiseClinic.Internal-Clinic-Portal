@@ -20,7 +20,7 @@ export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
 
     useEffect(() => {
         const refresh = async () => {
-            await AuthorizationService.refresh(undefined).then(() => {
+            await AuthorizationService.refresh().then(() => {
                 setDisplay(true);
             });
         };

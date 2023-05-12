@@ -14,7 +14,7 @@ export interface IDoctorsForm {
 export const useDoctorsValidator = () => {
     const initialValues: IDoctorsForm = {
         currentPage: 1,
-        pageSize: 2,
+        pageSize: 10,
         doctorValue: '',
         doctorInput: '',
         officeId: '',

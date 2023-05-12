@@ -1,11 +1,12 @@
-import { QueryKey, useQuery } from '@tanstack/react-query';
+import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { DoctorsService } from '../api/services/DoctorsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { DoctorsQueries } from '../constants/queries';
-import { IPagedResponse } from '../types/common/Responses';
-import { IGetPagedDoctorsRequest } from '../types/request/doctors';
+import { IChangeStatusRequest } from '../types/common/Requests';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../types/common/Responses';
+import { ICreateDoctorRequest, IGetPagedDoctorsRequest } from '../types/request/doctors';
 import { IDoctorInformationResponse } from '../types/response/doctors';
 import { showPopup } from '../utils/functions';
 
@@ -23,6 +24,35 @@ export const usePagedDoctors = (request: IGetPagedDoctorsRequest, enabled = fals
                 navigate(AppRoutes.Home);
                 showPopup('Something went wrong.');
             }
+        },
+    });
+};
+
+export const useChangeDoctorStatus = () => {
+    return useMutation<INoContentResponse, AxiosError, { id: string; status: number }>({
+        mutationFn: async ({ id, status }) => await DoctorsService.changeStatus(id, { status: status } as IChangeStatusRequest),
+        onSuccess: () => {
+            showPopup('Status changed successfully!', 'success');
+        },
+        onError: () => {
+            showPopup('Something went wrong.');
+        },
+    });
+};
+
+export const useCreateDoctor = (data: ICreateDoctorRequest) => {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    return useMutation<ICreatedResponse, AxiosError, void>({
+        mutationFn: async () => await DoctorsService.create(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries([DoctorsQueries.getDoctors]);
+            navigate(AppRoutes.Doctors);
+            showPopup('Doctor created successfully!', 'success');
+        },
+        onError: () => {
+            // setErrors
         },
     });
 };

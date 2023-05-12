@@ -1,7 +1,10 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent } from 'react';
+import { Loader } from '../../components/Loader/Loader';
+import { SelectStatus } from '../../components/Select/SelectStatus';
 import { dateViewFormat } from '../../constants/formats';
+import { useChangeDoctorStatus } from '../../hooks/doctors';
 import { IPagingData } from '../../types/common/Responses';
 import { IDoctorInformationResponse } from '../../types/response/doctors';
 
@@ -12,6 +15,8 @@ interface DoctorsTableProps {
 }
 
 export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pagingData, handlePageChange }) => {
+    const { mutate, isLoading } = useChangeDoctorStatus();
+
     return (
         <>
             <TableContainer component={Paper}>
@@ -30,7 +35,12 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
                             <TableRow key={doctor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                 <TableCell align='center'>{doctor.fullName}</TableCell>
                                 <TableCell align='center'>{doctor.specializationName}</TableCell>
-                                <TableCell align='center'>{doctor.status}</TableCell>
+                                <TableCell align='center'>
+                                    <SelectStatus
+                                        value={doctor.status}
+                                        handleChange={(value) => mutate({ id: doctor.id, status: value })}
+                                    />
+                                </TableCell>
                                 <TableCell align='center'>{dayjs(doctor.dateOfBirth).format(dateViewFormat)}</TableCell>
                                 <TableCell align='center'>{doctor.officeAddress}</TableCell>
                             </TableRow>
@@ -46,6 +56,8 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
                 rowsPerPageOptions={[]}
                 onPageChange={handlePageChange}
             />
+
+            {isLoading && <Loader />}
         </>
     );
 };

@@ -6,3 +6,18 @@ export interface IGetPagedDoctorsRequest extends IPagedRequest {
     specializationId?: string | null;
     fullName?: string;
 }
+
+export interface ICreateDoctorRequest {
+    id: string;
+    photoId?: string;
+    firstName: string;
+    lastName: string;
+    middleName?: string;
+    dateOfBirth: string;
+    specializationId: string;
+    officeId: string;
+    careerStartYear: number;
+    specializationName: string;
+    officeAddress: string;
+    status: number;
+}
