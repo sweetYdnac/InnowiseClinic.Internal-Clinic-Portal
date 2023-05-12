@@ -1,11 +1,12 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import { QueryObserverResult, RefetchOptions, RefetchQueryFilters, useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
 import { AppointmentsService } from '../../api/services/AppointmentsService';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
 import { timeViewFormat } from '../../constants/formats';
+import { ApppointmentsQueries } from '../../constants/queries';
 import { IPagingData } from '../../types/common/Responses';
 import { IAppointmentResponse } from '../../types/response/appointments';
 
@@ -13,17 +14,11 @@ interface AppointmentsListProps {
     appointments: IAppointmentResponse[];
     pagingData: IPagingData;
     handlePageChange: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
-    fetchAppointments: <TPageData>(
-        options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-    ) => Promise<QueryObserverResult<IAppointmentResponse[], Error>>;
 }
 
-export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({
-    appointments,
-    pagingData,
-    handlePageChange,
-    fetchAppointments,
-}) => {
+export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointments, pagingData, handlePageChange }) => {
+    const queryClient = useQueryClient();
+
     const [cancelAppointmentId, setCancelAppointmentId] = useState<string | null>(null);
     const closeDialog = () => setCancelAppointmentId(null);
 
@@ -31,14 +26,14 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({
         mutationFn: async () => await AppointmentsService.cancel(cancelAppointmentId as string),
         onSuccess: () => {
             closeDialog();
-            fetchAppointments();
+            queryClient.invalidateQueries([ApppointmentsQueries.getAppointments]);
         },
         retry: false,
     });
 
     const { mutate: approveAppointment, isLoading: approveAppointmentLoading } = useMutation({
         mutationFn: async (id: string) => await AppointmentsService.approve(id),
-        onSuccess: () => fetchAppointments(),
+        onSuccess: () => queryClient.invalidateQueries([ApppointmentsQueries.getAppointments]),
         retry: false,
     });
 

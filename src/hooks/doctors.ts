@@ -1,36 +1,20 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DoctorsService } from '../api/services/DoctorsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { DoctorsQueries } from '../constants/queries';
-import { IPagedRequest } from '../types/common/Requests';
-import { IPagingData } from '../types/common/Responses';
-import { IGetPagedDoctorsFiltes as IGetPagedDoctorsFilters, IGetPagedDoctorsRequest } from '../types/request/doctors';
+import { IPagedResponse } from '../types/common/Responses';
+import { IGetPagedDoctorsRequest } from '../types/request/doctors';
 import { IDoctorInformationResponse } from '../types/response/doctors';
 import { showPopup } from '../utils/functions';
 
-export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetPagedDoctorsFilters, enabled = false) => {
+export const usePagedDoctors = (request: IGetPagedDoctorsRequest, enabled = false) => {
     const navigate = useNavigate();
-    const [pagingData, setPagingData] = useState({
-        ...initialPagingData,
-    } as IPagingData);
 
-    const request: IGetPagedDoctorsRequest = {
-        currentPage: pagingData.currentPage,
-        pageSize: pagingData.pageSize,
-        ...filters,
-    };
-
-    const query = useQuery<IDoctorInformationResponse[], AxiosError, IDoctorInformationResponse[], QueryKey>({
+    return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
         queryKey: [DoctorsQueries.getDoctors, { ...request }],
-        queryFn: async () => {
-            const { items, ...paging } = await DoctorsService.getPaged(request);
-            setPagingData(paging as IPagingData);
-
-            return items;
-        },
+        queryFn: async () => await DoctorsService.getPaged(request),
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
@@ -41,10 +25,4 @@ export const usePagedDoctors = (initialPagingData: IPagedRequest, filters: IGetP
             }
         },
     });
-
-    return {
-        pagingData,
-        setPagingData,
-        ...query,
-    };
 };

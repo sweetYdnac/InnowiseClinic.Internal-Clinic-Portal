@@ -15,6 +15,7 @@ export interface IDoctorInformationResponse {
     officeId: string;
     officeAddress: string;
     experience: number;
+    dateOfBirth: string;
     status: number;
     photoId: string;
 }

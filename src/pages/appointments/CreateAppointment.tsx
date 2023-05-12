@@ -44,66 +44,63 @@ export const CreateAppointment = () => {
         data: patients,
         isFetching: isPatientsFetching,
         refetch: fetchPatients,
-    } = usePagedPatients({ currentPage: 1, pageSize: 20 }, { fullName: watch('patientInput') });
+    } = usePagedPatients({ currentPage: 1, pageSize: 20, fullName: watch('patientInput') });
 
     const {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOffices({ currentPage: 1, pageSize: 50 }, { isActive: true });
+    } = usePagedOffices({ currentPage: 1, pageSize: 50, isActive: true });
 
     const {
         data: specializations,
         isFetching: isSpecializationsFetching,
         refetch: fetchSpecializations,
-    } = usePagedSpecializations(
-        { currentPage: 1, pageSize: 20 },
-        {
-            isActive: true,
-            title: watch('specializationInput'),
-        }
-    );
+    } = usePagedSpecializations({
+        currentPage: 1,
+        pageSize: 20,
+        isActive: true,
+        title: watch('specializationInput'),
+    });
 
     const {
         data: doctors,
         isFetching: isDoctorsFetching,
         refetch: fetchDoctors,
-    } = usePagedDoctors(
-        { currentPage: 1, pageSize: 20 },
-        {
-            onlyAtWork: true,
-            officeId: watch('officeId'),
-            specializationId: watch('specializationId'),
-            fullName: watch('doctorInput'),
-        }
-    );
+    } = usePagedDoctors({
+        currentPage: 1,
+        pageSize: 20,
+        onlyAtWork: true,
+        officeId: watch('officeId'),
+        specializationId: watch('specializationId'),
+        fullName: watch('doctorInput'),
+    });
 
     const {
         data: services,
         isFetching: isServicesFetching,
         refetch: fetchServices,
-    } = usePagedServices(
-        { currentPage: 1, pageSize: 20 },
-        {
-            isActive: true,
-            title: watch('serviceInput'),
-            specializationId: watch('specializationId'),
-        }
-    );
+    } = usePagedServices({
+        currentPage: 1,
+        pageSize: 20,
+        isActive: true,
+        title: watch('serviceInput'),
+        specializationId: watch('specializationId'),
+    });
 
     const { mutate: createAppointment, isLoading: isCreateAppointmentLoading } = useCreateAppointmentCommand(
         {
             patientId: getValues('patientId'),
             patientFullName: getValues('patientInput'),
-            patientPhoneNumber: patients?.find((item) => item.id === getValues('patientId'))?.phoneNumber as string,
-            patientDateOfBirth: patients?.find((item) => item.id === getValues('patientId'))?.dateOfBirth as string,
+            patientPhoneNumber: patients?.items.find((item) => item.id === getValues('patientId'))?.phoneNumber as string,
+            patientDateOfBirth: patients?.items.find((item) => item.id === getValues('patientId'))?.dateOfBirth as string,
             doctorId: getValues('doctorId'),
             doctorFullName: getValues('doctorInput'),
             specializationId: getValues('specializationId'),
             doctorSpecializationName: getValues('specializationInput'),
             serviceId: getValues('serviceId'),
             serviceName: getValues('serviceInput'),
-            duration: services?.find((item) => item.id === getValues('serviceId'))?.duration as number,
+            duration: services?.items.find((item) => item.id === getValues('serviceId'))?.duration as number,
             officeId: getValues('officeId'),
             officeAddress: getValues('officeInput'),
             date: getValues('date')?.format(dateApiFormat) as string,
@@ -125,7 +122,7 @@ export const CreateAppointment = () => {
             return;
         }
 
-        const doctor = doctors?.find((item) => item.id === getValues('doctorId'));
+        const doctor = doctors?.items?.find((item) => item.id === getValues('doctorId'));
 
         if (doctor) {
             const specialization: ISpecializationResponse = {
@@ -134,7 +131,7 @@ export const CreateAppointment = () => {
                 isActive: true,
             };
 
-            specializations?.push(specialization);
+            specializations?.items.push(specialization);
             setValue('specializationId', doctor.specializationId, { shouldTouch: true, shouldValidate: true });
         }
     }, [getValues('doctorId')]);
@@ -146,14 +143,14 @@ export const CreateAppointment = () => {
         }
 
         const getSpecialization = async () => {
-            const id = services?.find((item) => item.id === watch('serviceId'))?.specializationId;
-            let specialization = specializations?.find((item) => item.id === id);
+            const id = services?.items.find((item) => item.id === watch('serviceId'))?.specializationId;
+            let specialization = specializations?.items.find((item) => item.id === id);
 
             if (!specialization) {
                 if (id) {
                     specialization = await SpecializationsService.getById(id);
                     setValue('specializationId', specialization.id, { shouldValidate: true, shouldTouch: true });
-                    specializations?.push(specialization);
+                    specializations?.items.push(specialization);
                 }
             } else {
                 setValue('specializationId', specialization.id, { shouldValidate: true, shouldTouch: true });
@@ -173,15 +170,15 @@ export const CreateAppointment = () => {
         refetch: fetchTimeSlots,
     } = useTimeSlots({
         date: watch('date')?.format(dateApiFormat) ?? '',
-        doctors: watch('doctorId') ? [watch('doctorId')] : doctors?.map((item) => item.id) ?? [],
-        duration: services?.find((item) => item.id === watch('serviceId'))?.duration ?? 10,
+        doctors: watch('doctorId') ? [watch('doctorId')] : doctors?.items?.map((item) => item.id) ?? [],
+        duration: services?.items.find((item) => item.id === watch('serviceId'))?.duration ?? 10,
         startTime: startTime.format(timeViewFormat),
         endTime: endTime.format(timeViewFormat),
     });
 
     const getDoctorsFromTimeSlot = () => {
         const selectedTime = getValues('time')?.format(timeViewFormat);
-        const filteredDoctors = doctors?.filter((doctor) => {
+        const filteredDoctors = doctors?.items?.filter((doctor) => {
             const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
             return !timeslot || timeslot.doctors.includes(doctor.id);
         });
@@ -221,15 +218,20 @@ export const CreateAppointment = () => {
                     control={control}
                     displayName='Patient'
                     options={
-                        patients?.map((item) => {
+                        patients?.items?.map((item) => {
                             return {
                                 label: item.fullName,
                                 id: item.id,
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleFetchOptions={() => fetchPatients()}
                     isFetching={isPatientsFetching}
+                    handleOpen={() => {
+                        if (!getValues('patientId')) {
+                            fetchPatients();
+                        }
+                    }}
+                    handleInputChange={() => fetchPatients()}
                     inputFieldName={register('patientInput').name}
                     debounceDelay={2000}
                 />
@@ -239,15 +241,20 @@ export const CreateAppointment = () => {
                     control={control}
                     displayName='Office'
                     options={
-                        offices?.map((item) => {
+                        offices?.items?.map((item) => {
                             return {
                                 label: item.address,
                                 id: item.id,
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleFetchOptions={() => fetchOffices()}
                     isFetching={isOfficesFetching}
+                    handleOpen={() => {
+                        if (!getValues('officeId')) {
+                            fetchOffices();
+                        }
+                    }}
+                    handleInputChange={() => fetchOffices()}
                     inputFieldName={register('officeInput').name}
                     debounceDelay={2000}
                 />
@@ -257,16 +264,21 @@ export const CreateAppointment = () => {
                     control={control}
                     displayName='Specialization'
                     options={
-                        specializations?.map((item) => {
+                        specializations?.items.map((item) => {
                             return {
                                 label: item.title,
                                 id: item.id,
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleFetchOptions={() => fetchSpecializations()}
-                    disabled={!getValues('officeId')}
                     isFetching={isSpecializationsFetching}
+                    handleOpen={() => {
+                        if (!getValues('specializationId')) {
+                            fetchSpecializations();
+                        }
+                    }}
+                    handleInputChange={() => fetchSpecializations()}
+                    disabled={!getValues('officeId')}
                     inputFieldName={register('specializationInput').name}
                     debounceDelay={2000}
                 />
@@ -276,9 +288,14 @@ export const CreateAppointment = () => {
                     control={control}
                     displayName='Doctor'
                     options={getDoctorsFromTimeSlot() ?? []}
-                    handleFetchOptions={() => fetchDoctors()}
-                    disabled={!getValues('officeId')}
                     isFetching={isDoctorsFetching}
+                    handleOpen={() => {
+                        if (!getValues('doctorId')) {
+                            fetchDoctors();
+                        }
+                    }}
+                    handleInputChange={() => fetchDoctors()}
+                    disabled={!getValues('officeId')}
                     inputFieldName={register('doctorInput').name}
                     debounceDelay={2000}
                 />
@@ -288,16 +305,21 @@ export const CreateAppointment = () => {
                     control={control}
                     displayName='Service'
                     options={
-                        services?.map((item) => {
+                        services?.items.map((item) => {
                             return {
                                 label: item.title,
                                 id: item.id,
                             } as IAutoCompleteItem;
                         }) ?? []
                     }
-                    handleFetchOptions={() => fetchServices()}
-                    disabled={!getValues('officeId')}
                     isFetching={isServicesFetching}
+                    handleOpen={() => {
+                        if (!getValues('serviceId')) {
+                            fetchServices();
+                        }
+                    }}
+                    handleInputChange={() => fetchServices()}
+                    disabled={!getValues('officeId')}
                     inputFieldName={register('serviceInput').name}
                     debounceDelay={2000}
                 />
@@ -316,7 +338,7 @@ export const CreateAppointment = () => {
                     timeSlots={timeSlots ?? []}
                     handleOpen={() => fetchTimeSlots()}
                     disabled={
-                        (doctors?.length === 0 && !getValues('doctorId')) ||
+                        (doctors?.items?.length === 0 && !getValues('doctorId')) ||
                         !getValues('serviceId') ||
                         !getValues('date')?.isValid() ||
                         isTimeSlotsFetching

@@ -1,8 +1,6 @@
 import { IPagedRequest } from '../common/Requests';
 
-export interface IGetPagedSpecializationsFilters {
+export interface IGetPagedSpecializationsRequest extends IPagedRequest {
     isActive: boolean;
     title?: string;
 }
-
-export interface IGetPagedSpecializationsRequest extends IPagedRequest {}

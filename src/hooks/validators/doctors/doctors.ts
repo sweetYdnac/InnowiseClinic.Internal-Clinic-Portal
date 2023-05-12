@@ -1,7 +1,10 @@
 import * as yup from 'yup';
 
 export interface IDoctorsForm {
-    doctorFullName: string;
+    currentPage: number;
+    pageSize: number;
+    doctorValue: string;
+    doctorInput: string;
     officeId: string;
     officeInput: string;
     specializationId: string;
@@ -10,7 +13,10 @@ export interface IDoctorsForm {
 
 export const useDoctorsValidator = () => {
     const initialValues: IDoctorsForm = {
-        doctorFullName: '',
+        currentPage: 1,
+        pageSize: 2,
+        doctorValue: '',
+        doctorInput: '',
         officeId: '',
         officeInput: '',
         specializationId: '',
@@ -18,7 +24,10 @@ export const useDoctorsValidator = () => {
     };
 
     const validationScheme = yup.object().shape({
-        doctorFullName: yup.string().notRequired(),
+        currentPage: yup.number().moreThan(0, 'Page number should be greater than 0').required(),
+        pageSize: yup.number().min(1).max(50).required(),
+        doctorValue: yup.string().notRequired(),
+        doctorInput: yup.string().notRequired(),
         officeId: yup.string().notRequired(),
         officeInput: yup.string().notRequired(),
         specializationId: yup.string().notRequired(),

@@ -9,8 +9,9 @@ interface AutoCompleteProps {
     control: Control<any, any>;
     displayName: string;
     options: IAutoCompleteItem[];
-    handleFetchOptions: () => void;
     isFetching: boolean;
+    handleOpen: () => void;
+    handleInputChange?: () => void;
     disabled?: boolean;
     inputFieldName?: string;
     debounceDelay?: number;
@@ -21,14 +22,15 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
     control,
     displayName,
     options,
-    handleFetchOptions,
+    isFetching,
+    handleOpen,
+    handleInputChange,
     disabled = false,
-    isFetching = false,
     inputFieldName,
     debounceDelay = 0,
 }) => {
     const [open, setOpen] = useState(false);
-    const debounced = useDebouncedCallback(() => handleFetchOptions?.(), debounceDelay);
+    const debounced = useDebouncedCallback(() => handleInputChange?.(), debounceDelay);
 
     const { field: idField, fieldState: idFieldState } = useController({
         name: valueFieldName,
@@ -49,9 +51,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             open={open}
             onOpen={() => {
                 setOpen(true);
-                if (!idField.value) {
-                    handleFetchOptions();
-                }
+                handleOpen();
             }}
             onClose={() => setOpen(false)}
             defaultValue={options.find((option) => option.id === idField.value) || null}
@@ -62,9 +62,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             onInputChange={(_, value, reason) => {
                 if (reason === 'input') {
                     inputField.onChange(value);
-                    if (debounceDelay > 0) {
-                        debounced?.();
-                    }
+                    debounced?.();
                 } else if ((reason = 'clear')) {
                     inputField.onChange(value);
                 }

@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import * as yup from 'yup';
 
 export interface IGetAppointmentsForm {
+    currentPage: number;
+    pageSize: number;
     date: dayjs.Dayjs;
     doctorId: string;
     doctorInput: string;
@@ -15,6 +17,8 @@ export interface IGetAppointmentsForm {
 
 export const useAppointmentsValidator = () => {
     const initialValues: IGetAppointmentsForm = {
+        currentPage: 1,
+        pageSize: 5,
         date: dayjs(),
         doctorId: '',
         doctorInput: '',
@@ -27,6 +31,8 @@ export const useAppointmentsValidator = () => {
     };
 
     const validationScheme = yup.object().shape({
+        currentPage: yup.number().moreThan(0, 'Page number should be greater than 0').required(),
+        pageSize: yup.number().min(1).max(50).required(),
         date: yup.date().min(dayjs(), 'Date should be greater or equal than today').required('Please, enter a date'),
         doctorId: yup.string().notRequired(),
         doctorInput: yup.string().notRequired(),

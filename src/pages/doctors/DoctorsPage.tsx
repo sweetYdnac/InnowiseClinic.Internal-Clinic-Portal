@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@mui/material';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { FilterTextfield } from '../../components/FilterTextfield/FilterTextfield';
@@ -9,10 +10,11 @@ import { usePagedOffices } from '../../hooks/offices';
 import { usePagedSpecializations } from '../../hooks/specializations';
 import { useDoctorsValidator } from '../../hooks/validators/doctors/doctors';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { DoctorsTable } from './DoctorsTable';
 
 export const DoctorsPage = () => {
     const { validationScheme, initialValues } = useDoctorsValidator();
-    const { register, handleSubmit, setError, control, getValues, watch, setValue } = useForm({
+    const { register, control, watch, getValues, setValue } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
@@ -22,51 +24,66 @@ export const DoctorsPage = () => {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOffices({ currentPage: 1, pageSize: 50 }, { isActive: true });
+    } = usePagedOffices({ currentPage: 1, pageSize: 50, isActive: true });
 
     const {
         data: specializations,
         isFetching: isSpecializationsFetching,
         refetch: fetchSpecializations,
-    } = usePagedSpecializations(
-        { currentPage: 1, pageSize: 20 },
-        {
-            isActive: true,
-            title: watch('specializationInput'),
-        }
-    );
+    } = usePagedSpecializations({
+        currentPage: 1,
+        pageSize: 20,
+        isActive: true,
+        title: watch('specializationInput'),
+    });
 
-    const { data: doctors, isLoading: isDoctorsLoading } = usePagedDoctors(
-        { currentPage: 1, pageSize: 20 },
+    const { data: doctors, isFetching: isDoctorsFetching } = usePagedDoctors(
         {
+            currentPage: watch('currentPage'),
+            pageSize: watch('pageSize'),
             onlyAtWork: true,
             officeId: watch('officeId'),
             specializationId: watch('specializationId'),
-            fullName: watch('doctorFullName'),
+            fullName: watch('doctorValue'),
         },
         true
     );
+
+    useEffect(() => {
+        setValue('currentPage', 1);
+    }, [watch('pageSize'), watch('officeId'), watch('specializationId'), watch('doctorValue')]);
 
     return (
         <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
             <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <FilterTextfield id={register('doctorFullName').name} control={control} displayName='Doctor' />
+                    <FilterTextfield
+                        valueFieldName={register('doctorValue').name}
+                        inputFieldName={register('doctorInput').name}
+                        control={control}
+                        displayName='Doctor'
+                        debounceDelay={2000}
+                    />
 
                     <AutoComplete
                         valueFieldName={register('officeId').name}
                         control={control}
                         displayName='Office'
                         options={
-                            offices?.map((item) => {
+                            offices?.items?.map((item) => {
                                 return {
                                     label: item.address,
                                     id: item.id,
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleFetchOptions={() => fetchOffices()}
                         isFetching={isOfficesFetching}
+                        handleOpen={() => {
+                            if (!getValues('officeId')) {
+                                fetchOffices();
+                            }
+                        }}
+                        handleInputChange={() => fetchOffices()}
                         inputFieldName={register('officeInput').name}
                         debounceDelay={2000}
                     />
@@ -76,23 +93,41 @@ export const DoctorsPage = () => {
                         control={control}
                         displayName='Specialization'
                         options={
-                            specializations?.map((item) => {
+                            specializations?.items.map((item) => {
                                 return {
                                     label: item.title,
                                     id: item.id,
                                 } as IAutoCompleteItem;
                             }) ?? []
                         }
-                        handleFetchOptions={() => fetchSpecializations()}
                         isFetching={isSpecializationsFetching}
+                        handleOpen={() => {
+                            if (!getValues('specializationId')) {
+                                fetchSpecializations();
+                            }
+                        }}
+                        handleInputChange={() => fetchSpecializations()}
                         inputFieldName={register('specializationInput').name}
                         debounceDelay={2000}
                     />
                 </Box>
-                {/* <Box>Doctors table</Box> */}
+                <Box>
+                    {doctors && (
+                        <DoctorsTable
+                            doctors={doctors.items}
+                            pagingData={{
+                                currentPage: doctors.currentPage,
+                                pageSize: doctors.pageSize,
+                                totalCount: doctors.totalCount,
+                                totalPages: doctors.totalPages,
+                            }}
+                            handlePageChange={(_, page) => setValue('currentPage', page + 1)}
+                        />
+                    )}
+                </Box>
             </Box>
 
-            {isDoctorsLoading && <Loader />}
+            {isDoctorsFetching && <Loader />}
         </Box>
     );
 };

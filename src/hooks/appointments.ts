@@ -1,49 +1,28 @@
 import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { AppointmentsService } from '../api/services/AppointmentsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { ApppointmentsQueries } from '../constants/queries';
-import { IPagedRequest } from '../types/common/Requests';
-import { ICreatedResponse, IPagingData } from '../types/common/Responses';
-import {
-    ICreateAppointmentRequest,
-    IGetAppointmentsFilters,
-    IGetAppointmentsRequest,
-    IGetTimeSlotsRequest,
-} from '../types/request/appointments';
+import { ICreatedResponse, IPagedResponse } from '../types/common/Responses';
+import { ICreateAppointmentRequest, IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../types/request/appointments';
 import { IAppointmentResponse, ITimeSlot } from '../types/response/appointments';
 import { showPopup } from '../utils/functions';
 import { ICreateAppointmentForm } from './validators/appointments/createAppointment';
 import { IGetAppointmentsForm } from './validators/appointments/getAppointments';
 
 export const usePagedAppointments = (
-    initialPagingData: IPagedRequest,
-    filters: IGetAppointmentsFilters,
-    setError: UseFormSetError<IGetAppointmentsForm>
+    request: IGetAppointmentsRequest,
+    setError: UseFormSetError<IGetAppointmentsForm>,
+    enabled = false
 ) => {
     const navigate = useNavigate();
-    const [pagingData, setPagingData] = useState({
-        ...initialPagingData,
-    } as IPagingData);
 
-    const request: IGetAppointmentsRequest = {
-        currentPage: pagingData.currentPage,
-        pageSize: pagingData.pageSize,
-        ...filters,
-    };
-
-    const query = useQuery<IAppointmentResponse[], AxiosError, IAppointmentResponse[], QueryKey>({
+    return useQuery<IPagedResponse<IAppointmentResponse>, AxiosError, IPagedResponse<IAppointmentResponse>, QueryKey>({
         queryKey: [ApppointmentsQueries.getAppointments, { ...request }],
-        queryFn: async () => {
-            const { items, ...paging } = await AppointmentsService.getAppointments(request);
-            setPagingData(paging as IPagingData);
-
-            return items;
-        },
-        enabled: false,
+        queryFn: async () => await AppointmentsService.getAppointments(request),
+        enabled: enabled,
         retry: false,
         keepPreviousData: true,
         onError: (error) => {
@@ -53,12 +32,6 @@ export const usePagedAppointments = (
             }
         },
     });
-
-    return {
-        pagingData,
-        setPagingData,
-        ...query,
-    };
 };
 
 export const useTimeSlots = (queryString: IGetTimeSlotsRequest, enabled = false) => {

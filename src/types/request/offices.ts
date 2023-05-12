@@ -1,7 +1,5 @@
 import { IPagedRequest } from '../common/Requests';
 
-export interface IGetPagedOfficesFilters {
+export interface IGetPagedOfficesRequest extends IPagedRequest {
     isActive: boolean | null;
 }
-
-export interface IGetPagedOfficesRequest extends IPagedRequest, IGetPagedOfficesFilters {}
