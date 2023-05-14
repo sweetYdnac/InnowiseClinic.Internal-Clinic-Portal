@@ -2,9 +2,11 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppointmentsService } from '../../api/services/AppointmentsService';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { timeViewFormat } from '../../constants/formats';
 import { ApppointmentsQueries } from '../../constants/queries';
 import { IPagingData } from '../../types/common/Responses';
@@ -17,6 +19,7 @@ interface AppointmentsListProps {
 }
 
 export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointments, pagingData, handlePageChange }) => {
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     const [cancelAppointmentId, setCancelAppointmentId] = useState<string | null>(null);
@@ -26,14 +29,14 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ ap
         mutationFn: async () => await AppointmentsService.cancel(cancelAppointmentId as string),
         onSuccess: () => {
             closeDialog();
-            queryClient.invalidateQueries([ApppointmentsQueries.getAppointments]);
+            queryClient.invalidateQueries([ApppointmentsQueries.getPaged]);
         },
         retry: false,
     });
 
     const { mutate: approveAppointment, isLoading: approveAppointmentLoading } = useMutation({
         mutationFn: async (id: string) => await AppointmentsService.approve(id),
-        onSuccess: () => queryClient.invalidateQueries([ApppointmentsQueries.getAppointments]),
+        onSuccess: () => queryClient.invalidateQueries([ApppointmentsQueries.getPaged]),
         retry: false,
     });
 
@@ -63,11 +66,15 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ ap
                                 <TableCell align='center'>{item.patientPhoneNumber}</TableCell>
                                 <TableCell align='center'>{item.serviceName}</TableCell>
                                 <TableCell align='center'>
-                                    <Button>Reschedule</Button>
                                     {item.isApproved ? (
                                         <Button onClick={() => setCancelAppointmentId(item.id)}>Cancel</Button>
                                     ) : (
-                                        <Button onClick={() => approveAppointment(item.id)}>Approve</Button>
+                                        <>
+                                            <Button onClick={() => navigate(AppRoutes.RescheduleAppointment.replace(':id', `${item.id}`))}>
+                                                Reschedule
+                                            </Button>
+                                            <Button onClick={() => approveAppointment(item.id)}>Approve</Button>
+                                        </>
                                     )}
                                 </TableCell>
                             </TableRow>

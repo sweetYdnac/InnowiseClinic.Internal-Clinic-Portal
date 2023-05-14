@@ -14,7 +14,7 @@ export const usePagedDoctors = (request: IGetPagedDoctorsRequest, enabled = fals
     const navigate = useNavigate();
 
     return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
-        queryKey: [DoctorsQueries.getDoctors, { ...request }],
+        queryKey: [DoctorsQueries.getPaged, { ...request }],
         queryFn: async () => await DoctorsService.getPaged(request),
         enabled: enabled,
         retry: false,
@@ -47,7 +47,7 @@ export const useCreateDoctor = (data: ICreateDoctorRequest) => {
     return useMutation<ICreatedResponse, AxiosError, void>({
         mutationFn: async () => await DoctorsService.create(data),
         onSuccess: () => {
-            queryClient.invalidateQueries([DoctorsQueries.getDoctors]);
+            queryClient.invalidateQueries([DoctorsQueries.getPaged]);
             navigate(AppRoutes.Doctors);
             showPopup('Doctor created successfully!', 'success');
         },

@@ -1,7 +1,7 @@
 import { DatePicker, DateView, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import { dateViewFormat } from '../../constants/formats';
 
@@ -26,6 +26,8 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
     openTo = 'day',
     disabled = false,
 }: DatepickerProps) => {
+    const format = useMemo(() => (views.includes('day') ? dateViewFormat : views.includes('month') ? 'MM YYYY' : 'YYYY'), [views]);
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Controller
@@ -42,7 +44,7 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                             label={displayName}
                             views={views}
                             openTo={openTo}
-                            format={dateViewFormat}
+                            format={format}
                             defaultValue={field.value as dayjs.Dayjs}
                             value={field.value as dayjs.Dayjs}
                             onChange={(date) => field.onChange(date)}

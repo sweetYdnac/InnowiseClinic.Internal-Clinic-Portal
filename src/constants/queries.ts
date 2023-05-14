@@ -1,25 +1,26 @@
 export enum ApppointmentsQueries {
-    getAppointments = 'getAppointments',
-    getTimeSlots = 'getTimeSlots',
+    getById = 'get-appointment-by-id',
+    getPaged = 'get-appointments',
+    getTimeSlots = 'get-time-slots',
 }
 
 export enum OfficesQueries {
-    getOffices = 'getOffices',
+    getPaged = 'get-offices',
 }
 
 export enum ServicesQueries {
-    getServices = 'getServices',
+    getPaged = 'get-services',
 }
 
 export enum SpecializationsQueries {
-    getSpecializationById = 'getSpecializationById',
-    getSpecializations = 'getSpecializations',
+    getById = 'get-specialization-by-id',
+    getPaged = 'get-specializations',
 }
 
 export enum DoctorsQueries {
-    getDoctors = 'getDoctors',
+    getPaged = 'get-doctors',
 }
 
 export enum PatientsQueries {
-    getPatients = 'getPatients',
+    getPaged = 'get-patients',
 }

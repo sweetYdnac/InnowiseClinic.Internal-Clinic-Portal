@@ -14,7 +14,7 @@ export const usePagedOffices = (request: IGetPagedOfficesRequest, enabled = fals
 
     return useQuery<IPagedResponse<IOfficeInformationResponse>, AxiosError, IPagedResponse<IOfficeInformationResponse>, QueryKey>({
         initialData: enabled ? undefined : ({ items: [] as IOfficeInformationResponse[] } as IPagedResponse<IOfficeInformationResponse>),
-        queryKey: [OfficesQueries.getOffices, { ...request }],
+        queryKey: [OfficesQueries.getPaged, { ...request }],
         queryFn: async () => await OfficesService.getPaged(request),
         enabled: enabled,
         retry: false,

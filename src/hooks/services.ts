@@ -14,7 +14,7 @@ export const usePagedServices = (request: IGetPagedServicesRequest, enabled = fa
     const { specializationId, ...rest } = request;
 
     return useQuery<IPagedResponse<IServiceInformationResponse>, AxiosError, IPagedResponse<IServiceInformationResponse>, QueryKey>({
-        queryKey: [ServicesQueries.getServices, { ...rest }],
+        queryKey: [ServicesQueries.getPaged, { ...rest }],
         queryFn: async () => await ServicesService.getPaged(request),
         enabled: enabled,
         retry: false,

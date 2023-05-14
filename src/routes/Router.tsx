@@ -4,6 +4,7 @@ import { Roles } from '../constants/Roles';
 import { Home } from '../pages/Home';
 import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
 import { CreateAppointment } from '../pages/appointments/CreateAppointment';
+import { RescheduleAppointment } from '../pages/appointments/RescheduleAppointmentPage';
 import { CreateDoctorPage } from '../pages/doctors/CreateDoctorPage';
 import { DoctorsPage } from '../pages/doctors/DoctorsPage';
 import { Layout } from '../pages/layout/Layout';
@@ -17,9 +18,9 @@ export const AppRouter = () => {
                 <Route path={AppRoutes.Login} element={<Login />} />
 
                 <Route element={<Layout />}>
-                    <Route path='/' element={<Home />} />
+                    <Route path={AppRoutes.Home} element={<Home />} />
                     <Route
-                        path='/appointments'
+                        path={AppRoutes.Appointments}
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <AppointmentsPage />
@@ -27,7 +28,7 @@ export const AppRouter = () => {
                         }
                     />
                     <Route
-                        path='/appointments/create'
+                        path={AppRoutes.CreateAppointment}
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <CreateAppointment />
@@ -35,7 +36,15 @@ export const AppRouter = () => {
                         }
                     />
                     <Route
-                        path='/doctors'
+                        path={AppRoutes.RescheduleAppointment}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <RescheduleAppointment />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.Doctors}
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <DoctorsPage />
@@ -43,7 +52,7 @@ export const AppRouter = () => {
                         }
                     />
                     <Route
-                        path='/doctors/create'
+                        path={AppRoutes.CreateDoctor}
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <CreateDoctorPage />

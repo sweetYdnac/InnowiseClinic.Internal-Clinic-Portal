@@ -1,4 +1,4 @@
-import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
+import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
@@ -7,10 +7,27 @@ import { AppRoutes } from '../constants/AppRoutes';
 import { ApppointmentsQueries } from '../constants/queries';
 import { ICreatedResponse, IPagedResponse } from '../types/common/Responses';
 import { ICreateAppointmentRequest, IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../types/request/appointments';
-import { IAppointmentResponse, ITimeSlot } from '../types/response/appointments';
+import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from '../types/response/appointments';
 import { showPopup } from '../utils/functions';
-import { ICreateAppointmentForm } from './validators/appointments/createAppointment';
-import { IGetAppointmentsForm } from './validators/appointments/getAppointments';
+import { ICreateAppointmentForm } from './validators/appointments/create';
+import { IGetAppointmentsForm } from './validators/appointments/getPaged';
+
+export const useAppointment = (id: string, enabled = false) => {
+    const navigate = useNavigate();
+
+    return useQuery<IRescheduleAppointmentResponse, AxiosError, IRescheduleAppointmentResponse, QueryKey>({
+        queryKey: [ApppointmentsQueries.getById, id],
+        queryFn: async () => await AppointmentsService.getById(id),
+        enabled: enabled,
+        retry: false,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
+        },
+    });
+};
 
 export const usePagedAppointments = (
     request: IGetAppointmentsRequest,
@@ -20,8 +37,8 @@ export const usePagedAppointments = (
     const navigate = useNavigate();
 
     return useQuery<IPagedResponse<IAppointmentResponse>, AxiosError, IPagedResponse<IAppointmentResponse>, QueryKey>({
-        queryKey: [ApppointmentsQueries.getAppointments, { ...request }],
-        queryFn: async () => await AppointmentsService.getAppointments(request),
+        queryKey: [ApppointmentsQueries.getPaged, { ...request }],
+        queryFn: async () => await AppointmentsService.getPaged(request),
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
@@ -56,9 +73,12 @@ export const useCreateAppointmentCommand = (
     navigate: NavigateFunction,
     setError: UseFormSetError<ICreateAppointmentForm>
 ) => {
+    const queryClient = useQueryClient();
+
     return useMutation<ICreatedResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await AppointmentsService.create(request),
         onSuccess: () => {
+            queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
             navigate(AppRoutes.Appointments);
             showPopup('Appointment created successfully!', 'success');
         },

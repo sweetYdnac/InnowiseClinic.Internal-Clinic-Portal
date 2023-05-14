@@ -13,7 +13,7 @@ export const usePagedPatients = (request: IGetPagedPatientsRequest, enabled = fa
     const navigate = useNavigate();
 
     return useQuery<IPagedResponse<IPatientInformationResponse>, AxiosError, IPagedResponse<IPatientInformationResponse>, QueryKey>({
-        queryKey: [PatientsQueries.getPatients, { ...request }],
+        queryKey: [PatientsQueries.getPaged, { ...request }],
         queryFn: async () => await PatientsService.getPaged(request),
         enabled: enabled,
         retry: false,

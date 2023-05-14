@@ -11,7 +11,7 @@ import { usePagedAppointments } from '../../hooks/appointments';
 import { usePagedDoctors } from '../../hooks/doctors';
 import { usePagedOffices } from '../../hooks/offices';
 import { usePagedServices } from '../../hooks/services';
-import { useAppointmentsValidator } from '../../hooks/validators/appointments/getAppointments';
+import { useAppointmentsValidator } from '../../hooks/validators/appointments/getPaged';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { AppointmentsTable } from './AppointmentsTable';
 

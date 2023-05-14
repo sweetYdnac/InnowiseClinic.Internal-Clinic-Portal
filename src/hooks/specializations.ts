@@ -16,7 +16,7 @@ export const usePagedSpecializations = (request: IGetPagedSpecializationsRequest
 
     return useQuery<IPagedResponse<ISpecializationResponse>, AxiosError, IPagedResponse<ISpecializationResponse>, QueryKey>({
         initialData: enabled ? undefined : ({ items: [] as ISpecializationResponse[] } as IPagedResponse<ISpecializationResponse>),
-        queryKey: [SpecializationsQueries.getSpecializations, { ...rest }],
+        queryKey: [SpecializationsQueries.getPaged, { ...rest }],
         queryFn: async () => await SpecializationsService.getPaged(request),
         enabled: enabled,
         retry: false,
@@ -34,7 +34,7 @@ export const useSpecialization = (id: string, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<ISpecializationResponse, AxiosError, ISpecializationResponse, QueryKey>({
-        queryKey: [SpecializationsQueries.getSpecializationById, id],
+        queryKey: [SpecializationsQueries.getById, id],
         queryFn: async () => await SpecializationsService.getById(id),
         enabled: enabled,
         retry: false,

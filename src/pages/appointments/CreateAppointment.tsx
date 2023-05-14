@@ -17,7 +17,7 @@ import { usePagedOffices } from '../../hooks/offices';
 import { usePagedPatients } from '../../hooks/patients';
 import { usePagedServices } from '../../hooks/services';
 import { usePagedSpecializations } from '../../hooks/specializations';
-import { useCreateAppointmentValidator } from '../../hooks/validators/appointments/createAppointment';
+import { useCreateAppointmentValidator } from '../../hooks/validators/appointments/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { ISpecializationResponse } from '../../types/response/specializations';
 
