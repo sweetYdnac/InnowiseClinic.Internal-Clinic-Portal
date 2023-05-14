@@ -18,7 +18,7 @@ export const useRescheduleAppointmentValidator = (appointment?: IRescheduleAppoi
             doctorInput: appointment ? appointment?.doctorFullName : '',
             date: dayjs(appointment?.date, dateApiFormat) || null,
             time: dayjs(appointment?.time, timeApiFormat) || null,
-        };
+        } as IRescheduleAppointmentForm;
     }, [appointment]);
 
     const validationScheme = useMemo(() => {
