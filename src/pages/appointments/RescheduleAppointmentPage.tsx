@@ -11,7 +11,7 @@ import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
 import { dateApiFormat, timeViewFormat } from '../../constants/formats';
-import { useAppointment, useTimeSlots } from '../../hooks/appointments';
+import { useAppointment, useRescheduleAppointmentCommand, useTimeSlots } from '../../hooks/appointments';
 import { usePagedDoctors } from '../../hooks/doctors';
 import { useRescheduleAppointmentValidator } from '../../hooks/validators/appointments/reschedule';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
@@ -25,11 +25,10 @@ export const RescheduleAppointment = () => {
         register,
         handleSubmit,
         setError,
-        setValue,
         getValues,
         watch,
         reset,
-        formState: { errors, touchedFields },
+        formState: { errors },
         control,
     } = useForm({
         mode: 'onBlur',
@@ -66,6 +65,12 @@ export const RescheduleAppointment = () => {
         endTime: endTime.format(timeViewFormat),
     });
 
+    const { mutate: rescheduleAppointment, isLoading: isRescheduleAppointmentLoading } = useRescheduleAppointmentCommand(
+        id as string,
+        getValues(),
+        setError
+    );
+
     const doctorsOptions = useMemo(() => {
         if (getValues('doctorId') && getValues('doctorInput') && !doctors) {
             return [
@@ -94,7 +99,7 @@ export const RescheduleAppointment = () => {
     return (
         <>
             <Box
-                // onSubmit={handleSubmit(() => createAppointment())}
+                onSubmit={handleSubmit(() => rescheduleAppointment())}
                 component='form'
                 sx={{
                     display: 'flex',
@@ -145,16 +150,10 @@ export const RescheduleAppointment = () => {
                     isLoading={isTimeSlotsFetching}
                 />
 
-                <SubmitButton
-                    errors={errors}
-                    touchedFields={touchedFields}
-                    shouldBeTouched={[touchedFields.doctorId, touchedFields.date as boolean, touchedFields.time as boolean]}
-                >
-                    Create
-                </SubmitButton>
+                <SubmitButton errors={errors}>Reschedule</SubmitButton>
             </Box>
 
-            {isFetchingAppointment && <Loader />}
+            {(isFetchingAppointment || isRescheduleAppointmentLoading) && <Loader />}
         </>
     );
 };

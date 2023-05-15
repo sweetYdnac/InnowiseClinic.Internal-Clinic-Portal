@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { SpecializationsService } from '../../api/services/SpecializationsService';
@@ -176,12 +176,10 @@ export const CreateAppointment = () => {
         endTime: endTime.format(timeViewFormat),
     });
 
-    const getDoctorsFromTimeSlot = () => {
+    const doctorsOptions = useMemo(() => {
         const selectedTime = getValues('time')?.format(timeViewFormat);
-        const filteredDoctors = doctors?.items?.filter((doctor) => {
-            const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
-            return !timeslot || timeslot.doctors.includes(doctor.id);
-        });
+        const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
+        const filteredDoctors = doctors?.items?.filter((doctor) => !timeslot || timeslot.doctors.includes(doctor.id));
 
         return (
             filteredDoctors?.map(
@@ -192,7 +190,7 @@ export const CreateAppointment = () => {
                     } as IAutoCompleteItem)
             ) || []
         );
-    };
+    }, [doctors, getValues('doctorId'), getValues('doctorInput'), timeSlots]);
 
     return (
         <>
@@ -287,7 +285,7 @@ export const CreateAppointment = () => {
                     valueFieldName={register('doctorId').name}
                     control={control}
                     displayName='Doctor'
-                    options={getDoctorsFromTimeSlot() ?? []}
+                    options={doctorsOptions}
                     isFetching={isDoctorsFetching}
                     handleOpen={() => {
                         if (!getValues('doctorId')) {
@@ -348,7 +346,6 @@ export const CreateAppointment = () => {
 
                 <SubmitButton
                     errors={errors}
-                    touchedFields={touchedFields}
                     shouldBeTouched={[
                         touchedFields.patientId,
                         touchedFields.officeId,

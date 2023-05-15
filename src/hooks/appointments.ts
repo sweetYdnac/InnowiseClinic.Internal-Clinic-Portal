@@ -1,16 +1,24 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { AppointmentsService } from '../api/services/AppointmentsService';
 import { AppRoutes } from '../constants/AppRoutes';
+import { dateApiFormat, timeApiFormat } from '../constants/formats';
 import { ApppointmentsQueries } from '../constants/queries';
-import { ICreatedResponse, IPagedResponse } from '../types/common/Responses';
-import { ICreateAppointmentRequest, IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../types/request/appointments';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../types/common/Responses';
+import {
+    ICreateAppointmentRequest,
+    IGetAppointmentsRequest,
+    IGetTimeSlotsRequest,
+    IRescheduleAppointmentRequest,
+} from '../types/request/appointments';
 import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from '../types/response/appointments';
 import { showPopup } from '../utils/functions';
 import { ICreateAppointmentForm } from './validators/appointments/create';
 import { IGetAppointmentsForm } from './validators/appointments/getPaged';
+import { IRescheduleAppointmentForm } from './validators/appointments/reschedule';
 
 export const useAppointment = (id: string, enabled = false) => {
     const navigate = useNavigate();
@@ -116,6 +124,55 @@ export const useCreateAppointmentCommand = (
                         error.response.data.errors?.ServiceId?.[0] ||
                         error.response.data.errors?.ServiceName?.[0] ||
                         error.response.data.errors?.Duration?.[0] ||
+                        error.response.data.Message ||
+                        '',
+                });
+                setError('date', {
+                    message: error.response.data.errors?.Date?.[0] || error.response.data.Message || '',
+                });
+                setError('time', {
+                    message: error.response.data.errors?.Time?.[0] || error.response.data.Message || '',
+                });
+            }
+        },
+        retry: false,
+    });
+};
+
+export const useRescheduleAppointmentCommand = (
+    id: string,
+    form: IRescheduleAppointmentForm,
+    setError: UseFormSetError<IRescheduleAppointmentForm>
+) => {
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+
+    const request = useMemo(() => {
+        return {
+            doctorId: form.doctorId,
+            doctorFullName: form.doctorInput,
+            date: form.date?.format(dateApiFormat),
+            time: form.time?.format(timeApiFormat),
+        } as IRescheduleAppointmentRequest;
+    }, [form.date, form.doctorId, form.doctorInput, form.time]);
+
+    return useMutation<INoContentResponse, AxiosError<any, any>, void>({
+        mutationFn: async () => await AppointmentsService.reschedule(id, request),
+        onSuccess: () => {
+            navigate(AppRoutes.Appointments);
+            queryClient.invalidateQueries({
+                queryKey: [ApppointmentsQueries.getById, id],
+                refetchType: 'inactive',
+            });
+            queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
+            showPopup('Appointment rescheduled successfully!', 'success');
+        },
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                setError('doctorId', {
+                    message:
+                        error.response.data.errors?.DoctorId?.[0] ||
+                        error.response.data.errors?.DoctorFullName?.[0] ||
                         error.response.data.Message ||
                         '',
                 });

@@ -1,5 +1,10 @@
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { ICreateAppointmentRequest, IGetAppointmentsRequest, IGetTimeSlotsRequest } from '../../types/request/appointments';
+import {
+    ICreateAppointmentRequest,
+    IGetAppointmentsRequest,
+    IGetTimeSlotsRequest,
+    IRescheduleAppointmentRequest,
+} from '../../types/request/appointments';
 import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlotsResponse } from '../../types/response/appointments';
 import { getQueryString } from '../../utils/functions';
 import { axiosInstance } from '../axiosConfig';
@@ -24,6 +29,9 @@ const approve = async (id: string) => (await axiosInstance.patch<INoContentRespo
 
 const create = async (request: ICreateAppointmentRequest) => (await axiosInstance.post<ICreatedResponse>('/appointments', request)).data;
 
+const reschedule = async (id: string, request: IRescheduleAppointmentRequest) =>
+    (await axiosInstance.put<INoContentResponse>(`/appointments/${id}`, request)).data;
+
 export const AppointmentsService = {
     getById,
     getPaged,
@@ -31,4 +39,5 @@ export const AppointmentsService = {
     cancel,
     approve,
     create,
+    reschedule,
 };

@@ -33,3 +33,10 @@ export interface ICreateAppointmentRequest {
     date: string;
     time: string;
 }
+
+export interface IRescheduleAppointmentRequest {
+    doctorId: string;
+    doctorFullName: string;
+    date: string;
+    time: string;
+}

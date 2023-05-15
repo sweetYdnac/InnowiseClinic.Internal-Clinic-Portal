@@ -113,7 +113,7 @@ export const Login: FunctionComponent = () => {
             <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
             <PasswordInput id={register('password').name} control={control} displayName='Password' />
 
-            <SubmitButton errors={errors} touchedFields={touchedFields} shouldBeTouched={[touchedFields.email, touchedFields.password]}>
+            <SubmitButton errors={errors} shouldBeTouched={[touchedFields.email, touchedFields.password]}>
                 Enter
             </SubmitButton>
         </Box>
