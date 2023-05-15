@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import { AccountStatuses } from '../../../constants/AccountStatuses';
 
 export interface ICreateDoctorForm {
+    photoUrl: string;
     firstName: string;
     lastName: string;
     middleName?: string;
@@ -20,6 +21,7 @@ export interface ICreateDoctorForm {
 export const useCreateDoctorValidator = () => {
     const initialValues = useMemo(() => {
         return {
+            photoUrl: '',
             firstName: '',
             lastName: '',
             middleName: '',
@@ -45,7 +47,17 @@ export const useCreateDoctorValidator = () => {
             specializationInput: yup.string().required('Invalid specialization name'),
             officeId: yup.string().required('Please, choose the office'),
             officeInput: yup.string().required('Invalid office address'),
-            careerStartYear: yup.mixed<dayjs.Dayjs>().required('Please, select the year'),
+            careerStartYear: yup
+                .mixed<dayjs.Dayjs>()
+                .required('Please, select the year')
+                .test('is-greater-than-date-of-birth', 'Career start year should be greater than date of birth', (value, data) => {
+                    const { dateOfBirth } = data.parent;
+                    if (!dateOfBirth || !value) {
+                        return true;
+                    }
+
+                    return value.year() > dateOfBirth.year();
+                }),
             status: yup.mixed<AccountStatuses>().oneOf(Object.values(AccountStatuses) as AccountStatuses[], 'Please select the status'),
         });
     }, []);

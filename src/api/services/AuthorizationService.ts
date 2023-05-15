@@ -51,7 +51,7 @@ const signIn = async (data: ILoginRequest) => {
     });
 };
 
-const signUp = async (data: IRegisterRequest) => await axiosInstance.post<ICreatedResponse>('/authorization/signUp', data);
+const signUp = async (data: IRegisterRequest) => (await axiosInstance.post<ICreatedResponse>('/authorization/signUp', data)).data;
 
 const logout = () => {
     localStorage.removeItem('accessToken');

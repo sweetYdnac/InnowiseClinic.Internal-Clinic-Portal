@@ -1,19 +1,34 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AccountCircle } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
+import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
+import { ImageInput } from '../../components/ImageInput/ImageInput';
 import { Loader } from '../../components/Loader/Loader';
+import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
+import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
+import { useCreateAccountCommand } from '../../hooks/authorization';
+import { useCreateDoctorCommand } from '../../hooks/doctors';
 import { usePagedOfficesQuery } from '../../hooks/offices';
+import { useCreatePhotoCommand } from '../../hooks/photos';
 import { usePagedSpecializationsQuery } from '../../hooks/specializations';
 import { useCreateDoctorValidator } from '../../hooks/validators/doctors/createDoctor';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const CreateDoctorPage = () => {
     const { initialValues, validationScheme } = useCreateDoctorValidator();
-    const { register, control, watch, getValues, setValue } = useForm({
+    const {
+        register,
+        control,
+        watch,
+        getValues,
+        setError,
+        handleSubmit,
+        formState: { errors, touchedFields },
+    } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
@@ -36,10 +51,24 @@ export const CreateDoctorPage = () => {
         refetch: fetchOffices,
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
+    const { mutateAsync: createAccount, isLoading: isCreateAccountLoading } = useCreateAccountCommand(watch('email'));
+    const { mutateAsync: createPhoto, isLoading: isCreatePhotoLoading } = useCreatePhotoCommand(getValues('photoUrl'));
+    const { mutateAsync: createDoctor, isLoading: isCreateDoctorLoading } = useCreateDoctorCommand(getValues(), setError);
+
+    const createProfile = useCallback(async () => {
+        await createAccount().then(async (account) => {
+            if (watch('photoUrl')) {
+                await createPhoto().then(async (photo) => await createDoctor({ accountId: account?.id as string, photoId: photo.id }));
+            } else {
+                await createDoctor({ accountId: account?.id as string, photoId: null });
+            }
+        });
+    }, [createAccount, createDoctor, createPhoto, watch]);
+
     return (
         <>
             <Box
-                // onSubmit={handleSubmit(() => createAppointment())}
+                onSubmit={handleSubmit(() => createProfile())}
                 component='form'
                 sx={{
                     display: 'flex',
@@ -54,6 +83,8 @@ export const CreateDoctorPage = () => {
                 <Typography variant='h5' gutterBottom>
                     Create Doctor
                 </Typography>
+
+                <ImageInput id={register('photoUrl').name} control={control} />
 
                 <Textfield id={register('firstName').name} control={control} displayName='First name' workMode='edit' />
                 <Textfield id={register('lastName').name} control={control} displayName='Last name' workMode='edit' />
@@ -133,9 +164,28 @@ export const CreateDoctorPage = () => {
                     disablePast={false}
                     disableFuture={true}
                 />
+
+                <SelectFormStatus id={register('status').name} control={control} />
+
+                <SubmitButton
+                    errors={errors}
+                    shouldBeTouched={[
+                        touchedFields.firstName,
+                        touchedFields.lastName,
+                        touchedFields.middleName,
+                        touchedFields.dateOfBirth as boolean,
+                        touchedFields.email,
+                        touchedFields.officeId,
+                        touchedFields.specializationId,
+                        touchedFields.careerStartYear as boolean,
+                        touchedFields.status,
+                    ]}
+                >
+                    Create
+                </SubmitButton>
             </Box>
 
-            {false && <Loader />}
+            {(isCreateAccountLoading || isCreatePhotoLoading || isCreateDoctorLoading) && <Loader />}
         </>
     );
 };

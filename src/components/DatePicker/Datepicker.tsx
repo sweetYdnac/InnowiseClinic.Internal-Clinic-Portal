@@ -63,7 +63,7 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                                     error: (fieldState.error?.message?.length ?? 0) > 0 && (fieldState.isTouched || field.value),
                                 },
                                 popper: {
-                                    placement: 'auto',
+                                    placement: 'bottom',
                                 },
                             }}
                         />

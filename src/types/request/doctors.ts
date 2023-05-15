@@ -9,7 +9,7 @@ export interface IGetPagedDoctorsRequest extends IPagedRequest {
 
 export interface ICreateDoctorRequest {
     id: string;
-    photoId?: string;
+    photoId: string | null;
     firstName: string;
     lastName: string;
     middleName?: string;
