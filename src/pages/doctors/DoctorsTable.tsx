@@ -4,7 +4,7 @@ import { FunctionComponent } from 'react';
 import { Loader } from '../../components/Loader/Loader';
 import { SelectStatus } from '../../components/Select/SelectStatus';
 import { dateViewFormat } from '../../constants/formats';
-import { useChangeDoctorStatus } from '../../hooks/doctors';
+import { useChangeDoctorStatusCommand } from '../../hooks/doctors';
 import { IPagingData } from '../../types/common/Responses';
 import { IDoctorInformationResponse } from '../../types/response/doctors';
 
@@ -15,7 +15,7 @@ interface DoctorsTableProps {
 }
 
 export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pagingData, handlePageChange }) => {
-    const { mutate, isLoading } = useChangeDoctorStatus();
+    const { mutate, isLoading } = useChangeDoctorStatusCommand();
 
     return (
         <>

@@ -11,14 +11,14 @@ import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
 import { dateApiFormat, timeViewFormat } from '../../constants/formats';
-import { useAppointment, useRescheduleAppointmentCommand, useTimeSlots } from '../../hooks/appointments';
-import { usePagedDoctors } from '../../hooks/doctors';
+import { useAppointmentQuery, useRescheduleAppointmentCommand, useTimeSlotsQuery } from '../../hooks/appointments';
+import { usePagedDoctorsQuery } from '../../hooks/doctors';
 import { useRescheduleAppointmentValidator } from '../../hooks/validators/appointments/reschedule';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const RescheduleAppointment = () => {
     const { id } = useParams();
-    const { data: appointment, isFetching: isFetchingAppointment } = useAppointment(id as string, true);
+    const { data: appointment, isFetching: isFetchingAppointment } = useAppointmentQuery(id as string, true);
     const { initialValues, validationScheme } = useRescheduleAppointmentValidator(appointment);
 
     const {
@@ -44,7 +44,7 @@ export const RescheduleAppointment = () => {
         data: doctors,
         isFetching: isDoctorsFetching,
         refetch: fetchDoctors,
-    } = usePagedDoctors({
+    } = usePagedDoctorsQuery({
         currentPage: 1,
         pageSize: 20,
         onlyAtWork: true,
@@ -57,7 +57,7 @@ export const RescheduleAppointment = () => {
         data: timeSlots,
         isFetching: isTimeSlotsFetching,
         refetch: fetchTimeSlots,
-    } = useTimeSlots({
+    } = useTimeSlotsQuery({
         date: watch('date')?.format(dateApiFormat) ?? '',
         doctors: watch('doctorId') ? [watch('doctorId')] : doctors?.items?.map((item) => item.id) ?? [],
         duration: appointment?.duration ?? 10,

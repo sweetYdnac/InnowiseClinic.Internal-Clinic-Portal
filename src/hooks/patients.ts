@@ -9,7 +9,7 @@ import { IGetPagedPatientsRequest } from '../types/request/patients';
 import { IPatientInformationResponse } from '../types/response/patients';
 import { showPopup } from '../utils/functions';
 
-export const usePagedPatients = (request: IGetPagedPatientsRequest, enabled = false) => {
+export const usePagedPatientsQuery = (request: IGetPagedPatientsRequest, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<IPagedResponse<IPatientInformationResponse>, AxiosError, IPagedResponse<IPatientInformationResponse>, QueryKey>({

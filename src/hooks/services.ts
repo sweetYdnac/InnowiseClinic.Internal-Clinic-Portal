@@ -9,7 +9,7 @@ import { IGetPagedServicesRequest } from '../types/request/services';
 import { IServiceInformationResponse } from '../types/response/services';
 import { showPopup } from '../utils/functions';
 
-export const usePagedServices = (request: IGetPagedServicesRequest, enabled = false) => {
+export const usePagedServicesQuery = (request: IGetPagedServicesRequest, enabled = false) => {
     const navigate = useNavigate();
     const { specializationId, ...rest } = request;
 

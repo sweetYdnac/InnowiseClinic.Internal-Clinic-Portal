@@ -7,9 +7,9 @@ import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { FilterTextfield } from '../../components/FilterTextfield/FilterTextfield';
 import { Loader } from '../../components/Loader/Loader';
 import { AppRoutes } from '../../constants/AppRoutes';
-import { usePagedDoctors } from '../../hooks/doctors';
-import { usePagedOffices } from '../../hooks/offices';
-import { usePagedSpecializations } from '../../hooks/specializations';
+import { usePagedDoctorsQuery } from '../../hooks/doctors';
+import { usePagedOfficesQuery } from '../../hooks/offices';
+import { usePagedSpecializationsQuery } from '../../hooks/specializations';
 import { useDoctorsValidator } from '../../hooks/validators/doctors/doctors';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { DoctorsTable } from './DoctorsTable';
@@ -27,20 +27,20 @@ export const DoctorsPage = () => {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOffices({ currentPage: 1, pageSize: 50, isActive: true });
+    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
     const {
         data: specializations,
         isFetching: isSpecializationsFetching,
         refetch: fetchSpecializations,
-    } = usePagedSpecializations({
+    } = usePagedSpecializationsQuery({
         currentPage: 1,
         pageSize: 20,
         isActive: true,
         title: watch('specializationInput'),
     });
 
-    const { data: doctors, isFetching: isDoctorsFetching } = usePagedDoctors(
+    const { data: doctors, isFetching: isDoctorsFetching } = usePagedDoctorsQuery(
         {
             currentPage: watch('currentPage'),
             pageSize: watch('pageSize'),

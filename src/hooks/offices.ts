@@ -9,7 +9,7 @@ import { IGetPagedOfficesRequest } from '../types/request/offices';
 import { IOfficeInformationResponse } from '../types/response/offices';
 import { showPopup } from '../utils/functions';
 
-export const usePagedOffices = (request: IGetPagedOfficesRequest, enabled = false) => {
+export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<IPagedResponse<IOfficeInformationResponse>, AxiosError, IPagedResponse<IOfficeInformationResponse>, QueryKey>({

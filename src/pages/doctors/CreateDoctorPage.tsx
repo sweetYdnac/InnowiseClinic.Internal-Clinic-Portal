@@ -6,8 +6,8 @@ import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
 import { Loader } from '../../components/Loader/Loader';
 import { Textfield } from '../../components/Textfield/Textfield';
-import { usePagedOffices } from '../../hooks/offices';
-import { usePagedSpecializations } from '../../hooks/specializations';
+import { usePagedOfficesQuery } from '../../hooks/offices';
+import { usePagedSpecializationsQuery } from '../../hooks/specializations';
 import { useCreateDoctorValidator } from '../../hooks/validators/doctors/createDoctor';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
@@ -23,7 +23,7 @@ export const CreateDoctorPage = () => {
         data: specializations,
         isFetching: isSpecializationsFetching,
         refetch: fetchSpecializations,
-    } = usePagedSpecializations({
+    } = usePagedSpecializationsQuery({
         currentPage: 1,
         pageSize: 20,
         isActive: true,
@@ -34,7 +34,7 @@ export const CreateDoctorPage = () => {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOffices({ currentPage: 1, pageSize: 50, isActive: true });
+    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
     return (
         <>

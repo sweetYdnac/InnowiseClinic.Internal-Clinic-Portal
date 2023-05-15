@@ -20,7 +20,7 @@ import { ICreateAppointmentForm } from './validators/appointments/create';
 import { IGetAppointmentsForm } from './validators/appointments/getPaged';
 import { IRescheduleAppointmentForm } from './validators/appointments/reschedule';
 
-export const useAppointment = (id: string, enabled = false) => {
+export const useAppointmentQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<IRescheduleAppointmentResponse, AxiosError, IRescheduleAppointmentResponse, QueryKey>({
@@ -37,7 +37,7 @@ export const useAppointment = (id: string, enabled = false) => {
     });
 };
 
-export const usePagedAppointments = (
+export const usePagedAppointmentsQuery = (
     request: IGetAppointmentsRequest,
     setError: UseFormSetError<IGetAppointmentsForm>,
     enabled = false
@@ -59,7 +59,7 @@ export const usePagedAppointments = (
     });
 };
 
-export const useTimeSlots = (queryString: IGetTimeSlotsRequest, enabled = false) => {
+export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<ITimeSlot[], AxiosError, ITimeSlot[], QueryKey>({

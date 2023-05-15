@@ -11,12 +11,12 @@ import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
 import { dateApiFormat, timeApiFormat, timeViewFormat } from '../../constants/formats';
-import { useCreateAppointmentCommand, useTimeSlots } from '../../hooks/appointments';
-import { usePagedDoctors } from '../../hooks/doctors';
-import { usePagedOffices } from '../../hooks/offices';
-import { usePagedPatients } from '../../hooks/patients';
-import { usePagedServices } from '../../hooks/services';
-import { usePagedSpecializations } from '../../hooks/specializations';
+import { useCreateAppointmentCommand, useTimeSlotsQuery } from '../../hooks/appointments';
+import { usePagedDoctorsQuery } from '../../hooks/doctors';
+import { usePagedOfficesQuery } from '../../hooks/offices';
+import { usePagedPatientsQuery } from '../../hooks/patients';
+import { usePagedServicesQuery } from '../../hooks/services';
+import { usePagedSpecializationsQuery } from '../../hooks/specializations';
 import { useCreateAppointmentValidator } from '../../hooks/validators/appointments/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { ISpecializationResponse } from '../../types/response/specializations';
@@ -44,19 +44,19 @@ export const CreateAppointment = () => {
         data: patients,
         isFetching: isPatientsFetching,
         refetch: fetchPatients,
-    } = usePagedPatients({ currentPage: 1, pageSize: 20, fullName: watch('patientInput') });
+    } = usePagedPatientsQuery({ currentPage: 1, pageSize: 20, fullName: watch('patientInput') });
 
     const {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOffices({ currentPage: 1, pageSize: 50, isActive: true });
+    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
     const {
         data: specializations,
         isFetching: isSpecializationsFetching,
         refetch: fetchSpecializations,
-    } = usePagedSpecializations({
+    } = usePagedSpecializationsQuery({
         currentPage: 1,
         pageSize: 20,
         isActive: true,
@@ -67,7 +67,7 @@ export const CreateAppointment = () => {
         data: doctors,
         isFetching: isDoctorsFetching,
         refetch: fetchDoctors,
-    } = usePagedDoctors({
+    } = usePagedDoctorsQuery({
         currentPage: 1,
         pageSize: 20,
         onlyAtWork: true,
@@ -80,7 +80,7 @@ export const CreateAppointment = () => {
         data: services,
         isFetching: isServicesFetching,
         refetch: fetchServices,
-    } = usePagedServices({
+    } = usePagedServicesQuery({
         currentPage: 1,
         pageSize: 20,
         isActive: true,
@@ -168,7 +168,7 @@ export const CreateAppointment = () => {
         data: timeSlots,
         isFetching: isTimeSlotsFetching,
         refetch: fetchTimeSlots,
-    } = useTimeSlots({
+    } = useTimeSlotsQuery({
         date: watch('date')?.format(dateApiFormat) ?? '',
         doctors: watch('doctorId') ? [watch('doctorId')] : doctors?.items?.map((item) => item.id) ?? [],
         duration: services?.items.find((item) => item.id === watch('serviceId'))?.duration ?? 10,

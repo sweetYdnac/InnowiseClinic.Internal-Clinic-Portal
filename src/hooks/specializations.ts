@@ -9,7 +9,7 @@ import { IGetPagedSpecializationsRequest } from '../types/request/specialization
 import { ISpecializationResponse } from '../types/response/specializations';
 import { showPopup } from '../utils/functions';
 
-export const usePagedSpecializations = (request: IGetPagedSpecializationsRequest, enabled = false) => {
+export const usePagedSpecializationsQuery = (request: IGetPagedSpecializationsRequest, enabled = false) => {
     const navigate = useNavigate();
 
     const { title, ...rest } = request;
@@ -30,7 +30,7 @@ export const usePagedSpecializations = (request: IGetPagedSpecializationsRequest
     });
 };
 
-export const useSpecialization = (id: string, enabled = false) => {
+export const useSpecializationQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<ISpecializationResponse, AxiosError, ISpecializationResponse, QueryKey>({

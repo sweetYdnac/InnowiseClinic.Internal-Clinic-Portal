@@ -7,10 +7,10 @@ import { Datepicker } from '../../components/DatePicker/Datepicker';
 import { Loader } from '../../components/Loader/Loader';
 import { SelectBoolean } from '../../components/Select/SelectBoolean';
 import { dateApiFormat } from '../../constants/formats';
-import { usePagedAppointments } from '../../hooks/appointments';
-import { usePagedDoctors } from '../../hooks/doctors';
-import { usePagedOffices } from '../../hooks/offices';
-import { usePagedServices } from '../../hooks/services';
+import { usePagedAppointmentsQuery } from '../../hooks/appointments';
+import { usePagedDoctorsQuery } from '../../hooks/doctors';
+import { usePagedOfficesQuery } from '../../hooks/offices';
+import { usePagedServicesQuery } from '../../hooks/services';
 import { useAppointmentsValidator } from '../../hooks/validators/appointments/getPaged';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { AppointmentsTable } from './AppointmentsTable';
@@ -24,7 +24,7 @@ export const AppointmentsPage: FunctionComponent = () => {
         defaultValues: initialValues,
     });
 
-    const { data: appointments, isFetching: isFetchingAppointments } = usePagedAppointments(
+    const { data: appointments, isFetching: isFetchingAppointments } = usePagedAppointmentsQuery(
         {
             currentPage: watch('currentPage'),
             pageSize: watch('pageSize'),
@@ -42,13 +42,13 @@ export const AppointmentsPage: FunctionComponent = () => {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOffices({ currentPage: 1, pageSize: 50, isActive: true });
+    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
     const {
         data: doctors,
         isFetching: isDoctorsFetching,
         refetch: fetchDoctors,
-    } = usePagedDoctors({
+    } = usePagedDoctorsQuery({
         currentPage: 1,
         pageSize: 20,
         onlyAtWork: true,
@@ -61,7 +61,7 @@ export const AppointmentsPage: FunctionComponent = () => {
         data: services,
         isFetching: isServicesFetching,
         refetch: fetchServices,
-    } = usePagedServices({
+    } = usePagedServicesQuery({
         currentPage: 1,
         pageSize: 20,
         isActive: true,

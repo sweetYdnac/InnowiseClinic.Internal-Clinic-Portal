@@ -10,7 +10,7 @@ import { ICreateDoctorRequest, IGetPagedDoctorsRequest } from '../types/request/
 import { IDoctorInformationResponse } from '../types/response/doctors';
 import { showPopup } from '../utils/functions';
 
-export const usePagedDoctors = (request: IGetPagedDoctorsRequest, enabled = false) => {
+export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled = false) => {
     const navigate = useNavigate();
 
     return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
@@ -28,7 +28,7 @@ export const usePagedDoctors = (request: IGetPagedDoctorsRequest, enabled = fals
     });
 };
 
-export const useChangeDoctorStatus = () => {
+export const useChangeDoctorStatusCommand = () => {
     return useMutation<INoContentResponse, AxiosError, { id: string; status: number }>({
         mutationFn: async ({ id, status }) => await DoctorsService.changeStatus(id, { status: status } as IChangeStatusRequest),
         onSuccess: () => {
@@ -40,7 +40,7 @@ export const useChangeDoctorStatus = () => {
     });
 };
 
-export const useCreateDoctor = (data: ICreateDoctorRequest) => {
+export const useCreateDoctorCommand = (data: ICreateDoctorRequest) => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
