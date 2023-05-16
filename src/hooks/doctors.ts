@@ -6,20 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { DoctorsService } from '../api/services/DoctorsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { dateApiFormat } from '../constants/formats';
-import { DoctorsQueries } from '../constants/queries';
+import { DoctorsQueries } from '../constants/QueryKeys';
 import { IChangeStatusRequest } from '../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../types/common/Responses';
-import {
-    ICreateDoctorRequest,
-    IGetPagedDoctorsRequest,
-    IUpdateDoctorRequest,
-    getPagedDoctorRequestValidator,
-} from '../types/request/doctors';
+import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../types/request/doctors';
 import { IDoctorInformationResponse, IDoctorResponse } from '../types/response/doctors';
 import { showPopup } from '../utils/functions';
 import { ICreateDoctorForm } from './validators/doctors/create';
 import { IUpdateDoctorForm } from './validators/doctors/update';
-import { useDoctorsValidator } from './validators/doctors/getPaged';
 
 export const useDoctorQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
@@ -41,13 +35,9 @@ export const useDoctorQuery = (id: string, enabled = false) => {
 export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled = false) => {
     const navigate = useNavigate();
 
-    return useQuery<IPagedResponse<IDoctorInformationResponse> | void, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
+    return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
         queryKey: [DoctorsQueries.getPaged, { ...request }],
-        queryFn: async () => {
-            await getPagedDoctorRequestValidator.validate(request);
-
-            await DoctorsService.getPaged(request);
-        },
+        queryFn: async () => await DoctorsService.getPaged(request),
         enabled: enabled,
         retry: false,
         keepPreviousData: true,

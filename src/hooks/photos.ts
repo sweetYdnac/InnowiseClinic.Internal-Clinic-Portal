@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PhotosService } from '../api/services/PhotosService';
 import { AppRoutes } from '../constants/AppRoutes';
-import { PhotosQueries } from '../constants/queries';
+import { PhotosQueries } from '../constants/QueryKeys';
 import { ICreatedResponse, INoContentResponse } from '../types/common/Responses';
 import { showPopup } from '../utils/functions';
 

@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PatientsService } from '../api/services/PatientsService';
 import { AppRoutes } from '../constants/AppRoutes';
-import { PatientsQueries } from '../constants/queries';
+import { PatientsQueries } from '../constants/QueryKeys';
 import { IPagedResponse } from '../types/common/Responses';
 import { IGetPagedPatientsRequest } from '../types/request/patients';
 import { IPatientInformationResponse } from '../types/response/patients';

@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ServicesService } from '../api/services/ServicesService';
 import { AppRoutes } from '../constants/AppRoutes';
-import { ServicesQueries } from '../constants/queries';
+import { ServicesQueries } from '../constants/QueryKeys';
 import { IPagedResponse } from '../types/common/Responses';
 import { IGetPagedServicesRequest } from '../types/request/services';
 import { IServiceInformationResponse } from '../types/response/services';

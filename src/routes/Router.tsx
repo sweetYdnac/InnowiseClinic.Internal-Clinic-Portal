@@ -5,18 +5,18 @@ import { Home } from '../pages/Home';
 import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
 import { CreateAppointment } from '../pages/appointments/CreateAppointment';
 import { RescheduleAppointment } from '../pages/appointments/RescheduleAppointmentPage';
+import { SignIn } from '../pages/authorization/SignIn';
 import { CreateDoctorPage } from '../pages/doctors/CreateDoctorPage';
 import { DoctorProfilePage } from '../pages/doctors/DoctorProfilePage';
 import { DoctorsPage } from '../pages/doctors/DoctorsPage';
 import { Layout } from '../pages/layout/Layout';
-import { Login } from '../pages/login/Login';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRouter = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path={AppRoutes.Login} element={<Login />} />
+                <Route path={AppRoutes.Login} element={<SignIn />} />
 
                 <Route element={<Layout />}>
                     <Route path={AppRoutes.Home} element={<Home />} />

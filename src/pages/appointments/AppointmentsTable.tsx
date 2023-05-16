@@ -8,7 +8,7 @@ import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { timeSlotFormat } from '../../constants/formats';
-import { ApppointmentsQueries } from '../../constants/queries';
+import { ApppointmentsQueries } from '../../constants/QueryKeys';
 import { IPagingData } from '../../types/common/Responses';
 import { IAppointmentResponse } from '../../types/response/appointments';
 

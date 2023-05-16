@@ -7,7 +7,7 @@ import { ValidationError } from 'yup';
 import { AppointmentsService } from '../api/services/AppointmentsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { dateApiFormat, timeApiFormat } from '../constants/formats';
-import { ApppointmentsQueries } from '../constants/queries';
+import { ApppointmentsQueries } from '../constants/QueryKeys';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../types/common/Responses';
 import {
     ICreateAppointmentRequest,

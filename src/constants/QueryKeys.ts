@@ -29,3 +29,8 @@ export enum PatientsQueries {
 export enum PhotosQueries {
     getById = 'get-photo-by-id',
 }
+
+export enum AuthorizationQueries {
+    signIn = 'sign-in',
+    getInitialProfile = 'get-initial-profile',
+}

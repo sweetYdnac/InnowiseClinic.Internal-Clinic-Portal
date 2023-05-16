@@ -10,7 +10,7 @@ import { Loader } from '../../components/Loader/Loader';
 import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
-import { useCreateAccountCommand } from '../../hooks/authorization';
+import { useSignUpCommand } from '../../hooks/authorization';
 import { useCreateDoctorCommand } from '../../hooks/doctors';
 import { usePagedOfficesQuery } from '../../hooks/offices';
 import { useCreatePhotoCommand } from '../../hooks/photos';
@@ -52,7 +52,7 @@ export const CreateDoctorPage = () => {
         refetch: fetchOffices,
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
-    const { mutateAsync: createAccount, isLoading: isCreateAccountLoading } = useCreateAccountCommand(watch('email'));
+    const { mutateAsync: createAccount, isLoading: isCreateAccountLoading } = useSignUpCommand(watch('email'));
     const { mutateAsync: createPhoto, isLoading: isCreatePhotoLoading } = useCreatePhotoCommand(photoUrl);
     const { mutateAsync: createDoctor, isLoading: isCreateDoctorLoading } = useCreateDoctorCommand(getValues(), setError);
 

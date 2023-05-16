@@ -60,7 +60,7 @@ export const DoctorProfilePage = () => {
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
     const officesOptions = useMemo(() => {
-        return offices.items.length > 0
+        return offices && offices.items.length > 0
             ? offices?.items?.map((item) => {
                   return {
                       label: item.address,
@@ -73,7 +73,7 @@ export const DoctorProfilePage = () => {
                       id: doctor?.officeId,
                   } as IAutoCompleteItem,
               ];
-    }, [doctor?.officeAddress, doctor?.officeId, offices.items]);
+    }, [doctor?.officeAddress, doctor?.officeId, offices]);
 
     const {
         data: specializations,
@@ -87,7 +87,7 @@ export const DoctorProfilePage = () => {
     });
 
     const specializationsOptions = useMemo(() => {
-        return specializations?.items.length > 0
+        return specializations && specializations.items.length > 0
             ? specializations?.items.map((item) => {
                   return {
                       label: item.title,
@@ -100,7 +100,7 @@ export const DoctorProfilePage = () => {
                       id: doctor?.specializationId,
                   } as IAutoCompleteItem,
               ];
-    }, [doctor?.specializationId, doctor?.specializationName, specializations?.items]);
+    }, [doctor?.specializationId, doctor?.specializationName, specializations]);
 
     const { mutate: updateDoctor, isLoading: isUpdatingDoctor } = useUpdateDoctorCommand(id as string, watch(), setError);
     const { mutate: updatePhoto, isLoading: isUpdatingPhoto } = useUpdatePhotoCommand(watch('photoId') as string, photo as string);
