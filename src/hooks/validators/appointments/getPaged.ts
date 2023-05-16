@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import * as yup from 'yup';
+import { Yup } from '../YupConfiguration';
 
 export interface IGetAppointmentsForm {
     currentPage: number;
@@ -34,18 +34,18 @@ export const useAppointmentsValidator = () => {
     }, []);
 
     const validationScheme = useMemo(() => {
-        return yup.object().shape({
-            currentPage: yup.number().moreThan(0, 'Page number should be greater than 0').required(),
-            pageSize: yup.number().min(1).max(50).required(),
-            date: yup.date().min(dayjs(), 'Date should be greater or equal than today').required('Please, enter a date'),
-            doctorId: yup.string().notRequired(),
-            doctorInput: yup.string().notRequired(),
-            serviceId: yup.string().notRequired(),
-            serviceInput: yup.string().notRequired(),
-            officeId: yup.string().notRequired(),
-            officeInput: yup.string().notRequired(),
-            specializationId: yup.string().notRequired(),
-            isApproved: yup.bool().notRequired().nullable(),
+        return Yup.object().shape({
+            currentPage: Yup.number().moreThan(0, 'Page number should be greater than 0').required(),
+            pageSize: Yup.number().min(1).max(50).required('Page size is required'),
+            date: Yup.date().min(dayjs(), 'Date could not be past').required('Please, enter a date'),
+            doctorId: Yup.string().notRequired(),
+            doctorInput: Yup.string().notRequired(),
+            serviceId: Yup.string().notRequired(),
+            serviceInput: Yup.string().notRequired(),
+            officeId: Yup.string().notRequired(),
+            officeInput: Yup.string().notRequired(),
+            specializationId: Yup.string().notRequired(),
+            isApproved: Yup.bool().notRequired().nullable(),
         });
     }, []);
 

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import * as yup from 'yup';
+import { Yup } from '../YupConfiguration';
 
 export interface ICreateAppointmentForm {
     patientId: string;
@@ -36,19 +36,22 @@ export const useCreateAppointmentValidator = () => {
     }, []);
 
     const validationScheme = useMemo(() => {
-        return yup.object().shape({
-            patientId: yup.string().required('Please, choose the patient'),
-            patientInput: yup.string().notRequired(),
-            officeId: yup.string().required('Please, choose the office'),
-            officeInput: yup.string().notRequired(),
-            doctorId: yup.string().required('Please, choose the doctor'),
-            doctorInput: yup.string().notRequired(),
-            specializationId: yup.string().required('Please, choose the specialization'),
-            specializationInput: yup.string().notRequired(),
-            serviceId: yup.string().required('Please, choose the service'),
-            serviceInput: yup.string().notRequired(),
-            date: yup.date().required('Please, enter a valid date').typeError('Please, enter a valid date'),
-            time: yup.date().required('Please, enter a valid timeslot').typeError('Please, enter a valid timeslot'),
+        return Yup.object().shape({
+            patientId: Yup.string().required('Please, choose the patient'),
+            patientInput: Yup.string().notRequired(),
+            officeId: Yup.string().required('Please, choose the office'),
+            officeInput: Yup.string().notRequired(),
+            doctorId: Yup.string().required('Please, choose the doctor'),
+            doctorInput: Yup.string().notRequired(),
+            specializationId: Yup.string().required('Please, choose the specialization'),
+            specializationInput: Yup.string().notRequired(),
+            serviceId: Yup.string().required('Please, choose the service'),
+            serviceInput: Yup.string().notRequired(),
+            date: Yup.date()
+                .min(dayjs(), 'Date could not be past')
+                .required('Please, enter a valid date')
+                .typeError('Please, enter a valid date'),
+            time: Yup.date().required('Please, enter a valid timeslot').typeError('Please, enter a valid timeslot'),
         });
     }, []);
 

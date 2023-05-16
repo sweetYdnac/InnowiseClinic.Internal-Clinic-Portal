@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { timeViewFormat } from '../../constants/formats';
+import { timeSlotFormat } from '../../constants/formats';
 import { ITimeSlot } from '../../types/response/appointments';
 
 interface TimeSlotPickerProps {
@@ -47,15 +47,15 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                             disabled={disabled}
                             readOnly={disabled}
                             label={displayName}
-                            format={timeViewFormat}
+                            format={timeSlotFormat}
                             minutesStep={10}
                             ampmInClock={true}
                             closeOnSelect={true}
                             shouldDisableTime={(value: dayjs.Dayjs, view) => {
                                 if (view === 'hours') {
-                                    return !timeSlots.some((slot) => dayjs(slot.time, timeViewFormat).hour() === value.hour());
+                                    return !timeSlots.some((slot) => dayjs(slot.time, timeSlotFormat).hour() === value.hour());
                                 } else if (view === 'minutes') {
-                                    return !timeSlots.some((slot) => slot.time === value.format(timeViewFormat));
+                                    return !timeSlots.some((slot) => slot.time === value.format(timeSlotFormat));
                                 }
 
                                 return false;

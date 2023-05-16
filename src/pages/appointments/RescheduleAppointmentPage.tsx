@@ -10,7 +10,7 @@ import { ReadonlyTextfield } from '../../components/ReadonlyTextfield/ReadonlyTe
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
-import { dateApiFormat, timeViewFormat } from '../../constants/formats';
+import { dateApiFormat, timeSlotFormat } from '../../constants/formats';
 import { useAppointmentQuery, useRescheduleAppointmentCommand, useTimeSlotsQuery } from '../../hooks/appointments';
 import { usePagedDoctorsQuery } from '../../hooks/doctors';
 import { useRescheduleAppointmentValidator } from '../../hooks/validators/appointments/reschedule';
@@ -61,8 +61,8 @@ export const RescheduleAppointment = () => {
         date: watch('date')?.format(dateApiFormat) ?? '',
         doctors: watch('doctorId') ? [watch('doctorId')] : doctors?.items?.map((item) => item.id) ?? [],
         duration: appointment?.duration ?? 10,
-        startTime: startTime.format(timeViewFormat),
-        endTime: endTime.format(timeViewFormat),
+        startTime: startTime.format(timeSlotFormat),
+        endTime: endTime.format(timeSlotFormat),
     });
 
     const { mutate: rescheduleAppointment, isLoading: isRescheduleAppointmentLoading } = useRescheduleAppointmentCommand(
@@ -81,7 +81,7 @@ export const RescheduleAppointment = () => {
             ];
         }
 
-        const selectedTime = getValues('time')?.format(timeViewFormat);
+        const selectedTime = getValues('time')?.format(timeSlotFormat);
         const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
         const filteredDoctors = doctors?.items?.filter((doctor) => !timeslot || timeslot.doctors.includes(doctor.id));
 

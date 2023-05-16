@@ -18,7 +18,7 @@ import { useDoctorQuery, useUpdateDoctorCommand } from '../../hooks/doctors';
 import { usePagedOfficesQuery } from '../../hooks/offices';
 import { useCreatePhotoCommand, useGetPhotoQuery, useUpdatePhotoCommand } from '../../hooks/photos';
 import { usePagedSpecializationsQuery } from '../../hooks/specializations';
-import { useUpdateDoctorValidator } from '../../hooks/validators/doctors/updateDoctor';
+import { useUpdateDoctorValidator } from '../../hooks/validators/doctors/update';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const DoctorProfilePage = () => {

@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import * as yup from 'yup';
 import { AccountStatuses } from '../../../constants/AccountStatuses';
 import { dateApiFormat } from '../../../constants/formats';
 import { IDoctorResponse } from '../../../types/response/doctors';
+import { Yup } from '../YupConfiguration';
 
 export interface IUpdateDoctorForm {
     photoId: string | null;
@@ -49,18 +49,20 @@ export const useUpdateDoctorValidator = (doctor: IDoctorResponse | undefined) =>
     ]);
 
     const validationScheme = useMemo(() => {
-        return yup.object().shape({
-            photoId: yup.string().notRequired(),
-            firstName: yup.string().required('Please, enter the first name'),
-            lastName: yup.string().required('Please, enter the last name'),
-            middleName: yup.string().notRequired(),
-            dateOfBirth: yup.mixed<dayjs.Dayjs>().required('Please, select the date').typeError('Please, enter a valid date'),
-            specializationId: yup.string().required('Please, choose the specialisation'),
-            specializationInput: yup.string().required('Invalid specialization name'),
-            officeId: yup.string().required('Please, choose the office'),
-            officeInput: yup.string().required('Invalid office address'),
-            careerStartYear: yup
-                .mixed<dayjs.Dayjs>()
+        return Yup.object().shape({
+            photoId: Yup.string().notRequired(),
+            firstName: Yup.string().required('Please, enter the first name'),
+            lastName: Yup.string().required('Please, enter the last name'),
+            middleName: Yup.string().notRequired(),
+            dateOfBirth: Yup.date()
+                .max(dayjs(), 'Date could not be future')
+                .required('Please, enter a valid date')
+                .typeError('Please, enter a valid date'),
+            specializationId: Yup.string().required('Please, choose the specialisation'),
+            specializationInput: Yup.string().required('Invalid specialization name'),
+            officeId: Yup.string().required('Please, choose the office'),
+            officeInput: Yup.string().required('Invalid office address'),
+            careerStartYear: Yup.date()
                 .required('Please, select the year')
                 .typeError('Please, enter a valid date')
                 .test('is-greater-than-date-of-birth', 'Career start year should be greater than date of birth', (value, data) => {
@@ -69,9 +71,9 @@ export const useUpdateDoctorValidator = (doctor: IDoctorResponse | undefined) =>
                         return true;
                     }
 
-                    return value.year() > dateOfBirth.year();
+                    return value.getFullYear() > dateOfBirth.getFullYear();
                 }),
-            status: yup.mixed<AccountStatuses>().oneOf(Object.values(AccountStatuses) as AccountStatuses[], 'Please select the status'),
+            status: Yup.mixed<AccountStatuses>().oneOf(Object.values(AccountStatuses) as AccountStatuses[], 'Please select the status'),
         });
     }, []);
 

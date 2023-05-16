@@ -10,7 +10,7 @@ import { AppRoutes } from '../../constants/AppRoutes';
 import { usePagedDoctorsQuery } from '../../hooks/doctors';
 import { usePagedOfficesQuery } from '../../hooks/offices';
 import { usePagedSpecializationsQuery } from '../../hooks/specializations';
-import { useDoctorsValidator } from '../../hooks/validators/doctors/doctors';
+import { useDoctorsValidator } from '../../hooks/validators/doctors/getPaged';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { DoctorsTable } from './DoctorsTable';
 

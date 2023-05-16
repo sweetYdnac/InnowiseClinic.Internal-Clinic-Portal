@@ -7,7 +7,7 @@ import { AppointmentsService } from '../../api/services/AppointmentsService';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
 import { AppRoutes } from '../../constants/AppRoutes';
-import { timeViewFormat } from '../../constants/formats';
+import { timeSlotFormat } from '../../constants/formats';
 import { ApppointmentsQueries } from '../../constants/queries';
 import { IPagingData } from '../../types/common/Responses';
 import { IAppointmentResponse } from '../../types/response/appointments';
@@ -57,10 +57,10 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ ap
                     <TableBody>
                         {appointments.map((item) => (
                             <TableRow key={item.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell align='center'>{`${dayjs(item.startTime, timeViewFormat).format(timeViewFormat)} - ${dayjs(
+                                <TableCell align='center'>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
                                     item.endTime,
-                                    timeViewFormat
-                                ).format(timeViewFormat)}`}</TableCell>
+                                    timeSlotFormat
+                                ).format(timeSlotFormat)}`}</TableCell>
                                 <TableCell align='center'>{item.doctorFullName}</TableCell>
                                 <TableCell align='center'>{item.patientFullName}</TableCell>
                                 <TableCell align='center'>{item.patientPhoneNumber}</TableCell>

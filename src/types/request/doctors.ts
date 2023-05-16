@@ -1,3 +1,4 @@
+import { Yup } from '../../hooks/validators/YupConfiguration';
 import { IPagedRequest } from '../common/Requests';
 
 export interface IGetPagedDoctorsRequest extends IPagedRequest {
@@ -6,6 +7,15 @@ export interface IGetPagedDoctorsRequest extends IPagedRequest {
     specializationId?: string | null;
     fullName?: string;
 }
+
+export const getPagedDoctorRequestValidator = Yup.object().shape({
+    currentPage: Yup.number().moreThan(0, 'Page number should be greater than 0').required(),
+    pageSize: Yup.number().min(1).max(50).required(),
+    onlyAtWork: Yup.boolean().required(),
+    officeId: Yup.string().notRequired(),
+    specializationId: Yup.string().notRequired(),
+    fullName: Yup.string().notRequired(),
+});
 
 export interface ICreateDoctorRequest {
     id: string;

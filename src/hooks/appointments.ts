@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
+import { ValidationError } from 'yup';
 import { AppointmentsService } from '../api/services/AppointmentsService';
 import { AppRoutes } from '../constants/AppRoutes';
 import { dateApiFormat, timeApiFormat } from '../constants/formats';
@@ -18,6 +19,7 @@ import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from 
 import { showPopup } from '../utils/functions';
 import { ICreateAppointmentForm } from './validators/appointments/create';
 import { IGetAppointmentsForm } from './validators/appointments/getPaged';
+import { useGetTimeSlotsValidator } from './validators/appointments/getTimeSlots';
 import { IRescheduleAppointmentForm } from './validators/appointments/reschedule';
 
 export const useAppointmentQuery = (id: string, enabled = false) => {
@@ -61,10 +63,23 @@ export const usePagedAppointmentsQuery = (
 
 export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = false) => {
     const navigate = useNavigate();
+    const { validationScheme } = useGetTimeSlotsValidator();
 
-    return useQuery<ITimeSlot[], AxiosError, ITimeSlot[], QueryKey>({
+    return useQuery<ITimeSlot[] | void, AxiosError, ITimeSlot[], QueryKey>({
         queryKey: [ApppointmentsQueries.getTimeSlots, { ...queryString }],
-        queryFn: async () => (await AppointmentsService.getTimeSlots(queryString)).timeSlots,
+        queryFn: async () => {
+            try {
+                await validationScheme.validate(queryString);
+
+                return (await AppointmentsService.getTimeSlots(queryString)).timeSlots;
+            } catch (error) {
+                console.log(error);
+                if (error instanceof ValidationError) {
+                    navigate(AppRoutes.Home);
+                    showPopup('Something went wrong.');
+                }
+            }
+        },
         enabled: enabled,
         retry: false,
         onError: (error) => {

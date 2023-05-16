@@ -15,7 +15,7 @@ import { useCreateDoctorCommand } from '../../hooks/doctors';
 import { usePagedOfficesQuery } from '../../hooks/offices';
 import { useCreatePhotoCommand } from '../../hooks/photos';
 import { usePagedSpecializationsQuery } from '../../hooks/specializations';
-import { useCreateDoctorValidator } from '../../hooks/validators/doctors/createDoctor';
+import { useCreateDoctorValidator } from '../../hooks/validators/doctors/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const CreateDoctorPage = () => {

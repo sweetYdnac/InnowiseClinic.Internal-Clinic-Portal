@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import * as yup from 'yup';
+import { Yup } from '../YupConfiguration';
 
 export interface IDoctorsForm {
     currentPage: number;
@@ -27,15 +27,15 @@ export const useDoctorsValidator = () => {
     }, []);
 
     const validationScheme = useMemo(() => {
-        return yup.object().shape({
-            currentPage: yup.number().moreThan(0, 'Page number should be greater than 0').required(),
-            pageSize: yup.number().min(1).max(50).required(),
-            doctorValue: yup.string().notRequired(),
-            doctorInput: yup.string().notRequired(),
-            officeId: yup.string().notRequired(),
-            officeInput: yup.string().notRequired(),
-            specializationId: yup.string().notRequired(),
-            specializationInput: yup.string().notRequired(),
+        return Yup.object().shape({
+            currentPage: Yup.number().moreThan(0, 'Page number should be greater than 0').required(),
+            pageSize: Yup.number().min(1).max(50).required('Page size is required'),
+            doctorValue: Yup.string().notRequired(),
+            doctorInput: Yup.string().notRequired(),
+            officeId: Yup.string().notRequired(),
+            officeInput: Yup.string().notRequired(),
+            specializationId: Yup.string().notRequired(),
+            specializationInput: Yup.string().notRequired(),
         });
     }, []);
 
