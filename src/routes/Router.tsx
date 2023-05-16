@@ -6,6 +6,7 @@ import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
 import { CreateAppointment } from '../pages/appointments/CreateAppointment';
 import { RescheduleAppointment } from '../pages/appointments/RescheduleAppointmentPage';
 import { CreateDoctorPage } from '../pages/doctors/CreateDoctorPage';
+import { DoctorProfilePage } from '../pages/doctors/DoctorProfilePage';
 import { DoctorsPage } from '../pages/doctors/DoctorsPage';
 import { Layout } from '../pages/layout/Layout';
 import { Login } from '../pages/login/Login';
@@ -56,6 +57,14 @@ export const AppRouter = () => {
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <CreateDoctorPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.DoctorProfile}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <DoctorProfilePage />
                             </ProtectedRoute>
                         }
                     />

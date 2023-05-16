@@ -13,6 +13,7 @@ interface AutoCompleteProps {
     handleOpen: () => void;
     handleInputChange?: () => void;
     disabled?: boolean;
+    readonly?: boolean;
     inputFieldName?: string;
     debounceDelay?: number;
 }
@@ -26,6 +27,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
     handleOpen,
     handleInputChange,
     disabled = false,
+    readonly = false,
     inputFieldName,
     debounceDelay = 0,
 }) => {
@@ -47,6 +49,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             clearOnBlur={true}
             {...idField}
             disabled={disabled}
+            readOnly={readonly}
             loading={isFetching || debounced.isPending()}
             open={open}
             onOpen={() => {
@@ -78,7 +81,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
                     label={idFieldState.error?.message && idFieldState.isTouched ? 'Error' : displayName}
                     variant='standard'
                     color={idFieldState.error?.message && (idFieldState.isTouched || idField.value) ? 'error' : 'success'}
-                    focused={!idFieldState.error?.message && (idFieldState.isTouched || !!idField.value)}
+                    focused={!readonly && !idFieldState.error?.message && (idFieldState.isTouched || !!idField.value)}
                     error={!!idFieldState.error?.message && (idFieldState.isTouched || !!idField.value)}
                     helperText={idFieldState.error?.message && (idFieldState.isTouched || idField.value) ? idFieldState.error?.message : ''}
                     InputProps={{

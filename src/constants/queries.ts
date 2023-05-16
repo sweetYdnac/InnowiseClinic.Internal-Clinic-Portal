@@ -18,9 +18,14 @@ export enum SpecializationsQueries {
 }
 
 export enum DoctorsQueries {
+    getById = 'get-doctor-by-id',
     getPaged = 'get-doctors',
 }
 
 export enum PatientsQueries {
     getPaged = 'get-patients',
+}
+
+export enum PhotosQueries {
+    getById = 'get-photo-by-id',
 }

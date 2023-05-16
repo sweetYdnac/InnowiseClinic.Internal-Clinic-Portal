@@ -1,8 +1,10 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import dayjs from 'dayjs';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
 import { SelectStatus } from '../../components/Select/SelectStatus';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { dateViewFormat } from '../../constants/formats';
 import { useChangeDoctorStatusCommand } from '../../hooks/doctors';
 import { IPagingData } from '../../types/common/Responses';
@@ -15,7 +17,10 @@ interface DoctorsTableProps {
 }
 
 export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pagingData, handlePageChange }) => {
+    const navigate = useNavigate();
     const { mutate, isLoading } = useChangeDoctorStatusCommand();
+
+    const handleRowClick = useCallback((id: string) => navigate(AppRoutes.DoctorProfile.replace(':id', `${id}`)), [navigate]);
 
     return (
         <>
@@ -32,17 +37,25 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
                     </TableHead>
                     <TableBody>
                         {doctors.map((doctor) => (
-                            <TableRow key={doctor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell align='center'>{doctor.fullName}</TableCell>
-                                <TableCell align='center'>{doctor.specializationName}</TableCell>
-                                <TableCell align='center'>
+                            <TableRow key={doctor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
+                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
+                                    {doctor.fullName}
+                                </TableCell>
+                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
+                                    {doctor.specializationName}
+                                </TableCell>
+                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
                                     <SelectStatus
                                         value={doctor.status}
                                         handleChange={(value) => mutate({ id: doctor.id, status: value })}
                                     />
                                 </TableCell>
-                                <TableCell align='center'>{dayjs(doctor.dateOfBirth).format(dateViewFormat)}</TableCell>
-                                <TableCell align='center'>{doctor.officeAddress}</TableCell>
+                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
+                                    {dayjs(doctor.dateOfBirth).format(dateViewFormat)}
+                                </TableCell>
+                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
+                                    {doctor.officeAddress}
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

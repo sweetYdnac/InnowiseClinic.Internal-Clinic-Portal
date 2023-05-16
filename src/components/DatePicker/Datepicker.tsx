@@ -14,6 +14,7 @@ interface DatepickerProps {
     views?: DateView[];
     openTo?: DateView;
     disabled?: boolean;
+    readonly?: boolean;
 }
 
 export const Datepicker: FunctionComponent<DatepickerProps> = ({
@@ -25,6 +26,7 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
     views = ['year', 'month', 'day'],
     openTo = 'day',
     disabled = false,
+    readonly = false,
 }: DatepickerProps) => {
     const format = useMemo(() => (views.includes('day') ? dateViewFormat : views.includes('month') ? 'MM YYYY' : 'YYYY'), [views]);
 
@@ -39,6 +41,7 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                         <DatePicker
                             {...field}
                             disabled={disabled}
+                            readOnly={readonly}
                             disableFuture={disableFuture}
                             disablePast={disablePast}
                             label={displayName}
@@ -53,14 +56,11 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                             slotProps={{
                                 textField: {
                                     sx: { m: 1, width: '75%' },
-                                    color:
-                                        (fieldState.error?.message?.length ?? 0) > 0 && (fieldState.isTouched || field.value)
-                                            ? 'error'
-                                            : 'success',
-                                    focused: (fieldState.error?.message?.length ?? 0) === 0 && (fieldState.isTouched || !!field.value),
+                                    color: fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success',
+                                    focused: !readonly && !fieldState.error?.message && (fieldState.isTouched || !!field.value),
                                     variant: 'standard',
                                     helperText: fieldState.error?.message,
-                                    error: (fieldState.error?.message?.length ?? 0) > 0 && (fieldState.isTouched || field.value),
+                                    error: !!fieldState.error?.message && (fieldState.isTouched || field.value),
                                 },
                                 popper: {
                                     placement: 'bottom',

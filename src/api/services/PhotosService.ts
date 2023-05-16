@@ -1,4 +1,4 @@
-import { ICreatedResponse } from '../../types/common/Responses';
+import { ICreatedResponse, INoContentResponse } from '../../types/common/Responses';
 import { axiosInstance } from '../axiosConfig';
 
 const getById = async (id: string) => {
@@ -22,18 +22,20 @@ const getById = async (id: string) => {
     });
 };
 
-const edit = async (id: string, photo: string) => {
+const update = async (id: string, photo: string) => {
     const blob = await (await fetch(photo)).blob();
     const file = new File([blob], id, { type: blob.type });
 
     const formData = new FormData();
     formData.append('photo', file);
 
-    await axiosInstance.put(`/documents/photos/${id}`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    });
+    return (
+        await axiosInstance.put<INoContentResponse>(`/documents/photos/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+    ).data;
 };
 
 const create = async (photo: string) => {
@@ -52,10 +54,8 @@ const create = async (photo: string) => {
     ).data;
 };
 
-const PhotosService = {
+export const PhotosService = {
     getById,
-    edit,
+    update,
     create,
 };
-
-export default PhotosService;

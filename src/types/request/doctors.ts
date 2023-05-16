@@ -21,3 +21,17 @@ export interface ICreateDoctorRequest {
     officeAddress: string;
     status: number;
 }
+
+export interface IUpdateDoctorRequest {
+    photoId: string | null;
+    firstName: string;
+    lastName: string;
+    middleName?: string;
+    dateOfBirth: string;
+    officeId: string;
+    officeAddress: string;
+    specializationId: string;
+    specializationName: string;
+    careerStartYear: number;
+    status: number;
+}

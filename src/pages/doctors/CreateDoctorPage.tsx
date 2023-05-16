@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AccountCircle } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
@@ -19,6 +19,7 @@ import { useCreateDoctorValidator } from '../../hooks/validators/doctors/createD
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const CreateDoctorPage = () => {
+    const [photoUrl, setPhotoUrl] = useState('');
     const { initialValues, validationScheme } = useCreateDoctorValidator();
     const {
         register,
@@ -52,18 +53,18 @@ export const CreateDoctorPage = () => {
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
     const { mutateAsync: createAccount, isLoading: isCreateAccountLoading } = useCreateAccountCommand(watch('email'));
-    const { mutateAsync: createPhoto, isLoading: isCreatePhotoLoading } = useCreatePhotoCommand(getValues('photoUrl'));
+    const { mutateAsync: createPhoto, isLoading: isCreatePhotoLoading } = useCreatePhotoCommand(photoUrl);
     const { mutateAsync: createDoctor, isLoading: isCreateDoctorLoading } = useCreateDoctorCommand(getValues(), setError);
 
     const createProfile = useCallback(async () => {
         await createAccount().then(async (account) => {
-            if (watch('photoUrl')) {
+            if (photoUrl) {
                 await createPhoto().then(async (photo) => await createDoctor({ accountId: account?.id as string, photoId: photo.id }));
             } else {
                 await createDoctor({ accountId: account?.id as string, photoId: null });
             }
         });
-    }, [createAccount, createDoctor, createPhoto, watch]);
+    }, [createAccount, createDoctor, createPhoto, photoUrl]);
 
     return (
         <>
@@ -84,7 +85,7 @@ export const CreateDoctorPage = () => {
                     Create Doctor
                 </Typography>
 
-                <ImageInput id={register('photoUrl').name} control={control} />
+                <ImageInput imageUrl={photoUrl} setImageUrl={setPhotoUrl} />
 
                 <Textfield id={register('firstName').name} control={control} displayName='First name' workMode='edit' />
                 <Textfield id={register('lastName').name} control={control} displayName='Last name' workMode='edit' />

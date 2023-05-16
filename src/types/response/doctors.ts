@@ -2,6 +2,7 @@ import { IPagedResponse, IProfile } from '../common/Responses';
 
 export interface IDoctorResponse extends IProfile {
     dateOfBirth: string;
+    specializationId: string;
     specializationName: string;
     careerStartYear: number;
     status: number;

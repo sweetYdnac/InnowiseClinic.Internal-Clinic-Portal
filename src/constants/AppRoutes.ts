@@ -6,5 +6,6 @@ export enum AppRoutes {
     RescheduleAppointment = '/appointments/:id/reschedule',
     Doctors = '/doctors',
     CreateDoctor = '/doctors/create',
+    DoctorProfile = '/doctors/:id/profile',
     Profile = '/profile',
 }

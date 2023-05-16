@@ -2,13 +2,15 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import * as yup from 'yup';
 import { AccountStatuses } from '../../../constants/AccountStatuses';
+import { dateApiFormat } from '../../../constants/formats';
+import { IDoctorResponse } from '../../../types/response/doctors';
 
-export interface ICreateDoctorForm {
+export interface IUpdateDoctorForm {
+    photoId: string | null;
     firstName: string;
     lastName: string;
     middleName?: string;
     dateOfBirth: dayjs.Dayjs | null;
-    email: string;
     specializationId: string;
     specializationInput: string;
     officeId: string;
@@ -17,30 +19,42 @@ export interface ICreateDoctorForm {
     status: AccountStatuses;
 }
 
-export const useCreateDoctorValidator = () => {
+export const useUpdateDoctorValidator = (doctor: IDoctorResponse | undefined) => {
     const initialValues = useMemo(() => {
         return {
-            firstName: '',
-            lastName: '',
-            middleName: '',
-            dateOfBirth: null,
-            email: '',
-            specializationId: '',
-            specializationInput: '',
-            officeId: '',
-            officeInput: '',
-            careerStartYear: null,
-            status: AccountStatuses.Inactive,
-        } as ICreateDoctorForm;
-    }, []);
+            photoId: doctor?.photoId,
+            firstName: doctor?.firstName ?? '',
+            lastName: doctor?.lastName ?? '',
+            middleName: doctor?.middleName ?? '',
+            dateOfBirth: dayjs(doctor?.dateOfBirth, dateApiFormat),
+            specializationId: doctor?.specializationId,
+            specializationInput: doctor?.specializationName,
+            officeId: doctor?.officeId,
+            officeInput: doctor?.officeAddress,
+            careerStartYear: dayjs(doctor?.careerStartYear.toString(), 'YYYY'),
+            status: doctor?.status ?? AccountStatuses.None,
+        } as IUpdateDoctorForm;
+    }, [
+        doctor?.careerStartYear,
+        doctor?.dateOfBirth,
+        doctor?.firstName,
+        doctor?.lastName,
+        doctor?.middleName,
+        doctor?.officeAddress,
+        doctor?.officeId,
+        doctor?.photoId,
+        doctor?.specializationId,
+        doctor?.specializationName,
+        doctor?.status,
+    ]);
 
     const validationScheme = useMemo(() => {
         return yup.object().shape({
+            photoId: yup.string().notRequired(),
             firstName: yup.string().required('Please, enter the first name'),
             lastName: yup.string().required('Please, enter the last name'),
             middleName: yup.string().notRequired(),
             dateOfBirth: yup.mixed<dayjs.Dayjs>().required('Please, select the date').typeError('Please, enter a valid date'),
-            email: yup.string().required('Please, enter the email').email(`You've entered an invalid email`),
             specializationId: yup.string().required('Please, choose the specialisation'),
             specializationInput: yup.string().required('Invalid specialization name'),
             officeId: yup.string().required('Please, choose the office'),

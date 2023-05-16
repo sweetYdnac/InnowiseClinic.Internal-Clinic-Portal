@@ -1,21 +1,15 @@
 import { PhotoCamera } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
-import { Control, useController } from 'react-hook-form';
 import { WorkMode } from '../../constants/WorkModes';
 
 interface ImageInputProps {
-    id: string;
-    control: Control<any, any>;
+    imageUrl: string;
+    setImageUrl: React.Dispatch<React.SetStateAction<string>>;
     workMode?: WorkMode;
 }
 
-export const ImageInput: FunctionComponent<ImageInputProps> = ({ id, control, workMode = 'edit' }: ImageInputProps) => {
-    const { field } = useController({
-        name: id,
-        control: control,
-    });
-
+export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setImageUrl, workMode = 'edit' }: ImageInputProps) => {
     const onSubmitFile = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
@@ -27,22 +21,16 @@ export const ImageInput: FunctionComponent<ImageInputProps> = ({ id, control, wo
                 reader.readAsDataURL(blob);
                 reader.onload = () => {
                     const imageDataUrl = reader.result as string;
-                    field.onChange({
-                        target: {
-                            value: imageDataUrl,
-                            name: id,
-                        },
-                        type: 'blur',
-                    });
+                    setImageUrl(imageDataUrl);
                 };
             }
         },
-        [field, id]
+        [setImageUrl]
     );
 
     return (
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <img width='100' alt='profilePhoto' src={field.value} />
+            <img width='100' alt='profilePhoto' src={imageUrl} />
 
             {workMode === 'edit' && (
                 <IconButton color='primary' aria-label='upload picture' component='label'>
