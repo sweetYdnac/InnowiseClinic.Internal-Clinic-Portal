@@ -1,6 +1,6 @@
 export enum AppRoutes {
     Home = '/',
-    Login = '/login',
+    SignIn = '/signIn',
     Appointments = '/appointments',
     CreateAppointment = '/appointments/create',
     RescheduleAppointment = '/appointments/:id/reschedule',

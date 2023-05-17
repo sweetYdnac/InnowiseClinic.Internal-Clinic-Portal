@@ -44,7 +44,7 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
                                 <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
                                     {doctor.specializationName}
                                 </TableCell>
-                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
+                                <TableCell align='center'>
                                     <SelectStatus
                                         value={doctor.status}
                                         handleChange={(value) => mutate({ id: doctor.id, status: value })}

@@ -15,6 +15,7 @@ interface DatepickerProps {
     openTo?: DateView;
     disabled?: boolean;
     readonly?: boolean;
+    handleValueChange?: () => void;
 }
 
 export const Datepicker: FunctionComponent<DatepickerProps> = ({
@@ -27,6 +28,7 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
     openTo = 'day',
     disabled = false,
     readonly = false,
+    handleValueChange,
 }: DatepickerProps) => {
     const format = useMemo(() => (views.includes('day') ? dateViewFormat : views.includes('month') ? 'MM YYYY' : 'YYYY'), [views]);
 
@@ -51,7 +53,10 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                             defaultValue={field.value as dayjs.Dayjs}
                             value={field.value as dayjs.Dayjs}
                             onChange={(date) => field.onChange(date)}
-                            onAccept={() => field.onBlur()}
+                            onAccept={() => {
+                                field.onBlur();
+                                handleValueChange?.();
+                            }}
                             onSelectedSectionsChange={() => field.onBlur()}
                             slotProps={{
                                 textField: {

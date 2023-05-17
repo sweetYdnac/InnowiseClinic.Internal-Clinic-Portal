@@ -16,7 +16,7 @@ export const useRescheduleAppointmentValidator = (appointment?: IRescheduleAppoi
         return {
             doctorId: appointment ? appointment.doctorId : '',
             doctorInput: appointment ? appointment?.doctorFullName : '',
-            date: dayjs(appointment?.date, dateApiFormat) || null,
+            date: dayjs(appointment?.date, dateApiFormat) || undefined,
             time: dayjs(appointment?.time, timeApiFormat) || null,
         } as IRescheduleAppointmentForm;
     }, [appointment]);

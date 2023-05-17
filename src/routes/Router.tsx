@@ -16,7 +16,7 @@ export const AppRouter = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path={AppRoutes.Login} element={<SignIn />} />
+                <Route path={AppRoutes.SignIn} element={<SignIn />} />
 
                 <Route element={<Layout />}>
                     <Route path={AppRoutes.Home} element={<Home />} />

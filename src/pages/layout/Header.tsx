@@ -26,7 +26,7 @@ export const Header: FunctionComponent<HeaderProps> = ({ isAuthorized }) => {
             dispatch(setProfile(defaultProfile));
             dispatch(setRole(defaultRole));
         } else {
-            navigate(AppRoutes.Login);
+            navigate(AppRoutes.SignIn);
         }
     };
 

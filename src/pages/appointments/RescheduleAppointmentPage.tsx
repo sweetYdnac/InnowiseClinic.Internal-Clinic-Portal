@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Typography } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
@@ -28,6 +28,7 @@ export const RescheduleAppointment = () => {
         getValues,
         watch,
         reset,
+        setValue,
         formState: { errors },
         control,
     } = useForm({
@@ -50,7 +51,7 @@ export const RescheduleAppointment = () => {
         onlyAtWork: true,
         officeId: appointment?.officeId,
         specializationId: appointment?.specializationId,
-        fullName: appointment?.doctorFullName,
+        fullName: watch('doctorInput'),
     });
 
     const {
@@ -71,6 +72,10 @@ export const RescheduleAppointment = () => {
         setError
     );
 
+    const handleDateChange = useCallback(() => {
+        setValue('time', null, { shouldValidate: true, shouldTouch: true });
+    }, [setValue]);
+
     const doctorsOptions = useMemo(() => {
         if (getValues('doctorId') && getValues('doctorInput') && !doctors) {
             return [
@@ -81,7 +86,7 @@ export const RescheduleAppointment = () => {
             ];
         }
 
-        const selectedTime = getValues('time')?.format(timeSlotFormat);
+        const selectedTime = watch('time')?.format(timeSlotFormat);
         const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
         const filteredDoctors = doctors?.items?.filter((doctor) => !timeslot || timeslot.doctors.includes(doctor.id));
 
@@ -94,7 +99,7 @@ export const RescheduleAppointment = () => {
                     } as IAutoCompleteItem)
             ) || []
         );
-    }, [doctors, getValues('doctorId'), getValues('doctorInput'), timeSlots]);
+    }, [doctors?.items, getValues('doctorId'), getValues('doctorInput'), timeSlots, watch('time')]);
 
     return (
         <>
@@ -124,7 +129,7 @@ export const RescheduleAppointment = () => {
                     valueFieldName={register('doctorId').name}
                     control={control}
                     displayName='Doctor'
-                    options={doctorsOptions ?? []}
+                    options={doctorsOptions}
                     isFetching={isDoctorsFetching}
                     handleOpen={() => {
                         if (!getValues('doctorId')) {
@@ -136,7 +141,13 @@ export const RescheduleAppointment = () => {
                     debounceDelay={2000}
                 />
 
-                <Datepicker disabled={!doctors && !getValues('doctorId')} id={register('date').name} control={control} displayName='Date' />
+                <Datepicker
+                    disabled={!doctors && !getValues('doctorId')}
+                    id={register('date').name}
+                    control={control}
+                    displayName='Date'
+                    handleValueChange={handleDateChange}
+                />
 
                 <TimeSlotPicker
                     id={register('time').name}

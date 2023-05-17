@@ -111,6 +111,13 @@ export const CreateAppointment = () => {
     );
 
     useEffect(() => {
+        setValue('specializationId', '', { shouldValidate: true });
+        setValue('doctorId', '', { shouldValidate: true });
+        setValue('serviceId', '', { shouldValidate: true });
+        setValue('date', null, { shouldValidate: true });
+    }, [getValues('officeId')]);
+
+    useEffect(() => {
         if (getValues('specializationId') === '') {
             setValue('serviceId', '', { shouldValidate: true });
         }
@@ -177,7 +184,7 @@ export const CreateAppointment = () => {
     });
 
     const doctorsOptions = useMemo(() => {
-        const selectedTime = getValues('time')?.format(timeSlotFormat);
+        const selectedTime = watch('time')?.format(timeSlotFormat);
         const timeslot = timeSlots?.find((slot) => slot.time === selectedTime);
         const filteredDoctors = doctors?.items?.filter((doctor) => !timeslot || timeslot.doctors.includes(doctor.id));
 
@@ -190,7 +197,7 @@ export const CreateAppointment = () => {
                     } as IAutoCompleteItem)
             ) || []
         );
-    }, [doctors, getValues('doctorId'), getValues('doctorInput'), timeSlots]);
+    }, [doctors?.items, watch('time'), timeSlots]);
 
     return (
         <>
@@ -288,7 +295,7 @@ export const CreateAppointment = () => {
                     options={doctorsOptions}
                     isFetching={isDoctorsFetching}
                     handleOpen={() => {
-                        if (!getValues('doctorId')) {
+                        if (!getValues('doctorId') && !getValues('time')) {
                             fetchDoctors();
                         }
                     }}
@@ -323,7 +330,7 @@ export const CreateAppointment = () => {
                 />
 
                 <Datepicker
-                    disabled={!getValues('serviceId') || (!doctors && !getValues('doctorId'))}
+                    disabled={!getValues('serviceId') || (!doctors && !getValues('doctorId')) || !getValues('officeId')}
                     id={register('date').name}
                     control={control}
                     displayName='Date'

@@ -46,7 +46,7 @@ export const SignIn: FunctionComponent = () => {
             autoComplete='off'
         >
             <Typography variant='h4' sx={{ marginBottom: '50px' }} gutterBottom>
-                Login
+                Sign In
             </Typography>
 
             <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
