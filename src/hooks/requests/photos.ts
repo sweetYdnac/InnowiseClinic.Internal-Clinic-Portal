@@ -30,7 +30,10 @@ export const useCreatePhotoCommand = (photoUrl: string) => {
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await PhotosService.create(photoUrl),
-        onSuccess: (response) => queryClient.setQueryData([PhotosQueries.getById, response.id], photoUrl),
+        onSuccess: (response) => {
+            queryClient.setQueryData([PhotosQueries.getById, response.id], photoUrl);
+            showPopup('Photo updated successfully!', 'success');
+        },
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
@@ -46,7 +49,10 @@ export const useUpdatePhotoCommand = (id: string, photoUrl: string) => {
 
     return useMutation<INoContentResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await PhotosService.update(id, photoUrl),
-        onSuccess: () => queryClient.setQueryData([PhotosQueries.getById, id], photoUrl),
+        onSuccess: () => {
+            queryClient.setQueryData([PhotosQueries.getById, id], photoUrl);
+            showPopup('Photo updated successfully!', 'success');
+        },
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);

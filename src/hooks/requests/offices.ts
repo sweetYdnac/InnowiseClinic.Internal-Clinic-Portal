@@ -1,13 +1,33 @@
-import { QueryKey, useQuery } from '@tanstack/react-query';
+import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useMemo } from 'react';
+import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { OfficesService } from '../../api/services/OfficesService';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { OfficesQueries } from '../../constants/QueryKeys';
-import { IPagedResponse } from '../../types/common/Responses';
-import { IGetPagedOfficesRequest } from '../../types/request/offices';
-import { IOfficeInformationResponse } from '../../types/response/offices';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
+import { IGetPagedOfficesRequest, IUpdateOfficeRequest } from '../../types/request/offices';
+import { IOfficeInformationResponse, IOfficeResponse } from '../../types/response/offices';
 import { showPopup } from '../../utils/functions';
+import { ICreateOfficeForm } from '../validators/offices/create';
+import { IUpdateOfficeForm } from '../validators/offices/update';
+
+export const useOfficeQuery = (id: string) => {
+    const navigate = useNavigate();
+
+    return useQuery<IOfficeResponse, AxiosError, IOfficeResponse, QueryKey>({
+        queryKey: [OfficesQueries.getById, id],
+        queryFn: async () => await OfficesService.getById(id),
+        retry: false,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                showPopup('Something went wrong.');
+            }
+        },
+    });
+};
 
 export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled = false) => {
     const navigate = useNavigate();
@@ -23,6 +43,156 @@ export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled =
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
                 showPopup('Something went wrong.');
+            }
+        },
+    });
+};
+
+export const useChangeOfficeStatusCommand = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation<INoContentResponse, AxiosError, { id: string; isActive: boolean }>({
+        mutationFn: async ({ id, isActive }) => await OfficesService.changeStatus(id, isActive),
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData<IOfficeResponse>([OfficesQueries.getById, variables.id], (prev) => {
+                if (prev !== undefined) {
+                    return {
+                        ...prev,
+                        isActive: variables.isActive,
+                    } as IOfficeResponse;
+                }
+                return prev;
+            });
+            queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>([OfficesQueries.getPaged], (prev) => {
+                return {
+                    ...prev,
+                    items: prev?.items.map((item) => {
+                        if (item.id === variables.id) {
+                            return {
+                                ...item,
+                                isActive: variables.isActive,
+                            };
+                        }
+                        return item;
+                    }),
+                } as IPagedResponse<IOfficeInformationResponse>;
+            });
+            showPopup('Status changed successfully!', 'success');
+        },
+        onError: () => {
+            showPopup('Something went wrong.');
+        },
+    });
+};
+
+export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setError: UseFormSetError<IUpdateOfficeForm>) => {
+    const queryClient = useQueryClient();
+
+    let request = useMemo(
+        () =>
+            ({
+                ...form,
+            } as IUpdateOfficeRequest),
+        [form]
+    );
+
+    return useMutation<INoContentResponse, AxiosError<any, any>, string>({
+        mutationFn: async (photoId: string) => {
+            request.photoId = photoId;
+
+            return await OfficesService.update(id, request);
+        },
+        onSuccess: (data, photoId) => {
+            queryClient.setQueryData([OfficesQueries.getById, id], {
+                photoId: photoId,
+                address: `${request.city}, ${request.street}, ${request.houseNumber}, ${request.officeNumber}`,
+                registryPhoneNumber: request.registryPhoneNumber,
+                isActive: request.isActive,
+            } as IOfficeResponse);
+            queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>([OfficesQueries.getPaged], (prev) => {
+                return {
+                    ...prev,
+                    items: prev?.items.map((item) => {
+                        if (item.id === id) {
+                            return {
+                                id: id,
+                                address: `${request.city}, ${request.street}, ${request.houseNumber}, ${request.officeNumber}`,
+                                registryPhoneNumber: request.registryPhoneNumber,
+                                isActive: request.isActive,
+                            } as IOfficeInformationResponse;
+                        }
+                        return item;
+                    }),
+                } as IPagedResponse<IOfficeInformationResponse>;
+            });
+            showPopup('Doctor created successfully!', 'success');
+        },
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                setError('city', {
+                    message: error.response.data.errors?.City?.[0] || error.response.data.Message || '',
+                });
+                setError('street', {
+                    message: error.response.data.errors?.Street?.[0] || error.response.data.Message || '',
+                });
+                setError('houseNumber', {
+                    message: error.response.data.errors?.HouseNumber?.[0] || error.response.data.Message || '',
+                });
+                setError('officeNumber', {
+                    message: error.response.data.errors?.OfficeNumber?.[0] || error.response.data.Message || '',
+                });
+                setError('registryPhoneNumber', {
+                    message: error.response.data.errors?.RegistryPhoneNumber?.[0] || error.response.data.Message || '',
+                });
+                setError('isActive', {
+                    message: error.response.data.errors?.IsActive?.[0] || error.response.data.Message || '',
+                });
+            }
+        },
+    });
+};
+
+export const useCreateOfficeCommand = (form: ICreateOfficeForm, setError: UseFormSetError<ICreateOfficeForm>) => {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    return useMutation<ICreatedResponse, AxiosError<any, any>, { photoId: string | null }>({
+        mutationFn: async ({ photoId }) =>
+            await OfficesService.create({
+                ...form,
+                photoId: photoId,
+            }),
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData([OfficesQueries.getById, data.id], {
+                photoId: variables.photoId,
+                address: `${form.city}, ${form.street}, ${form.houseNumber}, ${form.officeNumber}`,
+                registryPhoneNumber: form.registryPhoneNumber,
+                isActive: form.isActive,
+            } as IOfficeResponse);
+            queryClient.invalidateQueries([OfficesQueries.getPaged]);
+            navigate(AppRoutes.Offices);
+            showPopup('Office created successfully!', 'success');
+        },
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                setError('city', {
+                    message: error.response.data.errors?.City?.[0] || error.response.data.Message || '',
+                });
+                setError('street', {
+                    message: error.response.data.errors?.Street?.[0] || error.response.data.Message || '',
+                });
+                setError('houseNumber', {
+                    message: error.response.data.errors?.HouseNumber?.[0] || error.response.data.Message || '',
+                });
+                setError('officeNumber', {
+                    message: error.response.data.errors?.OfficeNumber?.[0] || error.response.data.Message || '',
+                });
+                setError('registryPhoneNumber', {
+                    message: error.response.data.errors?.RegistryPhoneNumber?.[0] || error.response.data.Message || '',
+                });
+                setError('isActive', {
+                    message: error.response.data.errors?.IsActive?.[0] || error.response.data.Message || '',
+                });
             }
         },
     });

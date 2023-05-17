@@ -10,7 +10,7 @@ import { showPopup } from '../utils/functions';
 
 interface ProtectedRouteProps {
     roles: Roles[];
-    children: ReactNode;
+    children: ReactNode | ReactNode[];
 }
 
 export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {

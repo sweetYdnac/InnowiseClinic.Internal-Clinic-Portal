@@ -51,9 +51,34 @@ export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled =
 };
 
 export const useChangeDoctorStatusCommand = () => {
+    const queryClient = useQueryClient();
+
     return useMutation<INoContentResponse, AxiosError, { id: string; status: number }>({
         mutationFn: async ({ id, status }) => await DoctorsService.changeStatus(id, { status: status } as IChangeStatusRequest),
-        onSuccess: () => {
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData<IDoctorResponse>([DoctorsQueries.getById, variables.id], (prev) => {
+                if (prev !== undefined) {
+                    return {
+                        ...prev,
+                        status: variables.status,
+                    } as IDoctorResponse;
+                }
+                return prev;
+            });
+            queryClient.setQueriesData<IPagedResponse<IDoctorInformationResponse>>([DoctorsQueries.getPaged], (prev) => {
+                return {
+                    ...prev,
+                    items: prev?.items.map((item) => {
+                        if (item.id === variables.id) {
+                            return {
+                                ...item,
+                                status: variables.status,
+                            };
+                        }
+                        return item;
+                    }),
+                } as IPagedResponse<IDoctorInformationResponse>;
+            });
             showPopup('Status changed successfully!', 'success');
         },
         onError: () => {
@@ -66,31 +91,33 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    let request = useMemo(() => {
-        return {
-            firstName: form.firstName,
-            lastName: form.lastName,
-            middleName: form.middleName,
-            dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
-            specializationId: form.specializationId,
-            officeId: form.officeId,
-            careerStartYear: form.careerStartYear?.year() ?? 0,
-            specializationName: form.specializationInput,
-            officeAddress: form.officeInput,
-            status: form.status,
-        } as ICreateDoctorRequest;
-    }, [
-        form.careerStartYear,
-        form.dateOfBirth,
-        form.firstName,
-        form.lastName,
-        form.middleName,
-        form.officeId,
-        form.officeInput,
-        form.specializationId,
-        form.specializationInput,
-        form.status,
-    ]);
+    let request = useMemo(
+        () =>
+            ({
+                firstName: form.firstName,
+                lastName: form.lastName,
+                middleName: form.middleName,
+                dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
+                specializationId: form.specializationId,
+                officeId: form.officeId,
+                careerStartYear: form.careerStartYear?.year() ?? 0,
+                specializationName: form.specializationInput,
+                officeAddress: form.officeInput,
+                status: form.status,
+            } as ICreateDoctorRequest),
+        [
+            form.careerStartYear,
+            form.dateOfBirth,
+            form.firstName,
+            form.lastName,
+            form.middleName,
+            form.officeId,
+            form.officeInput,
+            form.specializationId,
+            form.specializationInput,
+            form.status,
+        ]
+    );
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, { accountId: string; photoId: string | null }>({
         mutationFn: async ({ accountId, photoId }) => {
@@ -144,37 +171,40 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
 export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setError: UseFormSetError<IUpdateDoctorForm>) => {
     const queryClient = useQueryClient();
 
-    let request = useMemo(() => {
-        return {
-            photoId: form.photoId,
-            firstName: form.firstName,
-            lastName: form.lastName,
-            middleName: form.middleName,
-            dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
-            officeId: form.officeId,
-            officeAddress: form.officeInput,
-            specializationId: form.specializationId,
-            specializationName: form.specializationInput,
-            careerStartYear: form.careerStartYear?.year() ?? 0,
-            status: form.status,
-        } as IUpdateDoctorRequest;
-    }, [
-        form.careerStartYear,
-        form.dateOfBirth,
-        form.firstName,
-        form.lastName,
-        form.middleName,
-        form.officeId,
-        form.officeInput,
-        form.photoId,
-        form.specializationId,
-        form.specializationInput,
-        form.status,
-    ]);
+    let request = useMemo(
+        () =>
+            ({
+                photoId: form.photoId,
+                firstName: form.firstName,
+                lastName: form.lastName,
+                middleName: form.middleName,
+                dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
+                officeId: form.officeId,
+                officeAddress: form.officeInput,
+                specializationId: form.specializationId,
+                specializationName: form.specializationInput,
+                careerStartYear: form.careerStartYear?.year() ?? 0,
+                status: form.status,
+            } as IUpdateDoctorRequest),
+        [
+            form.careerStartYear,
+            form.dateOfBirth,
+            form.firstName,
+            form.lastName,
+            form.middleName,
+            form.officeId,
+            form.officeInput,
+            form.photoId,
+            form.specializationId,
+            form.specializationInput,
+            form.status,
+        ]
+    );
 
     return useMutation<INoContentResponse, AxiosError<any, any>, string>({
         mutationFn: async (photoId: string) => {
             request.photoId = photoId;
+
             return await DoctorsService.update(id, request);
         },
         onSuccess: (data, photoId) => {

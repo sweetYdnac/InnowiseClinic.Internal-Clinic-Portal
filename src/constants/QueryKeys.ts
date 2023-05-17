@@ -5,6 +5,7 @@ export enum ApppointmentsQueries {
 }
 
 export enum OfficesQueries {
+    getById = 'get-office-by-id',
     getPaged = 'get-offices',
 }
 

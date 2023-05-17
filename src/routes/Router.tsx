@@ -10,6 +10,9 @@ import { CreateDoctorPage } from '../pages/doctors/CreateDoctorPage';
 import { DoctorProfilePage } from '../pages/doctors/DoctorProfilePage';
 import { DoctorsPage } from '../pages/doctors/DoctorsPage';
 import { Layout } from '../pages/layout/Layout';
+import { CreateOfficePage } from '../pages/offices/CreateOfficePage';
+import { OfficeInformationPage } from '../pages/offices/OfficeInformationPage';
+import { OfficesPage } from '../pages/offices/OfficesPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRouter = () => {
@@ -65,6 +68,30 @@ export const AppRouter = () => {
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <DoctorProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.Offices}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <OfficesPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.CreateOffice}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <CreateOfficePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.OfficeInformation}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <OfficeInformationPage />
                             </ProtectedRoute>
                         }
                     />

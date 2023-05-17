@@ -54,9 +54,9 @@ export const CreateDoctorPage = () => {
 
     const { mutateAsync: createAccount, isLoading: isCreateAccountLoading } = useSignUpCommand(watch('email'));
     const { mutateAsync: createPhoto, isLoading: isCreatePhotoLoading } = useCreatePhotoCommand(photoUrl);
-    const { mutateAsync: createDoctor, isLoading: isCreateDoctorLoading } = useCreateDoctorCommand(getValues(), setError);
+    const { mutateAsync: createDoctor, isLoading: isCreateDoctorLoading } = useCreateDoctorCommand(watch(), setError);
 
-    const createProfile = useCallback(async () => {
+    const onSubmit = useCallback(async () => {
         await createAccount().then(async (account) => {
             if (photoUrl) {
                 await createPhoto().then(async (photo) => await createDoctor({ accountId: account?.id as string, photoId: photo.id }));
@@ -69,7 +69,7 @@ export const CreateDoctorPage = () => {
     return (
         <>
             <Box
-                onSubmit={handleSubmit(() => createProfile())}
+                onSubmit={handleSubmit(() => onSubmit())}
                 component='form'
                 sx={{
                     display: 'flex',

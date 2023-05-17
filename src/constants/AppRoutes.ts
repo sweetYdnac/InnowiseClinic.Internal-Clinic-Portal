@@ -7,5 +7,8 @@ export enum AppRoutes {
     Doctors = '/doctors',
     CreateDoctor = '/doctors/create',
     DoctorProfile = '/doctors/:id/profile',
+    Offices = '/offices',
+    CreateOffice = '/offices/create',
+    OfficeInformation = '/offices/:id',
     Profile = '/profile',
 }

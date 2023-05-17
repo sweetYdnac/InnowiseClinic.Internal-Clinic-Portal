@@ -8,6 +8,7 @@ interface TextfieldProps {
     id: string;
     control: Control<any, any>;
     displayName: string;
+    disableWhiteSpace?: boolean;
     inputMode?: 'text' | 'numeric' | 'email';
     workMode?: WorkMode;
     placeholder?: string;
@@ -19,6 +20,7 @@ export const Textfield: FunctionComponent<TextfieldProps> = ({
     id,
     control,
     displayName,
+    disableWhiteSpace = false,
     inputMode = 'text',
     workMode = 'view',
     placeholder,
@@ -73,6 +75,10 @@ export const Textfield: FunctionComponent<TextfieldProps> = ({
                         }}
                         InputLabelProps={{
                             shrink: true,
+                        }}
+                        onChange={(e) => {
+                            const value = disableWhiteSpace ? e.target.value.trim() : e.target.value;
+                            field.onChange(value);
                         }}
                     />
                 )}

@@ -104,28 +104,42 @@ export const DoctorProfilePage = () => {
 
     const { mutate: updateDoctor, isLoading: isUpdatingDoctor } = useUpdateDoctorCommand(id as string, watch(), setError);
     const { mutate: updatePhoto, isLoading: isUpdatingPhoto } = useUpdatePhotoCommand(watch('photoId') as string, photo as string);
-    const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photoUrl as string);
+    const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photo as string);
+
+    const sendUpdateDoctor = useCallback(
+        (photoId: string) => {
+            updateDoctor(photoId, {
+                onSuccess: () => {
+                    reset(watch());
+                    setWorkMode('view');
+                },
+            });
+        },
+        [reset, updateDoctor, watch]
+    );
+
+    const tryUpdateDoctor = useCallback(() => {
+        if (!deepEqual(watch(), defaultValues)) {
+            sendUpdateDoctor(watch('photoId') as string);
+        } else {
+            setWorkMode('view');
+        }
+    }, [defaultValues, sendUpdateDoctor, watch]);
 
     const onSubmit = useCallback(async () => {
         if (watch('photoId') !== null) {
             if (photo !== photoUrl) {
                 updatePhoto();
             }
-
-            if (!deepEqual(watch(), defaultValues)) {
-                updateDoctor(watch('photoId') as string);
-                reset(watch());
-            }
-
-            setWorkMode('view');
+            tryUpdateDoctor();
         } else {
             if (photo) {
-                await createPhoto().then((photo) => updateDoctor(photo.id));
+                await createPhoto().then((photo) => sendUpdateDoctor(photo.id));
+            } else {
+                tryUpdateDoctor();
             }
         }
-    }, [createPhoto, defaultValues, photo, photoUrl, reset, updateDoctor, updatePhoto, watch]);
-
-    console.log(photo === photoUrl);
+    }, [createPhoto, photo, photoUrl, sendUpdateDoctor, tryUpdateDoctor, updatePhoto, watch]);
 
     return (
         <>
@@ -152,7 +166,7 @@ export const DoctorProfilePage = () => {
                         noValidate
                         autoComplete='on'
                     >
-                        <ImageInput imageUrl={photo ?? ''} setImageUrl={setPhoto} workMode={workMode} />
+                        <ImageInput imageUrl={photo} setImageUrl={setPhoto} workMode={workMode} />
 
                         <Textfield id={register('firstName').name} control={control} displayName='First name' workMode={workMode} />
                         <Textfield id={register('lastName').name} control={control} displayName='Last name' workMode={workMode} />
