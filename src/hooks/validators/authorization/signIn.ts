@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { PasswordBoundaries } from '../../../constants/Validation';
 import { Yup } from '../YupConfiguration';
 
-export interface ILoginForm {
+export interface ISignInForm {
     email: string;
     password: string;
 }
@@ -12,7 +12,7 @@ export const useLoginValidator = () => {
         return {
             email: '',
             password: '',
-        } as ILoginForm;
+        } as ISignInForm;
     }, []);
 
     const validationScheme = useMemo(() => {

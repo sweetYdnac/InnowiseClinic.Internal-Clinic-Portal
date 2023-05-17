@@ -4,23 +4,23 @@ import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { ValidationError } from 'yup';
-import { AppointmentsService } from '../api/services/AppointmentsService';
-import { AppRoutes } from '../constants/AppRoutes';
-import { dateApiFormat, timeApiFormat } from '../constants/formats';
-import { ApppointmentsQueries } from '../constants/QueryKeys';
-import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../types/common/Responses';
+import { AppointmentsService } from '../../api/services/AppointmentsService';
+import { AppRoutes } from '../../constants/AppRoutes';
+import { ApppointmentsQueries } from '../../constants/QueryKeys';
+import { dateApiFormat, timeApiFormat } from '../../constants/formats';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import {
     ICreateAppointmentRequest,
     IGetAppointmentsRequest,
     IGetTimeSlotsRequest,
     IRescheduleAppointmentRequest,
-} from '../types/request/appointments';
-import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from '../types/response/appointments';
-import { showPopup } from '../utils/functions';
-import { ICreateAppointmentForm } from './validators/appointments/create';
-import { IGetAppointmentsForm } from './validators/appointments/getPaged';
-import { useGetTimeSlotsValidator } from './validators/appointments/getTimeSlots';
-import { IRescheduleAppointmentForm } from './validators/appointments/reschedule';
+} from '../../types/request/appointments';
+import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from '../../types/response/appointments';
+import { showPopup } from '../../utils/functions';
+import { ICreateAppointmentForm } from '../validators/appointments/create';
+import { IGetAppointmentsForm } from '../validators/appointments/getPaged';
+import { useGetTimeSlotsValidator } from '../validators/appointments/getTimeSlots';
+import { IRescheduleAppointmentForm } from '../validators/appointments/reschedule';
 
 export const useAppointmentQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
@@ -100,7 +100,8 @@ export const useCreateAppointmentCommand = (
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await AppointmentsService.create(request),
-        onSuccess: () => {
+        onSuccess: (response) => {
+            queryClient.setQueryData([ApppointmentsQueries.getById, response.id], request as IRescheduleAppointmentResponse);
             queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
             navigate(AppRoutes.Appointments);
             showPopup('Appointment created successfully!', 'success');
@@ -174,12 +175,14 @@ export const useRescheduleAppointmentCommand = (
     return useMutation<INoContentResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await AppointmentsService.reschedule(id, request),
         onSuccess: () => {
-            navigate(AppRoutes.Appointments);
-            queryClient.invalidateQueries({
-                queryKey: [ApppointmentsQueries.getById, id],
-                refetchType: 'inactive',
+            queryClient.setQueryData<IRescheduleAppointmentResponse>([ApppointmentsQueries.getById, id], (oldData) => {
+                return {
+                    ...oldData,
+                    ...request,
+                } as IRescheduleAppointmentResponse;
             });
             queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
+            navigate(AppRoutes.Appointments);
             showPopup('Appointment rescheduled successfully!', 'success');
         },
         onError: (error) => {

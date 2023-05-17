@@ -1,13 +1,13 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { SpecializationsService } from '../api/services/SpecializationsService';
-import { AppRoutes } from '../constants/AppRoutes';
-import { SpecializationsQueries } from '../constants/QueryKeys';
-import { IPagedResponse } from '../types/common/Responses';
-import { IGetPagedSpecializationsRequest } from '../types/request/specializations';
-import { ISpecializationResponse } from '../types/response/specializations';
-import { showPopup } from '../utils/functions';
+import { SpecializationsService } from '../../api/services/SpecializationsService';
+import { AppRoutes } from '../../constants/AppRoutes';
+import { SpecializationsQueries } from '../../constants/QueryKeys';
+import { IPagedResponse } from '../../types/common/Responses';
+import { IGetPagedSpecializationsRequest } from '../../types/request/specializations';
+import { ISpecializationResponse } from '../../types/response/specializations';
+import { showPopup } from '../../utils/functions';
 
 export const usePagedSpecializationsQuery = (request: IGetPagedSpecializationsRequest, enabled = false) => {
     const navigate = useNavigate();

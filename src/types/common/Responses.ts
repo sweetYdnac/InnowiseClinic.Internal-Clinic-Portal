@@ -16,7 +16,7 @@ export interface ICreatedResponse {
 export interface INoContentResponse {}
 
 export interface IProfile {
-    photoId: string;
+    photoId: string | null;
     firstName: string;
     lastName: string;
     middleName: string;

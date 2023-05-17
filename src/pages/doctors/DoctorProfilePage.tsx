@@ -14,10 +14,10 @@ import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
 import { WorkMode } from '../../constants/WorkModes';
-import { useDoctorQuery, useUpdateDoctorCommand } from '../../hooks/doctors';
-import { usePagedOfficesQuery } from '../../hooks/offices';
-import { useCreatePhotoCommand, useGetPhotoQuery, useUpdatePhotoCommand } from '../../hooks/photos';
-import { usePagedSpecializationsQuery } from '../../hooks/specializations';
+import { useDoctorQuery, useUpdateDoctorCommand } from '../../hooks/requests/doctors';
+import { usePagedOfficesQuery } from '../../hooks/requests/offices';
+import { useCreatePhotoCommand, useGetPhotoQuery, useUpdatePhotoCommand } from '../../hooks/requests/photos';
+import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { useUpdateDoctorValidator } from '../../hooks/validators/doctors/update';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 

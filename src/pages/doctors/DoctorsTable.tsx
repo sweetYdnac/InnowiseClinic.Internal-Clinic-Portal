@@ -6,7 +6,7 @@ import { Loader } from '../../components/Loader/Loader';
 import { SelectStatus } from '../../components/Select/SelectStatus';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { dateViewFormat } from '../../constants/formats';
-import { useChangeDoctorStatusCommand } from '../../hooks/doctors';
+import { useChangeDoctorStatusCommand } from '../../hooks/requests/doctors';
 import { IPagingData } from '../../types/common/Responses';
 import { IDoctorInformationResponse } from '../../types/response/doctors';
 

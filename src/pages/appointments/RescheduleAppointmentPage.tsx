@@ -11,8 +11,8 @@ import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
 import { dateApiFormat, timeSlotFormat } from '../../constants/formats';
-import { useAppointmentQuery, useRescheduleAppointmentCommand, useTimeSlotsQuery } from '../../hooks/appointments';
-import { usePagedDoctorsQuery } from '../../hooks/doctors';
+import { useAppointmentQuery, useRescheduleAppointmentCommand, useTimeSlotsQuery } from '../../hooks/requests/appointments';
+import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';
 import { useRescheduleAppointmentValidator } from '../../hooks/validators/appointments/reschedule';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 

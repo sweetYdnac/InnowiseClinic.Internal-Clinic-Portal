@@ -4,21 +4,21 @@ import jwt from 'jwt-decode';
 import randomize from 'randomatic';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { AuthorizationService } from '../api/services/AuthorizationService';
-import { AppRoutes } from '../constants/AppRoutes';
-import { AuthorizationQueries } from '../constants/QueryKeys';
-import { PasswordBoundaries } from '../constants/Validation';
-import { IProfileState, setProfile } from '../store/profileSlice';
-import { setRole } from '../store/roleSlice';
-import { IJwtToken } from '../types/common/IJwtToken';
-import { ICreatedResponse } from '../types/common/Responses';
-import { IRegisterRequest } from '../types/request/authorization';
-import { ITokenResponse } from '../types/response/authorization';
-import { getProfile, getRoleByName, showPopup } from '../utils/functions';
-import { useAppDispatch } from './store';
-import { ILoginForm as ISignForm } from './validators/authorization/signIn';
+import { AuthorizationService } from '../../api/services/AuthorizationService';
+import { AppRoutes } from '../../constants/AppRoutes';
+import { AuthorizationQueries } from '../../constants/QueryKeys';
+import { PasswordBoundaries } from '../../constants/Validation';
+import { IProfileState, setProfile } from '../../store/profileSlice';
+import { setRole } from '../../store/roleSlice';
+import { IJwtToken } from '../../types/common/IJwtToken';
+import { ICreatedResponse } from '../../types/common/Responses';
+import { IRegisterRequest } from '../../types/request/authorization';
+import { ITokenResponse } from '../../types/response/authorization';
+import { getProfile, getRoleByName, showPopup } from '../../utils/functions';
+import { useAppDispatch } from '../store';
+import { ISignInForm } from '../validators/authorization/signIn';
 
-export const useSignInQuery = (form: ISignForm, setError: UseFormSetError<ISignForm>, enabled = false) => {
+export const useSignInQuery = (form: ISignInForm, setError: UseFormSetError<ISignInForm>, enabled = false) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 

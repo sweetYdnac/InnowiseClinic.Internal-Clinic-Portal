@@ -10,11 +10,11 @@ import { Loader } from '../../components/Loader/Loader';
 import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
-import { useSignUpCommand } from '../../hooks/authorization';
-import { useCreateDoctorCommand } from '../../hooks/doctors';
-import { usePagedOfficesQuery } from '../../hooks/offices';
-import { useCreatePhotoCommand } from '../../hooks/photos';
-import { usePagedSpecializationsQuery } from '../../hooks/specializations';
+import { useSignUpCommand } from '../../hooks/requests/authorization';
+import { useCreateDoctorCommand } from '../../hooks/requests/doctors';
+import { usePagedOfficesQuery } from '../../hooks/requests/offices';
+import { useCreatePhotoCommand } from '../../hooks/requests/photos';
+import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { useCreateDoctorValidator } from '../../hooks/validators/doctors/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 

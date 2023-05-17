@@ -3,17 +3,17 @@ import { AxiosError } from 'axios';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { DoctorsService } from '../api/services/DoctorsService';
-import { AppRoutes } from '../constants/AppRoutes';
-import { dateApiFormat } from '../constants/formats';
-import { DoctorsQueries } from '../constants/QueryKeys';
-import { IChangeStatusRequest } from '../types/common/Requests';
-import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../types/common/Responses';
-import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../types/request/doctors';
-import { IDoctorInformationResponse, IDoctorResponse } from '../types/response/doctors';
-import { showPopup } from '../utils/functions';
-import { ICreateDoctorForm } from './validators/doctors/create';
-import { IUpdateDoctorForm } from './validators/doctors/update';
+import { DoctorsService } from '../../api/services/DoctorsService';
+import { AppRoutes } from '../../constants/AppRoutes';
+import { DoctorsQueries } from '../../constants/QueryKeys';
+import { dateApiFormat } from '../../constants/formats';
+import { IChangeStatusRequest } from '../../types/common/Requests';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
+import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../../types/request/doctors';
+import { IDoctorInformationResponse, IDoctorResponse } from '../../types/response/doctors';
+import { showPopup } from '../../utils/functions';
+import { ICreateDoctorForm } from '../validators/doctors/create';
+import { IUpdateDoctorForm } from '../validators/doctors/update';
 
 export const useDoctorQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
@@ -66,26 +66,41 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
+    let request = useMemo(() => {
+        return {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            middleName: form.middleName,
+            dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
+            specializationId: form.specializationId,
+            officeId: form.officeId,
+            careerStartYear: form.careerStartYear?.year() ?? 0,
+            specializationName: form.specializationInput,
+            officeAddress: form.officeInput,
+            status: form.status,
+        } as ICreateDoctorRequest;
+    }, [
+        form.careerStartYear,
+        form.dateOfBirth,
+        form.firstName,
+        form.lastName,
+        form.middleName,
+        form.officeId,
+        form.officeInput,
+        form.specializationId,
+        form.specializationInput,
+        form.status,
+    ]);
+
     return useMutation<ICreatedResponse, AxiosError<any, any>, { accountId: string; photoId: string | null }>({
         mutationFn: async ({ accountId, photoId }) => {
-            const request: ICreateDoctorRequest = {
-                id: accountId,
-                photoId: photoId,
-                firstName: form.firstName,
-                lastName: form.lastName,
-                middleName: form.middleName,
-                dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
-                specializationId: form.specializationId,
-                officeId: form.officeId,
-                careerStartYear: form.careerStartYear?.year() ?? 0,
-                specializationName: form.specializationInput,
-                officeAddress: form.officeInput,
-                status: form.status,
-            };
+            request.id = accountId;
+            request.photoId = photoId;
 
             return await DoctorsService.create(request);
         },
-        onSuccess: () => {
+        onSuccess: (data, variables) => {
+            queryClient.setQueryData([DoctorsQueries.getById, variables.accountId], { ...request, photoId: variables.photoId });
             queryClient.invalidateQueries([DoctorsQueries.getPaged]);
             navigate(AppRoutes.Doctors);
             showPopup('Doctor created successfully!', 'success');
@@ -163,7 +178,10 @@ export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setE
             return await DoctorsService.update(id, request);
         },
         onSuccess: (data, photoId) => {
-            queryClient.setQueryData([DoctorsQueries.getById, id], request);
+            queryClient.setQueryData([DoctorsQueries.getById, id], {
+                ...request,
+                photoId: photoId,
+            } as IDoctorResponse);
             queryClient.invalidateQueries([DoctorsQueries.getPaged]);
             showPopup('Doctor created successfully!', 'success');
         },

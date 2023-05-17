@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { EmailAddressInput } from '../../components/EmailAddressInput/EmailAddressInput';
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
-import { useGetInitialProfile, useSignInQuery } from '../../hooks/authorization';
+import { useGetInitialProfile, useSignInQuery } from '../../hooks/requests/authorization';
 import { useLoginValidator } from '../../hooks/validators/authorization/signIn';
 import '../../styles/ModalForm.css';
 import { ITokenResponse } from '../../types/response/authorization';
