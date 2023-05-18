@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { FunctionComponent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../../constants/AppRoutes';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { useAuthorizationService } from '../../hooks/services/useAuthorizationService';
 import { useAppDispatch } from '../../hooks/store';
 import { switchAside } from '../../store/layoutSlice';

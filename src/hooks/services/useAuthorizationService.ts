@@ -3,9 +3,9 @@ import jwt from 'jwt-decode';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { ApiBaseUrls } from '../../constants/ApiBaseUrls';
-import { AppRoutes } from '../../constants/AppRoutes';
 import { LocalStorage } from '../../constants/LocalStorage';
 import { Roles } from '../../constants/Roles';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { IJwtToken } from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
 import { ILoginRequest, IRegisterRequest } from '../../types/request/authorization';
@@ -59,10 +59,6 @@ export const useAuthorizationService = () => {
             const refreshToken = localStorage.getItem(LocalStorage.RefreshToken);
             if (!refreshToken) {
                 logout();
-                navigate(AppRoutes.SignIn);
-                enqueueSnackbar('Your session has expired', {
-                    variant: 'warning',
-                });
                 return;
             }
 

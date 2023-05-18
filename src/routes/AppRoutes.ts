@@ -11,4 +11,7 @@ export enum AppRoutes {
     CreateOffice = '/offices/create',
     OfficeInformation = '/offices/:id',
     Profile = '/profile',
+    Specializations = '/specializations',
+    CreateSpecialization = '/specializations/create',
+    SpecializationInformation = '/specializations/:id',
 }

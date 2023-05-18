@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Loader } from './components/Loader/Loader';
 import { useInitialProfileQuery } from './hooks/requests/authorization';
 import { useAuthorizationService } from './hooks/services/useAuthorizationService';
@@ -6,9 +6,13 @@ import { useAppDispatch } from './hooks/store';
 import { setRole } from './store/roleSlice';
 import { getRoleByName } from './utils/functions';
 
-export const Root = () => {
-    const authorizationService = useAuthorizationService();
+interface RootProps {
+    children: ReactNode;
+}
+
+export const Root = ({ children }: RootProps) => {
     const { isFetching, refetch } = useInitialProfileQuery();
+    const authorizationService = useAuthorizationService();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -29,5 +33,5 @@ export const Root = () => {
         initializeRole();
     }, []);
 
-    return isFetching ? <Loader /> : <></>;
+    return isFetching ? <Loader /> : <>{children}</>;
 };

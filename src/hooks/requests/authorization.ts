@@ -5,10 +5,10 @@ import { useSnackbar } from 'notistack';
 import randomize from 'randomatic';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../../constants/AppRoutes';
 import { AuthorizationQueries } from '../../constants/QueryKeys';
 import { Roles } from '../../constants/Roles';
 import { PasswordBoundaries } from '../../constants/Validation';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import { IJwtToken } from '../../types/common/IJwtToken';
@@ -67,11 +67,12 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
         queryKey: [AuthorizationQueries.getInitialProfile],
         queryFn: async () => {
             let profile: IProfileState | null = null;
+            const id = accountId ?? authorizationService.getAccountId();
             switch (getRoleByName(roleName ?? authorizationService.getRoleName())) {
                 case Roles.Doctor:
-                    const doctor = await doctorsService.getById(accountId ?? authorizationService.getAccountId());
+                    const doctor = await doctorsService.getById(id);
                     profile = {
-                        id: accountId,
+                        id: id,
                         photoId: doctor.photoId,
                         firstName: doctor.firstName,
                         lastName: doctor.lastName,
@@ -83,9 +84,9 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
                     } as IProfileState;
                     break;
                 case Roles.Receptionist:
-                    const receptionist = await receptionistsService.getById(accountId ?? authorizationService.getAccountId());
+                    const receptionist = await receptionistsService.getById(id);
                     profile = {
-                        id: accountId,
+                        id: id,
                         photoId: receptionist.photoId,
                         firstName: receptionist.firstName,
                         lastName: receptionist.lastName,
@@ -111,11 +112,6 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
         onError(error) {
             enqueueSnackbar(`Something went wrong. ${error.message}`, {
                 variant: 'error',
-            });
-        },
-        onSuccess() {
-            enqueueSnackbar('You signed in successfully!', {
-                variant: 'success',
             });
         },
     });

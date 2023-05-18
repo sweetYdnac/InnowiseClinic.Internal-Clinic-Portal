@@ -4,7 +4,7 @@ import { FunctionComponent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
-import { AppRoutes } from '../../constants/AppRoutes';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { timeSlotFormat } from '../../constants/Formats';
 import { useApproveAppointmentCommand, useCancelAppointmentCommand } from '../../hooks/requests/appointments';
 import { IPagingData } from '../../types/common/Responses';

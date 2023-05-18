@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../../constants/AppRoutes';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { DoctorsQueries } from '../../constants/QueryKeys';
 import { dateApiFormat } from '../../constants/Formats';
 import { IChangeStatusRequest } from '../../types/common/Requests';

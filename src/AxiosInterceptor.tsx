@@ -2,9 +2,9 @@ import { AxiosError, AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axi
 import { useSnackbar } from 'notistack';
 import { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from './constants/AppRoutes';
 import { axiosInstance } from './hooks/services/axiosConfig';
 import { useAuthorizationService } from './hooks/services/useAuthorizationService';
+import { AppRoutes } from './routes/AppRoutes';
 
 interface AxiosInterceptorProps {
     children: ReactNode;
@@ -67,7 +67,7 @@ export const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
             axiosInstance.interceptors.response.eject(requestInterceptor);
             axiosInstance.interceptors.response.eject(responseInterceptor);
         };
-    }, [authorizationService, enqueueSnackbar, navigate]);
+    }, []);
 
     return <>{children}</>;
 };

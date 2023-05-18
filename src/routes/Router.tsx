@@ -1,5 +1,4 @@
 import { Route, Routes } from 'react-router-dom';
-import { AppRoutes } from '../constants/AppRoutes';
 import { Roles } from '../constants/Roles';
 import { Home } from '../pages/Home';
 import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
@@ -13,6 +12,9 @@ import { Layout } from '../pages/layout/Layout';
 import { CreateOfficePage } from '../pages/offices/CreateOfficePage';
 import { OfficeInformationPage } from '../pages/offices/OfficeInformationPage';
 import { OfficesPage } from '../pages/offices/OfficesPage';
+import { CreateSpecializationPage } from '../pages/specializations/CreateSpecializationPage';
+import { SpecializationsPage } from '../pages/specializations/SpecializationsPage';
+import { AppRoutes } from './AppRoutes';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export const AppRouter = () => {
@@ -91,6 +93,22 @@ export const AppRouter = () => {
                     element={
                         <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                             <OfficeInformationPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path={AppRoutes.Specializations}
+                    element={
+                        <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                            <SpecializationsPage />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path={AppRoutes.CreateSpecialization}
+                    element={
+                        <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                            <CreateSpecializationPage />
                         </ProtectedRoute>
                     }
                 />

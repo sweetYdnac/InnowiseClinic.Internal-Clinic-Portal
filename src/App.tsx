@@ -21,13 +21,14 @@ const App = () => {
         <Provider store={store}>
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
-                    <AxiosInterceptor>
-                        <Root />
-                        <SnackbarProvider>
-                            <AppRouter />
-                        </SnackbarProvider>
-                        <ReactQueryDevtools />
-                    </AxiosInterceptor>
+                    <SnackbarProvider>
+                        <Root>
+                            <AxiosInterceptor>
+                                <AppRouter />
+                            </AxiosInterceptor>
+                        </Root>
+                    </SnackbarProvider>
+                    <ReactQueryDevtools />
                 </BrowserRouter>
             </QueryClientProvider>
         </Provider>

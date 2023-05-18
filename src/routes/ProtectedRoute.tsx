@@ -2,7 +2,7 @@ import { useSnackbar } from 'notistack';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../components/Loader/Loader';
-import { AppRoutes } from '../constants/AppRoutes';
+import { AppRoutes } from './AppRoutes';
 import { Roles } from '../constants/Roles';
 import { useAuthorizationService } from '../hooks/services/useAuthorizationService';
 import { useAppSelector } from '../hooks/store';

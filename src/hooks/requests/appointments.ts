@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { ValidationError } from 'yup';
-import { AppRoutes } from '../../constants/AppRoutes';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { dateApiFormat, timeApiFormat } from '../../constants/Formats';
 import { ApppointmentsQueries } from '../../constants/QueryKeys';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
