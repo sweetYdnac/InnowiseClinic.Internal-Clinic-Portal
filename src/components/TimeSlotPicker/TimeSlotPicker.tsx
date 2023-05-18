@@ -5,7 +5,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { timeSlotFormat } from '../../constants/formats';
+import { timeSlotFormat } from '../../constants/Formats';
 import { ITimeSlot } from '../../types/response/appointments';
 
 interface TimeSlotPickerProps {

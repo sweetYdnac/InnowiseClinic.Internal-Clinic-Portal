@@ -1,12 +1,12 @@
+import { useSnackbar } from 'notistack';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthorizationService } from '../api/services/AuthorizationService';
 import { Loader } from '../components/Loader/Loader';
 import { AppRoutes } from '../constants/AppRoutes';
 import { Roles } from '../constants/Roles';
+import { useAuthorizationService } from '../hooks/services/useAuthorizationService';
 import { useAppSelector } from '../hooks/store';
 import { selectRole } from '../store/roleSlice';
-import { showPopup } from '../utils/functions';
 
 interface ProtectedRouteProps {
     roles: Roles[];
@@ -14,13 +14,15 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
+    const authorizationService = useAuthorizationService();
     const [display, setDisplay] = useState(false);
     const currentRole = useAppSelector(selectRole);
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         const refresh = async () => {
-            await AuthorizationService.refresh().then(() => {
+            await authorizationService.refresh().then(() => {
                 setDisplay(true);
             });
         };
@@ -28,10 +30,15 @@ export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
         const checkAuthorization = async () => {
             if (!roles.find((item) => item === currentRole)) {
                 navigate(AppRoutes.Home);
-                showPopup(`Only users with roles ${roles.map((role) => role.toUpperCase()).join(', ')} allowed to access this page.`);
+                enqueueSnackbar(
+                    `Only users with roles ${roles.map((role) => role.toUpperCase()).join(', ')} allowed to access this page.`,
+                    {
+                        variant: 'warning',
+                    }
+                );
             }
 
-            if (AuthorizationService.isAuthorized()) {
+            if (authorizationService.isAuthorized()) {
                 setDisplay(true);
             } else {
                 refresh();
@@ -39,7 +46,7 @@ export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
         };
 
         checkAuthorization();
-    }, []);
+    }, [authorizationService, currentRole, enqueueSnackbar, navigate, roles]);
 
     return <>{display ? children : <Loader />}</>;
 };

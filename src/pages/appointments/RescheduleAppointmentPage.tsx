@@ -10,7 +10,7 @@ import { ReadonlyTextfield } from '../../components/ReadonlyTextfield/ReadonlyTe
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
 import { endTime, startTime } from '../../constants/WorkingDay';
-import { dateApiFormat, timeSlotFormat } from '../../constants/formats';
+import { dateApiFormat, timeSlotFormat } from '../../constants/Formats';
 import { useAppointmentQuery, useRescheduleAppointmentCommand, useTimeSlotsQuery } from '../../hooks/requests/appointments';
 import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';
 import { useRescheduleAppointmentValidator } from '../../hooks/validators/appointments/reschedule';

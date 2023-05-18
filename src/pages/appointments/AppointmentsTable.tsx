@@ -1,14 +1,12 @@
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppointmentsService } from '../../api/services/AppointmentsService';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
 import { AppRoutes } from '../../constants/AppRoutes';
-import { timeSlotFormat } from '../../constants/formats';
-import { ApppointmentsQueries } from '../../constants/QueryKeys';
+import { timeSlotFormat } from '../../constants/Formats';
+import { useApproveAppointmentCommand, useCancelAppointmentCommand } from '../../hooks/requests/appointments';
 import { IPagingData } from '../../types/common/Responses';
 import { IAppointmentResponse } from '../../types/response/appointments';
 
@@ -20,25 +18,11 @@ interface AppointmentsListProps {
 
 export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ appointments, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
-
     const [cancelAppointmentId, setCancelAppointmentId] = useState<string | null>(null);
+    const { mutate: approveAppointment, isLoading: approveAppointmentLoading } = useApproveAppointmentCommand();
+    const { mutate: cancelAppointment, isLoading: cancelAppointmentLoading } = useCancelAppointmentCommand(cancelAppointmentId ?? '');
+
     const closeDialog = () => setCancelAppointmentId(null);
-
-    const { mutate: cancelAppointment, isLoading: cancelAppointmentLoading } = useMutation({
-        mutationFn: async () => await AppointmentsService.cancel(cancelAppointmentId as string),
-        onSuccess: () => {
-            closeDialog();
-            queryClient.invalidateQueries([ApppointmentsQueries.getPaged]);
-        },
-        retry: false,
-    });
-
-    const { mutate: approveAppointment, isLoading: approveAppointmentLoading } = useMutation({
-        mutationFn: async (id: string) => await AppointmentsService.approve(id),
-        onSuccess: () => queryClient.invalidateQueries([ApppointmentsQueries.getPaged]),
-        retry: false,
-    });
 
     return (
         <>
@@ -73,7 +57,7 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ ap
                                             <Button onClick={() => navigate(AppRoutes.RescheduleAppointment.replace(':id', `${item.id}`))}>
                                                 Reschedule
                                             </Button>
-                                            <Button onClick={() => approveAppointment(item.id)}>Approve</Button>
+                                            <Button onClick={() => approveAppointment({ id: item.id })}>Approve</Button>
                                         </>
                                     )}
                                 </TableCell>
@@ -95,7 +79,10 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ ap
                 isOpen={cancelAppointmentId !== null}
                 title='Cancel appointment'
                 content='Do you really want to cancel the appointment? It will be permanently deleted.'
-                handleSubmit={cancelAppointment}
+                handleSubmit={() => {
+                    cancelAppointment({ id: cancelAppointmentId ?? '' });
+                    closeDialog();
+                }}
                 handleDecline={closeDialog}
             />
 

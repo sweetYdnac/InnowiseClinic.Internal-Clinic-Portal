@@ -1,15 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { FunctionComponent } from 'react';
+import jwt from 'jwt-decode';
+import { FunctionComponent, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { EmailAddressInput } from '../../components/EmailAddressInput/EmailAddressInput';
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
-import { useGetInitialProfile, useSignInQuery } from '../../hooks/requests/authorization';
+import { useInitialProfileQuery, useSignInQuery } from '../../hooks/requests/authorization';
 import { useLoginValidator } from '../../hooks/validators/authorization/signIn';
 import '../../styles/ModalForm.css';
-import { ITokenResponse } from '../../types/response/authorization';
+import { IJwtToken } from '../../types/common/IJwtToken';
 
 export const SignIn: FunctionComponent = () => {
     const { validationScheme, initialValues } = useLoginValidator();
@@ -28,7 +29,24 @@ export const SignIn: FunctionComponent = () => {
     });
 
     const { data: tokenResponse, refetch } = useSignInQuery(watch(), setError);
-    useGetInitialProfile(tokenResponse as ITokenResponse);
+
+    const t = useMemo(() => {
+        if (tokenResponse) {
+            const decoded = jwt<IJwtToken>(tokenResponse?.accessToken as string);
+
+            return {
+                accountId: decoded.sub,
+                role: decoded.role,
+            };
+        } else {
+            return {
+                accountId: '',
+                role: '',
+            };
+        }
+    }, [tokenResponse]);
+
+    useInitialProfileQuery(t.accountId, t.role, !!tokenResponse?.accessToken);
 
     return (
         <Box

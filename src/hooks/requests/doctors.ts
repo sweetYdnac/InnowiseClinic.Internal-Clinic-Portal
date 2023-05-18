@@ -4,24 +4,25 @@ import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { DoctorsService } from '../../api/services/DoctorsService';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { DoctorsQueries } from '../../constants/QueryKeys';
-import { dateApiFormat } from '../../constants/formats';
+import { dateApiFormat } from '../../constants/Formats';
 import { IChangeStatusRequest } from '../../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../../types/request/doctors';
 import { IDoctorInformationResponse, IDoctorResponse } from '../../types/response/doctors';
+import { useDoctorsService } from '../services/useDoctorsService';
 import { ICreateDoctorForm } from '../validators/doctors/create';
 import { IUpdateDoctorForm } from '../validators/doctors/update';
 
 export const useDoctorQuery = (id: string, enabled = false) => {
+    const doctorsService = useDoctorsService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IDoctorResponse, AxiosError, IDoctorResponse, QueryKey>({
         queryKey: [DoctorsQueries.getById, id],
-        queryFn: async () => await DoctorsService.getById(id),
+        queryFn: async () => await doctorsService.getById(id),
         enabled: enabled,
         retry: false,
         onError: (error) => {
@@ -36,12 +37,13 @@ export const useDoctorQuery = (id: string, enabled = false) => {
 };
 
 export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled = false) => {
+    const doctorsService = useDoctorsService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
         queryKey: [DoctorsQueries.getPaged, { ...request }],
-        queryFn: async () => await DoctorsService.getPaged(request),
+        queryFn: async () => await doctorsService.getPaged(request),
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
@@ -57,11 +59,13 @@ export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled =
 };
 
 export const useChangeDoctorStatusCommand = () => {
+    const doctorsService = useDoctorsService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<INoContentResponse, AxiosError, { id: string; status: number }>({
-        mutationFn: async ({ id, status }) => await DoctorsService.changeStatus(id, { status: status } as IChangeStatusRequest),
+        mutationFn: async ({ id, status }) => await doctorsService.changeStatus(id, { status: status } as IChangeStatusRequest),
+        retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData<IDoctorResponse>([DoctorsQueries.getById, variables.id], (prev) => {
                 if (prev !== undefined) {
@@ -99,6 +103,7 @@ export const useChangeDoctorStatusCommand = () => {
 };
 
 export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFormSetError<ICreateDoctorForm>) => {
+    const doctorsService = useDoctorsService();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -136,8 +141,9 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
             request.id = accountId;
             request.photoId = photoId;
 
-            return await DoctorsService.create(request);
+            return await doctorsService.create(request);
         },
+        retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData([DoctorsQueries.getById, variables.accountId], { ...request, photoId: variables.photoId });
             queryClient.invalidateQueries([DoctorsQueries.getPaged]);
@@ -183,6 +189,7 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
 };
 
 export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setError: UseFormSetError<IUpdateDoctorForm>) => {
+    const doctorsService = useDoctorsService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -220,8 +227,9 @@ export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setE
         mutationFn: async (photoId: string) => {
             request.photoId = photoId;
 
-            return await DoctorsService.update(id, request);
+            return await doctorsService.update(id, request);
         },
+        retry: false,
         onSuccess: (data, photoId) => {
             queryClient.setQueryData([DoctorsQueries.getById, id], {
                 ...request,

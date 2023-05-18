@@ -1,17 +1,17 @@
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { AuthorizationService } from '../../api/services/AuthorizationService';
-import { Popup } from '../../components/Popup/Popup';
+import { useAuthorizationService } from '../../hooks/services/useAuthorizationService';
 import { Header } from './Header';
 import { Aside } from './aside/Aside';
 
 export const Layout = () => {
-    const [isAuthorized, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
+    const authorizationService = useAuthorizationService();
+    const [isAuthorized, setIsAuthorized] = useState(authorizationService.isAuthorized());
 
     useEffect(() => {
         const handleStorageChange = () => {
-            setIsAuthorized(AuthorizationService.isAuthorized());
+            setIsAuthorized(authorizationService.isAuthorized());
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -19,7 +19,7 @@ export const Layout = () => {
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, [authorizationService]);
 
     return (
         <Box style={{ display: 'flex', flexDirection: 'column' }}>
@@ -30,8 +30,6 @@ export const Layout = () => {
                     <Outlet />
                 </Box>
             </Box>
-
-            <Popup />
         </Box>
     );
 };

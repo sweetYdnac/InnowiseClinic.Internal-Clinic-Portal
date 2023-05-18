@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import * as Yup from 'yup';
-import { dateApiFormat, timeApiFormat, timeSlotFormat } from '../../constants/formats';
+import { dateApiFormat, timeApiFormat, timeSlotFormat } from '../../constants/Formats';
 
 declare module 'yup' {
     interface StringSchema {

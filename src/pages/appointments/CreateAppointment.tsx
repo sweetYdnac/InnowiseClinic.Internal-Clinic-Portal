@@ -3,25 +3,26 @@ import { Box, Typography } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { SpecializationsService } from '../../api/services/SpecializationsService';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
 import { Loader } from '../../components/Loader/Loader';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
+import { dateApiFormat, timeApiFormat, timeSlotFormat } from '../../constants/Formats';
 import { endTime, startTime } from '../../constants/WorkingDay';
-import { dateApiFormat, timeApiFormat, timeSlotFormat } from '../../constants/formats';
 import { useCreateAppointmentCommand, useTimeSlotsQuery } from '../../hooks/requests/appointments';
 import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { usePagedPatientsQuery } from '../../hooks/requests/patients';
 import { usePagedServicesQuery } from '../../hooks/requests/services';
 import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
+import { useSpecializationsService } from '../../hooks/services/useSpecializationsService';
 import { useCreateAppointmentValidator } from '../../hooks/validators/appointments/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { ISpecializationResponse } from '../../types/response/specializations';
 
 export const CreateAppointment = () => {
+    const specializationsService = useSpecializationsService();
     const navigate = useNavigate();
     const { validationScheme, initialValues } = useCreateAppointmentValidator();
 
@@ -155,7 +156,7 @@ export const CreateAppointment = () => {
 
             if (!specialization) {
                 if (id) {
-                    specialization = await SpecializationsService.getById(id);
+                    specialization = await specializationsService.getById(id);
                     setValue('specializationId', specialization.id, { shouldValidate: true, shouldTouch: true });
                     specializations?.items.push(specialization);
                 }

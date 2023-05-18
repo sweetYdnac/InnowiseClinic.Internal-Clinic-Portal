@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
 import { SelectStatus } from '../../components/Select/SelectStatus';
 import { AppRoutes } from '../../constants/AppRoutes';
-import { dateViewFormat } from '../../constants/formats';
+import { dateViewFormat } from '../../constants/Formats';
 import { useChangeDoctorStatusCommand } from '../../hooks/requests/doctors';
 import { IPagingData } from '../../types/common/Responses';
 import { IDoctorInformationResponse } from '../../types/response/doctors';

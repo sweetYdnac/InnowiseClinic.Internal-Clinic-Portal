@@ -1,32 +1,33 @@
 import { useEffect } from 'react';
-import { AuthorizationService } from './api/services/AuthorizationService';
+import { Loader } from './components/Loader/Loader';
+import { useInitialProfileQuery } from './hooks/requests/authorization';
+import { useAuthorizationService } from './hooks/services/useAuthorizationService';
 import { useAppDispatch } from './hooks/store';
-import { IProfileState, setProfile } from './store/profileSlice';
 import { setRole } from './store/roleSlice';
-import { getProfile, getRoleByName } from './utils/functions';
+import { getRoleByName } from './utils/functions';
 
 export const Root = () => {
+    const authorizationService = useAuthorizationService();
+    const { isFetching, refetch } = useInitialProfileQuery();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         const initializeRole = async () => {
-            if (!AuthorizationService.isAuthorized()) {
-                await AuthorizationService.refresh();
+            if (!authorizationService.isAuthorized()) {
+                await authorizationService.refresh();
             }
 
-            const role = getRoleByName(AuthorizationService.getRoleName());
+            const role = getRoleByName(authorizationService.getRoleName());
             dispatch(setRole(role));
 
-            const accountId = AuthorizationService.getAccountId();
+            const accountId = authorizationService.getAccountId();
             if (accountId) {
-                const profile = await getProfile(AuthorizationService.getRoleName(), accountId);
-                if (profile) {
-                    dispatch(setProfile(profile as IProfileState));
-                }
+                refetch();
             }
         };
 
         initializeRole();
     }, []);
-    return <></>;
+
+    return isFetching ? <Loader /> : <></>;
 };

@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import { AxiosInterceptor } from './AxiosInterceptor';
 import { Root } from './Root';
 import { AppRouter } from './routes/Router';
 import { store } from './store/store';
@@ -18,11 +20,15 @@ const App = () => {
     return (
         <Provider store={store}>
             <QueryClientProvider client={queryClient}>
-                <Root />
-                <SnackbarProvider>
-                    <AppRouter />
-                </SnackbarProvider>
-                <ReactQueryDevtools />
+                <BrowserRouter>
+                    <AxiosInterceptor>
+                        <Root />
+                        <SnackbarProvider>
+                            <AppRouter />
+                        </SnackbarProvider>
+                        <ReactQueryDevtools />
+                    </AxiosInterceptor>
+                </BrowserRouter>
             </QueryClientProvider>
         </Provider>
     );

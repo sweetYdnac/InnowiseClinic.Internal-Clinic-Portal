@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { dateApiFormat, timeApiFormat } from '../../../constants/formats';
+import { dateApiFormat, timeApiFormat } from '../../../constants/Formats';
 import { IRescheduleAppointmentResponse } from '../../../types/response/appointments';
 import { Yup } from '../YupConfiguration';
 

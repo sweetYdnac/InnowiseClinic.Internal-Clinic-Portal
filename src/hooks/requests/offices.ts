@@ -4,22 +4,23 @@ import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { OfficesService } from '../../api/services/OfficesService';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { OfficesQueries } from '../../constants/QueryKeys';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { IGetPagedOfficesRequest, IUpdateOfficeRequest } from '../../types/request/offices';
 import { IOfficeInformationResponse, IOfficeResponse } from '../../types/response/offices';
+import { useOfficesService } from '../services/useOfficesService';
 import { ICreateOfficeForm } from '../validators/offices/create';
 import { IUpdateOfficeForm } from '../validators/offices/update';
 
 export const useOfficeQuery = (id: string) => {
+    const officesService = useOfficesService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IOfficeResponse, AxiosError, IOfficeResponse, QueryKey>({
         queryKey: [OfficesQueries.getById, id],
-        queryFn: async () => await OfficesService.getById(id),
+        queryFn: async () => await officesService.getById(id),
         retry: false,
         onError: (error) => {
             if (error.response?.status === 400) {
@@ -33,13 +34,14 @@ export const useOfficeQuery = (id: string) => {
 };
 
 export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled = false) => {
+    const officesService = useOfficesService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IPagedResponse<IOfficeInformationResponse>, AxiosError, IPagedResponse<IOfficeInformationResponse>, QueryKey>({
         initialData: enabled ? undefined : ({ items: [] as IOfficeInformationResponse[] } as IPagedResponse<IOfficeInformationResponse>),
         queryKey: [OfficesQueries.getPaged, { ...request }],
-        queryFn: async () => await OfficesService.getPaged(request),
+        queryFn: async () => await officesService.getPaged(request),
         enabled: enabled,
         retry: false,
         keepPreviousData: true,
@@ -55,11 +57,13 @@ export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled =
 };
 
 export const useChangeOfficeStatusCommand = () => {
+    const officesService = useOfficesService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<INoContentResponse, AxiosError, { id: string; isActive: boolean }>({
-        mutationFn: async ({ id, isActive }) => await OfficesService.changeStatus(id, isActive),
+        mutationFn: async ({ id, isActive }) => await officesService.changeStatus(id, isActive),
+        retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData<IOfficeResponse>([OfficesQueries.getById, variables.id], (prev) => {
                 if (prev !== undefined) {
@@ -97,6 +101,7 @@ export const useChangeOfficeStatusCommand = () => {
 };
 
 export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setError: UseFormSetError<IUpdateOfficeForm>) => {
+    const officesService = useOfficesService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -112,8 +117,9 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
         mutationFn: async (photoId: string) => {
             request.photoId = photoId;
 
-            return await OfficesService.update(id, request);
+            return await officesService.update(id, request);
         },
+        retry: false,
         onSuccess: (data, photoId) => {
             queryClient.setQueryData([OfficesQueries.getById, id], {
                 photoId: photoId,
@@ -167,16 +173,18 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
 };
 
 export const useCreateOfficeCommand = (form: ICreateOfficeForm, setError: UseFormSetError<ICreateOfficeForm>) => {
+    const officesService = useOfficesService();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, { photoId: string | null }>({
         mutationFn: async ({ photoId }) =>
-            await OfficesService.create({
+            await officesService.create({
                 ...form,
                 photoId: photoId,
             }),
+        retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData([OfficesQueries.getById, data.id], {
                 photoId: variables.photoId,
