@@ -1,5 +1,6 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -9,12 +10,12 @@ import { OfficesQueries } from '../../constants/QueryKeys';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { IGetPagedOfficesRequest, IUpdateOfficeRequest } from '../../types/request/offices';
 import { IOfficeInformationResponse, IOfficeResponse } from '../../types/response/offices';
-import { showPopup } from '../../utils/functions';
 import { ICreateOfficeForm } from '../validators/offices/create';
 import { IUpdateOfficeForm } from '../validators/offices/update';
 
 export const useOfficeQuery = (id: string) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IOfficeResponse, AxiosError, IOfficeResponse, QueryKey>({
         queryKey: [OfficesQueries.getById, id],
@@ -23,7 +24,9 @@ export const useOfficeQuery = (id: string) => {
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -31,6 +34,7 @@ export const useOfficeQuery = (id: string) => {
 
 export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IPagedResponse<IOfficeInformationResponse>, AxiosError, IPagedResponse<IOfficeInformationResponse>, QueryKey>({
         initialData: enabled ? undefined : ({ items: [] as IOfficeInformationResponse[] } as IPagedResponse<IOfficeInformationResponse>),
@@ -42,7 +46,9 @@ export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled =
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -50,6 +56,7 @@ export const usePagedOfficesQuery = (request: IGetPagedOfficesRequest, enabled =
 
 export const useChangeOfficeStatusCommand = () => {
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<INoContentResponse, AxiosError, { id: string; isActive: boolean }>({
         mutationFn: async ({ id, isActive }) => await OfficesService.changeStatus(id, isActive),
@@ -77,16 +84,21 @@ export const useChangeOfficeStatusCommand = () => {
                     }),
                 } as IPagedResponse<IOfficeInformationResponse>;
             });
-            showPopup('Status changed successfully!', 'success');
+            enqueueSnackbar('Status changed successfully!', {
+                variant: 'success',
+            });
         },
         onError: () => {
-            showPopup('Something went wrong.');
+            enqueueSnackbar('Something went wrong.', {
+                variant: 'error',
+            });
         },
     });
 };
 
 export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setError: UseFormSetError<IUpdateOfficeForm>) => {
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     let request = useMemo(
         () =>
@@ -125,7 +137,9 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
                     }),
                 } as IPagedResponse<IOfficeInformationResponse>;
             });
-            showPopup('Doctor created successfully!', 'success');
+            enqueueSnackbar('Office updated successfully!', {
+                variant: 'success',
+            });
         },
         onError: (error) => {
             if (error.response?.status === 400) {
@@ -155,6 +169,7 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
 export const useCreateOfficeCommand = (form: ICreateOfficeForm, setError: UseFormSetError<ICreateOfficeForm>) => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, { photoId: string | null }>({
         mutationFn: async ({ photoId }) =>
@@ -171,7 +186,9 @@ export const useCreateOfficeCommand = (form: ICreateOfficeForm, setError: UseFor
             } as IOfficeResponse);
             queryClient.invalidateQueries([OfficesQueries.getPaged]);
             navigate(AppRoutes.Offices);
-            showPopup('Office created successfully!', 'success');
+            enqueueSnackbar('Office created successfully!', {
+                variant: 'success',
+            });
         },
         onError: (error) => {
             if (error.response?.status === 400) {

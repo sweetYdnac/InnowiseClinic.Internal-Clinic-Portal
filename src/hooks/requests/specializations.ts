@@ -1,5 +1,6 @@
 import { QueryKey, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { SpecializationsService } from '../../api/services/SpecializationsService';
 import { AppRoutes } from '../../constants/AppRoutes';
@@ -7,10 +8,10 @@ import { SpecializationsQueries } from '../../constants/QueryKeys';
 import { IPagedResponse } from '../../types/common/Responses';
 import { IGetPagedSpecializationsRequest } from '../../types/request/specializations';
 import { ISpecializationResponse } from '../../types/response/specializations';
-import { showPopup } from '../../utils/functions';
 
 export const usePagedSpecializationsQuery = (request: IGetPagedSpecializationsRequest, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     const { title, ...rest } = request;
 
@@ -24,7 +25,9 @@ export const usePagedSpecializationsQuery = (request: IGetPagedSpecializationsRe
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -32,6 +35,7 @@ export const usePagedSpecializationsQuery = (request: IGetPagedSpecializationsRe
 
 export const useSpecializationQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<ISpecializationResponse, AxiosError, ISpecializationResponse, QueryKey>({
         queryKey: [SpecializationsQueries.getById, id],
@@ -41,7 +45,9 @@ export const useSpecializationQuery = (id: string, enabled = false) => {
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });

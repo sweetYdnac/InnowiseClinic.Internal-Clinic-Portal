@@ -1,5 +1,6 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +12,12 @@ import { IChangeStatusRequest } from '../../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../../types/request/doctors';
 import { IDoctorInformationResponse, IDoctorResponse } from '../../types/response/doctors';
-import { showPopup } from '../../utils/functions';
 import { ICreateDoctorForm } from '../validators/doctors/create';
 import { IUpdateDoctorForm } from '../validators/doctors/update';
 
 export const useDoctorQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IDoctorResponse, AxiosError, IDoctorResponse, QueryKey>({
         queryKey: [DoctorsQueries.getById, id],
@@ -26,7 +27,9 @@ export const useDoctorQuery = (id: string, enabled = false) => {
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -34,6 +37,7 @@ export const useDoctorQuery = (id: string, enabled = false) => {
 
 export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
         queryKey: [DoctorsQueries.getPaged, { ...request }],
@@ -44,7 +48,9 @@ export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled =
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -52,6 +58,7 @@ export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled =
 
 export const useChangeDoctorStatusCommand = () => {
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<INoContentResponse, AxiosError, { id: string; status: number }>({
         mutationFn: async ({ id, status }) => await DoctorsService.changeStatus(id, { status: status } as IChangeStatusRequest),
@@ -79,10 +86,14 @@ export const useChangeDoctorStatusCommand = () => {
                     }),
                 } as IPagedResponse<IDoctorInformationResponse>;
             });
-            showPopup('Status changed successfully!', 'success');
+            enqueueSnackbar('Status changed successfully!', {
+                variant: 'success',
+            });
         },
         onError: () => {
-            showPopup('Something went wrong.');
+            enqueueSnackbar('Something went wrong.', {
+                variant: 'error',
+            });
         },
     });
 };
@@ -90,6 +101,7 @@ export const useChangeDoctorStatusCommand = () => {
 export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFormSetError<ICreateDoctorForm>) => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     let request = useMemo(
         () =>
@@ -130,7 +142,9 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
             queryClient.setQueryData([DoctorsQueries.getById, variables.accountId], { ...request, photoId: variables.photoId });
             queryClient.invalidateQueries([DoctorsQueries.getPaged]);
             navigate(AppRoutes.Doctors);
-            showPopup('Doctor created successfully!', 'success');
+            enqueueSnackbar('Doctor created successfully!', {
+                variant: 'success',
+            });
         },
         onError: (error) => {
             if (error.response?.status === 400) {
@@ -170,6 +184,7 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
 
 export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setError: UseFormSetError<IUpdateDoctorForm>) => {
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     let request = useMemo(
         () =>
@@ -213,7 +228,9 @@ export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setE
                 photoId: photoId,
             } as IDoctorResponse);
             queryClient.invalidateQueries([DoctorsQueries.getPaged]);
-            showPopup('Doctor created successfully!', 'success');
+            enqueueSnackbar('Doctor updated successfully!', {
+                variant: 'success',
+            });
         },
         onError: (error) => {
             if (error.response?.status === 400) {

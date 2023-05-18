@@ -1,6 +1,7 @@
 import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import jwt from 'jwt-decode';
+import { useSnackbar } from 'notistack';
 import randomize from 'randomatic';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -14,13 +15,14 @@ import { IJwtToken } from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
 import { IRegisterRequest } from '../../types/request/authorization';
 import { ITokenResponse } from '../../types/response/authorization';
-import { getProfile, getRoleByName, showPopup } from '../../utils/functions';
+import { getProfile, getRoleByName } from '../../utils/functions';
 import { useAppDispatch } from '../store';
 import { ISignInForm } from '../validators/authorization/signIn';
 
 export const useSignInQuery = (form: ISignInForm, setError: UseFormSetError<ISignInForm>, enabled = false) => {
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<ITokenResponse, AxiosError<any, any>, ITokenResponse, QueryKey>({
         queryKey: [AuthorizationQueries.signIn, { ...form }],
@@ -42,7 +44,9 @@ export const useSignInQuery = (form: ISignInForm, setError: UseFormSetError<ISig
                     message: error?.response?.data.errors?.Password?.[0] || error?.response?.data.Message || '',
                 });
             } else {
-                showPopup(`You are not allowed to perform this action. ${error.message}`);
+                enqueueSnackbar(`You are not allowed to perform this action. ${error.message}`, {
+                    variant: 'warning',
+                });
             }
         },
     });
@@ -50,6 +54,7 @@ export const useSignInQuery = (form: ISignInForm, setError: UseFormSetError<ISig
 
 export const useSignUpCommand = (email: string) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<ICreatedResponse | void, AxiosError<any, any>, void>({
         mutationFn: async () => {
@@ -66,7 +71,9 @@ export const useSignUpCommand = (email: string) => {
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -74,6 +81,7 @@ export const useSignUpCommand = (email: string) => {
 
 export const useGetInitialProfile = (tokenResponse: ITokenResponse) => {
     const dispatch = useAppDispatch();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<any, AxiosError<any, any>, IProfileState, QueryKey>({
         queryKey: [AuthorizationQueries.getInitialProfile],
@@ -92,10 +100,14 @@ export const useGetInitialProfile = (tokenResponse: ITokenResponse) => {
         refetchOnReconnect: false,
         refetchOnWindowFocus: false,
         onError(error) {
-            showPopup(`Something goes wrong. ${error.message}`);
+            enqueueSnackbar(`Something went wrong. ${error.message}`, {
+                variant: 'error',
+            });
         },
         onSuccess() {
-            showPopup('You signed in successfully!');
+            enqueueSnackbar('You signed in successfully!', {
+                variant: 'success',
+            });
         },
     });
 };

@@ -1,5 +1,6 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
@@ -16,7 +17,6 @@ import {
     IRescheduleAppointmentRequest,
 } from '../../types/request/appointments';
 import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from '../../types/response/appointments';
-import { showPopup } from '../../utils/functions';
 import { ICreateAppointmentForm } from '../validators/appointments/create';
 import { IGetAppointmentsForm } from '../validators/appointments/getPaged';
 import { useGetTimeSlotsValidator } from '../validators/appointments/getTimeSlots';
@@ -24,6 +24,7 @@ import { IRescheduleAppointmentForm } from '../validators/appointments/reschedul
 
 export const useAppointmentQuery = (id: string, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IRescheduleAppointmentResponse, AxiosError, IRescheduleAppointmentResponse, QueryKey>({
         queryKey: [ApppointmentsQueries.getById, id],
@@ -33,7 +34,9 @@ export const useAppointmentQuery = (id: string, enabled = false) => {
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -45,6 +48,7 @@ export const usePagedAppointmentsQuery = (
     enabled = false
 ) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<IPagedResponse<IAppointmentResponse>, AxiosError, IPagedResponse<IAppointmentResponse>, QueryKey>({
         queryKey: [ApppointmentsQueries.getPaged, { ...request }],
@@ -55,7 +59,9 @@ export const usePagedAppointmentsQuery = (
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -63,6 +69,7 @@ export const usePagedAppointmentsQuery = (
 
 export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = false) => {
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
     const { validationScheme } = useGetTimeSlotsValidator();
 
     return useQuery<ITimeSlot[] | void, AxiosError, ITimeSlot[], QueryKey>({
@@ -76,7 +83,9 @@ export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = f
                 console.log(error);
                 if (error instanceof ValidationError) {
                     navigate(AppRoutes.Home);
-                    showPopup('Something went wrong.');
+                    enqueueSnackbar('Something went wrong.', {
+                        variant: 'error',
+                    });
                 }
             }
         },
@@ -85,7 +94,9 @@ export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = f
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);
-                showPopup('Something went wrong.');
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
             }
         },
     });
@@ -97,14 +108,18 @@ export const useCreateAppointmentCommand = (
     setError: UseFormSetError<ICreateAppointmentForm>
 ) => {
     const queryClient = useQueryClient();
+    const { enqueueSnackbar } = useSnackbar();
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await AppointmentsService.create(request),
+        retry: false,
         onSuccess: (response) => {
             queryClient.setQueryData([ApppointmentsQueries.getById, response.id], request as IRescheduleAppointmentResponse);
             queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
             navigate(AppRoutes.Appointments);
-            showPopup('Appointment created successfully!', 'success');
+            enqueueSnackbar('Appointment created successfully!', {
+                variant: 'success',
+            });
         },
         onError: (error) => {
             if (error.response?.status === 400) {
@@ -151,7 +166,6 @@ export const useCreateAppointmentCommand = (
                 });
             }
         },
-        retry: false,
     });
 };
 
@@ -162,6 +176,7 @@ export const useRescheduleAppointmentCommand = (
 ) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
 
     const request = useMemo(() => {
         return {
@@ -183,7 +198,9 @@ export const useRescheduleAppointmentCommand = (
             });
             queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
             navigate(AppRoutes.Appointments);
-            showPopup('Appointment rescheduled successfully!', 'success');
+            enqueueSnackbar('Appointment rescheduled successfully!', {
+                variant: 'success',
+            });
         },
         onError: (error) => {
             if (error.response?.status === 400) {

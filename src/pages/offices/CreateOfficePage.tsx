@@ -75,9 +75,10 @@ export const CreateOfficePage = () => {
                 <Textfield
                     id={register('registryPhoneNumber').name}
                     control={control}
-                    displayName='City'
+                    displayName='Phone number'
                     workMode='edit'
                     inputMode='numeric'
+                    startAdornment={<>+</>}
                 />
                 <ToggleSwitch
                     value={watch('isActive')}
