@@ -14,4 +14,5 @@ export enum AppRoutes {
     Specializations = '/specializations',
     CreateSpecialization = '/specializations/create',
     SpecializationInformation = '/specializations/:id',
+    ServiceInformation = '/services/:id',
 }

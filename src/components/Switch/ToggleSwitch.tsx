@@ -3,7 +3,7 @@ import { FunctionComponent } from 'react';
 
 interface ToggleSwitchProps {
     value: boolean;
-    handleChange: (value: boolean) => void;
+    handleChange?: (value: boolean) => void;
     disabled?: boolean;
 }
 
@@ -17,7 +17,7 @@ export const ToggleSwitch: FunctionComponent<ToggleSwitchProps> = ({ value, hand
                     color='warning'
                     checked={value}
                     onChange={(_, checked) => {
-                        handleChange(checked);
+                        handleChange?.(checked);
                     }}
                 />
             }

@@ -1,13 +1,12 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useSnackbar } from 'notistack';
-import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../../routes/AppRoutes';
 import { OfficesQueries } from '../../constants/QueryKeys';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { IGetPagedOfficesRequest, IUpdateOfficeRequest } from '../../types/request/offices';
+import { IGetPagedOfficesRequest } from '../../types/request/offices';
 import { IOfficeInformationResponse, IOfficeResponse } from '../../types/response/offices';
 import { useOfficesService } from '../services/useOfficesService';
 import { ICreateOfficeForm } from '../validators/offices/create';
@@ -105,27 +104,19 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
 
-    let request = useMemo(
-        () =>
-            ({
-                ...form,
-            } as IUpdateOfficeRequest),
-        [form]
-    );
-
     return useMutation<INoContentResponse, AxiosError<any, any>, string>({
         mutationFn: async (photoId: string) => {
-            request.photoId = photoId;
+            form.photoId = photoId;
 
-            return await officesService.update(id, request);
+            return await officesService.update(id, form);
         },
         retry: false,
         onSuccess: (data, photoId) => {
             queryClient.setQueryData([OfficesQueries.getById, id], {
                 photoId: photoId,
-                address: `${request.city}, ${request.street}, ${request.houseNumber}, ${request.officeNumber}`,
-                registryPhoneNumber: request.registryPhoneNumber,
-                isActive: request.isActive,
+                address: `${form.city}, ${form.street}, ${form.houseNumber}, ${form.officeNumber}`,
+                registryPhoneNumber: form.registryPhoneNumber,
+                isActive: form.isActive,
             } as IOfficeResponse);
             queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>([OfficesQueries.getPaged], (prev) => {
                 return {
@@ -134,9 +125,9 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
                         if (item.id === id) {
                             return {
                                 id: id,
-                                address: `${request.city}, ${request.street}, ${request.houseNumber}, ${request.officeNumber}`,
-                                registryPhoneNumber: request.registryPhoneNumber,
-                                isActive: request.isActive,
+                                address: `${form.city}, ${form.street}, ${form.houseNumber}, ${form.officeNumber}`,
+                                registryPhoneNumber: form.registryPhoneNumber,
+                                isActive: form.isActive,
                             } as IOfficeInformationResponse;
                         }
                         return item;

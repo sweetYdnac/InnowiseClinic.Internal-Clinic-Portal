@@ -10,12 +10,18 @@ export enum OfficesQueries {
 }
 
 export enum ServicesQueries {
+    getById = 'get-service-by-id',
     getPaged = 'get-services',
 }
 
 export enum SpecializationsQueries {
     getById = 'get-specialization-by-id',
     getPaged = 'get-specializations',
+}
+
+export enum ServiceCategoriesQueries {
+    getById = 'get-service-category-by-id',
+    getAll = 'get-all-service-categories',
 }
 
 export enum DoctorsQueries {

@@ -8,4 +8,5 @@ export enum ApiBaseUrls {
     Photos = '/documents/photos',
     Services = '/services',
     Specializations = '/specializations',
+    ServiceCategories = '/services/categories',
 }

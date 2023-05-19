@@ -1,6 +1,10 @@
 import { ApiBaseUrls } from '../../constants/ApiBaseUrls';
-import { INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { IGetPagedSpecializationsRequest } from '../../types/request/specializations';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
+import {
+    ICreateSpecializationRequest,
+    IGetPagedSpecializationsRequest,
+    IUpdateSpecializationRequest,
+} from '../../types/request/specializations';
 import { ISpecializationResponse } from '../../types/response/specializations';
 import { ISpecializationsService } from '../../types/services/ISpecializationsService';
 import { getQueryString } from '../../utils/functions';
@@ -17,6 +21,12 @@ export const useSpecializationsService = () =>
 
             return (await axiosInstance.get<IPagedResponse<ISpecializationResponse>>(path)).data;
         },
+
+        create: async (data: ICreateSpecializationRequest) =>
+            (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Specializations, data)).data,
+
+        update: async (id: string, data: IUpdateSpecializationRequest) =>
+            await axiosInstance.put<INoContentResponse>(`${ApiBaseUrls.Specializations}/${id}`, data),
 
         changeStatus: async (id: string, isActive: boolean) =>
             await axiosInstance.patch<INoContentResponse>(`${ApiBaseUrls.Specializations}/${id}?isActive=${isActive}`),
