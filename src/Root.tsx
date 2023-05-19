@@ -16,7 +16,7 @@ export const Root = ({ children }: RootProps) => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const initializeRole = async () => {
+        const initializeStore = async () => {
             if (!authorizationService.isAuthorized()) {
                 await authorizationService.refresh();
             }
@@ -30,7 +30,7 @@ export const Root = ({ children }: RootProps) => {
             }
         };
 
-        initializeRole();
+        initializeStore();
     }, []);
 
     return isFetching ? <Loader /> : <>{children}</>;

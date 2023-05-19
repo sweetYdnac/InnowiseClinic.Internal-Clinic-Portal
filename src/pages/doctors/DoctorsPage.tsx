@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { FilterTextfield } from '../../components/FilterTextfield/FilterTextfield';
 import { Loader } from '../../components/Loader/Loader';
-import { AppRoutes } from '../../routes/AppRoutes';
 import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { useDoctorsValidator } from '../../hooks/validators/doctors/getPaged';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 import { DoctorsTable } from './DoctorsTable';
 

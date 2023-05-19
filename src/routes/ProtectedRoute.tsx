@@ -2,11 +2,11 @@ import { useSnackbar } from 'notistack';
 import { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../components/Loader/Loader';
-import { AppRoutes } from './AppRoutes';
 import { Roles } from '../constants/Roles';
 import { useAuthorizationService } from '../hooks/services/useAuthorizationService';
 import { useAppSelector } from '../hooks/store';
 import { selectRole } from '../store/roleSlice';
+import { AppRoutes } from './AppRoutes';
 
 interface ProtectedRouteProps {
     roles: Roles[];
@@ -28,6 +28,10 @@ export const ProtectedRoute = ({ roles, children }: ProtectedRouteProps) => {
         };
 
         const checkAuthorization = async () => {
+            if (currentRole === Roles.None) {
+                return;
+            }
+
             if (!roles.find((item) => item === currentRole)) {
                 navigate(AppRoutes.Home);
                 enqueueSnackbar(

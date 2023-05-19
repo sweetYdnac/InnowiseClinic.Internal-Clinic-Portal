@@ -37,6 +37,9 @@ export const useSignInQuery = (form: ISignInForm, setError: UseFormSetError<ISig
             const decoded = jwt<IJwtToken>(data.accessToken as string);
             dispatch(setRole(getRoleByName(decoded.role)));
             navigate(AppRoutes.Home);
+            enqueueSnackbar('You signed in successfully!', {
+                variant: 'success',
+            });
         },
         onError(error) {
             if (error.response?.status === 400) {

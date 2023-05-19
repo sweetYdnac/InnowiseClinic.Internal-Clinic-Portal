@@ -22,11 +22,11 @@ const App = () => {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <SnackbarProvider>
-                        <Root>
-                            <AxiosInterceptor>
-                                <AppRouter />
-                            </AxiosInterceptor>
-                        </Root>
+                        <AppRouter>
+                            <Root>
+                                <AxiosInterceptor />
+                            </Root>
+                        </AppRouter>
                     </SnackbarProvider>
                     <ReactQueryDevtools />
                 </BrowserRouter>
