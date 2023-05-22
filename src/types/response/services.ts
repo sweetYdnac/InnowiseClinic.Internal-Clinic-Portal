@@ -1,6 +1,7 @@
 export interface IServiceResponse {
     title: string;
     price: number;
+    specializationId: string;
     categoryId: string;
     categoryTitle: string;
     isActive: boolean;

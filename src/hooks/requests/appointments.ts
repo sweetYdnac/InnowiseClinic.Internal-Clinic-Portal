@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { ValidationError } from 'yup';
-import { AppRoutes } from '../../routes/AppRoutes';
 import { dateApiFormat, timeApiFormat } from '../../constants/Formats';
 import { ApppointmentsQueries } from '../../constants/QueryKeys';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import {
     ICreateAppointmentRequest,
@@ -83,7 +83,6 @@ export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = f
 
                 return (await appointmentsService.getTimeSlots(queryString)).timeSlots;
             } catch (error) {
-                console.log(error);
                 if (error instanceof ValidationError) {
                     navigate(AppRoutes.Home);
                     enqueueSnackbar('Something went wrong.', {

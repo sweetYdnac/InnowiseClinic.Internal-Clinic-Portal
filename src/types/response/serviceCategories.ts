@@ -3,3 +3,7 @@ export interface IServiceCategoryResponse {
     title: string;
     timeSlotSize: number;
 }
+
+export interface IGetServiceCategoriesResponse {
+    categories: IServiceCategoryResponse[];
+}

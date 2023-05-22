@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Box, Button, IconButton } from '@mui/material';
+import { deepEqual } from 'fast-equals';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
@@ -75,15 +76,19 @@ export const SpecializationInformationPage = () => {
     }, []);
 
     const onSubmit = useCallback(() => {
-        updateSpecialization(undefined, {
-            onSuccess: () => {
-                reset(watch());
-                setWorkMode('view');
-            },
-        });
+        if (!deepEqual(watch(), defaultValues)) {
+            updateSpecialization(undefined, {
+                onSuccess: () => {
+                    reset(watch());
+                    setWorkMode('view');
+                },
+            });
+        } else {
+            setWorkMode('view');
+        }
 
         watch('services').forEach((item) => createService({ ...item, specializationId: id as string }));
-    }, [createService, id, reset, updateSpecialization, watch]);
+    }, [createService, defaultValues, id, reset, updateSpecialization, watch]);
 
     return (
         <>
@@ -128,7 +133,6 @@ export const SpecializationInformationPage = () => {
                                 }}
                                 handlePageChange={(_, page) => handleChangePage(page + 1)}
                                 workMode={workMode}
-                                newServices={watch('services')}
                             />
                         )}
 

@@ -9,7 +9,7 @@ import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../type
 import { ICreateServiceRequest, IGetPagedServicesRequest, IUpdateServiceRequest } from '../../types/request/services';
 import { IServiceInformationResponse, IServiceResponse } from '../../types/response/services';
 import { useServicesService } from '../services/useServicesService';
-import { IServiceForm } from '../validators/services/create&update';
+import { IServiceForm, useServiceValidator } from '../validators/services/create&update';
 
 export const useGetServiceByIdQuery = (id: string, enabled = false) => {
     const servicesService = useServicesService();
@@ -46,7 +46,7 @@ export const usePagedServicesQuery = (request: IGetPagedServicesRequest, enabled
         keepPreviousData: true,
         onSuccess: (response) => {
             response.items.forEach((item) => {
-                const { id, duration, specializationId, ...rest } = item;
+                const { id, duration, ...rest } = item;
                 queryClient.setQueryData<IServiceResponse>([ServicesQueries.getById, item.id], rest as IServiceResponse);
             });
         },
@@ -65,21 +65,26 @@ export const useCreateServiceCommand = () => {
     const serviceService = useServicesService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
+    const { requestValidationScheme } = useServiceValidator();
 
     return useMutation<ICreatedResponse, AxiosError<any, any>, IServiceForm>({
-        mutationFn: async (form: IServiceForm) =>
-            await serviceService.create({
+        mutationFn: async (form: IServiceForm) => {
+            await requestValidationScheme.validate(form);
+
+            return await serviceService.create({
                 title: form.title,
                 price: form.price,
                 specializationId: form.specializationId,
                 categoryId: form.categoryId,
                 isActive: form.isActive,
-            } as ICreateServiceRequest),
+            } as ICreateServiceRequest);
+        },
         retry: false,
         onSuccess: (data, form) => {
             queryClient.setQueryData([ServicesQueries.getById, data.id], {
                 title: form.title,
                 price: form.price,
+                specializationId: form.specializationId,
                 categoryId: form.categoryId,
                 categoryTitle: form.categoryInput,
                 isActive: form.isActive,
@@ -103,22 +108,27 @@ export const useUpdateServiceCommand = (form: IServiceForm, setError: UseFormSet
     const serviceService = useServicesService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
+    const { requestValidationScheme } = useServiceValidator();
 
     return useMutation<INoContentResponse, AxiosError<any, any>, { id: string }>({
-        mutationFn: async ({ id }) =>
-            await serviceService.update(id, {
+        mutationFn: async ({ id }) => {
+            await requestValidationScheme.validate(form);
+
+            return await serviceService.update(id, {
                 title: form.title,
                 price: form.price,
-                specializationId: form.specializationId,
                 categoryId: form.categoryId,
-                isActive: form.isActive,
                 timeSlotSize: form.categoryDuration,
-            } as IUpdateServiceRequest),
+                specializationId: form.specializationId,
+                isActive: form.isActive,
+            } as IUpdateServiceRequest);
+        },
         retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData([ServicesQueries.getById, variables.id], {
                 title: form.title,
                 price: form.price,
+                specializationId: form.specializationId,
                 categoryId: form.categoryId,
                 categoryTitle: form.categoryInput,
                 isActive: form.isActive,

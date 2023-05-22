@@ -27,7 +27,7 @@ export const useGetServiceCategoryById = (id: string, enabled = false) => {
     });
 };
 
-export const useGetAllServiceCategories = (enabled = false) => {
+export const useGetAllServiceCategories = () => {
     const serviceCategoriesService = useServiceCategoriesService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();

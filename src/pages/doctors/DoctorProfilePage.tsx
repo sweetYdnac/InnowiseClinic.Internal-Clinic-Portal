@@ -86,21 +86,23 @@ export const DoctorProfilePage = () => {
         title: watch('specializationInput'),
     });
 
-    const specializationsOptions = useMemo(() => {
-        return specializations && specializations.items.length > 0
-            ? specializations?.items.map((item) => {
-                  return {
-                      label: item.title,
-                      id: item.id,
-                  } as IAutoCompleteItem;
-              }) ?? []
-            : [
-                  {
-                      label: doctor?.specializationName,
-                      id: doctor?.specializationId,
-                  } as IAutoCompleteItem,
-              ];
-    }, [doctor?.specializationId, doctor?.specializationName, specializations]);
+    const specializationsOptions = useMemo(
+        () =>
+            specializations && specializations.items.length > 0
+                ? specializations?.items.map((item) => {
+                      return {
+                          label: item.title,
+                          id: item.id,
+                      } as IAutoCompleteItem;
+                  }) ?? []
+                : [
+                      {
+                          label: doctor?.specializationName,
+                          id: doctor?.specializationId,
+                      } as IAutoCompleteItem,
+                  ],
+        [doctor?.specializationId, doctor?.specializationName, specializations]
+    );
 
     const { mutate: updateDoctor, isLoading: isUpdatingDoctor } = useUpdateDoctorCommand(id as string, watch(), setError);
     const { mutate: updatePhoto, isLoading: isUpdatingPhoto } = useUpdatePhotoCommand(watch('photoId') as string, photo as string);

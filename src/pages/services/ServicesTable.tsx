@@ -1,26 +1,17 @@
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import {
-    Divider,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-} from '@mui/material';
-import { FunctionComponent, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import { FunctionComponent, useCallback, useEffect } from 'react';
 import { Loader } from '../../components/Loader/Loader';
 import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
+import { Modals } from '../../constants/Modals';
 import { WorkMode } from '../../constants/WorkModes';
 import { useChangeServiceStatusCommand } from '../../hooks/requests/services';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { IServiceForm } from '../../hooks/validators/services/create&update';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { openModal } from '../../store/modalsSlice';
+import { clearServices, removeService, selectServices } from '../../store/servicesSlice';
 import { IPagingData } from '../../types/common/Responses';
 import { IServiceInformationResponse } from '../../types/response/services';
 import { ToCurrency } from '../../utils/currencyFormatter';
@@ -30,7 +21,6 @@ interface ServicesTableProps {
     pagingData: IPagingData;
     handlePageChange: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
     workMode?: WorkMode;
-    newServices?: IServiceForm[];
 }
 
 export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
@@ -38,12 +28,29 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
     pagingData,
     handlePageChange,
     workMode = 'view',
-    newServices = [],
 }) => {
-    const navigate = useNavigate();
     const { mutate, isLoading } = useChangeServiceStatusCommand();
+    const dispatch = useAppDispatch();
+    const newServices = useAppSelector(selectServices);
 
-    const handleRowClick = useCallback((id: string) => navigate(AppRoutes.ServiceInformation.replace(':id', `${id}`)), [navigate]);
+    const handleOpenServiceInformationModal = useCallback(
+        (id: string) => dispatch(openModal({ name: Modals.Service, id: id, workMode: 'view' })),
+        [dispatch]
+    );
+    const handleOpenEditServiceModal = useCallback(
+        (id: string) => dispatch(openModal({ name: Modals.Service, id: id, workMode: 'edit' })),
+        [dispatch]
+    );
+    const handleRemoveService = useCallback((service: IServiceForm) => dispatch(removeService(service)), [dispatch]);
+    const handleOpenCreateServiceModal = useCallback(() => {
+        dispatch(openModal({ name: Modals.CreateService }));
+    }, [dispatch]);
+
+    useEffect(() => {
+        return () => {
+            dispatch(clearServices());
+        };
+    }, [dispatch]);
 
     return (
         <>
@@ -55,14 +62,13 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
                             <TableCell align='center'>Price</TableCell>
                             <TableCell align='center'>Category</TableCell>
                             <TableCell align='center'>Status</TableCell>
-                            <TableCell align='center'>Edit</TableCell>
-                            {workMode === 'edit' && <TableCell align='center'>Remove</TableCell>}
+                            <TableCell align='center'>Manage</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {workMode === 'edit' && (
-                            <TableRow hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell colSpan={6} align='center'>
+                            <TableRow hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
+                                <TableCell colSpan={6} align='center' onClick={() => handleOpenCreateServiceModal()}>
                                     Add Service
                                     <IconButton>
                                         <AddBoxIcon fontSize='medium' />
@@ -71,43 +77,33 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
                             </TableRow>
                         )}
                         {newServices.map((service) => (
-                            <TableRow
-                                key={`${service.title}${service.categoryId}`}
-                                hover
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
+                            <TableRow key={`${service.title}${service.categoryId}`} sx={{ backgroundColor: 'lightgreen' }}>
                                 <TableCell align='center'>{service.title}</TableCell>
                                 <TableCell align='center'>{ToCurrency(service.price)}</TableCell>
                                 <TableCell align='center'>{service.categoryInput}</TableCell>
                                 <TableCell align='center'>
                                     <ToggleSwitch disabled={true} value={service.isActive} />
                                 </TableCell>
-                                <TableCell align='center'>
+                                <TableCell align='center' onClick={() => handleRemoveService(service)}>
                                     <IconButton>
-                                        <ModeEditIcon fontSize='medium' />
-                                        {/* edit service modal */}
+                                        <DeleteForeverIcon fontSize='medium' />
                                     </IconButton>
                                 </TableCell>
-                                {workMode === 'edit' && (
-                                    <TableCell align='center'>
-                                        <IconButton>
-                                            <DeleteForeverIcon fontSize='medium' />
-                                            {/* remove new added service */}
-                                        </IconButton>
-                                    </TableCell>
-                                )}
                             </TableRow>
                         ))}
-                        <Divider variant='middle' />
                         {existedServices.map((service) => (
-                            <TableRow key={service.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
-                                <TableCell onClick={() => handleRowClick(service.id)} align='center'>
+                            <TableRow
+                                key={service.id}
+                                hover
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', backgroundColor: 'lightgrey' }}
+                            >
+                                <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
                                     {service.title}
                                 </TableCell>
-                                <TableCell onClick={() => handleRowClick(service.id)} align='center'>
+                                <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
                                     {ToCurrency(service.price)}
                                 </TableCell>
-                                <TableCell onClick={() => handleRowClick(service.id)} align='center'>
+                                <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
                                     {service.categoryTitle}
                                 </TableCell>
                                 <TableCell align='center'>
@@ -117,9 +113,8 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
                                     />
                                 </TableCell>
                                 <TableCell align='center'>
-                                    <IconButton>
+                                    <IconButton onClick={() => handleOpenEditServiceModal(service.id)}>
                                         <ModeEditIcon fontSize='medium' />
-                                        {/* edit service modal */}
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
@@ -134,6 +129,7 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
                 page={pagingData.currentPage - 1}
                 rowsPerPageOptions={[]}
                 onPageChange={handlePageChange}
+                sx={{ alignSelf: 'end' }}
             />
 
             {isLoading && <Loader />}

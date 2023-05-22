@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
+import { selectServices } from '../../../store/servicesSlice';
 import { ISpecializationResponse } from '../../../types/response/specializations';
+import { useAppSelector } from '../../store';
 import { Yup } from '../YupConfiguration';
 import { IServiceForm } from '../services/create&update';
 
@@ -10,14 +12,16 @@ export interface ISpecializationForm {
 }
 
 export const useSpecializationValidator = (specialization: ISpecializationResponse | undefined) => {
+    const services = useAppSelector(selectServices);
+
     const initialValues = useMemo(
         () =>
             ({
                 title: specialization?.title,
                 isActive: specialization?.isActive,
-                services: [],
+                services: services,
             } as ISpecializationForm),
-        [specialization?.isActive, specialization?.title]
+        [services, specialization?.isActive, specialization?.title]
     );
 
     const validationScheme = Yup.object().shape({
