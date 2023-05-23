@@ -1,4 +1,5 @@
 import { ApiBaseUrls } from '../../constants/ApiBaseUrls';
+import { IChangeStatusRequest } from '../../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { ICreateReceptionistRequest, IGetPagedReceptionistsRequest, IUpdateReceptionistRequest } from '../../types/request/receptionists';
 import { IReceptionistsInformationResponse, IReceptionistsResponse } from '../../types/response/receptionists';
@@ -23,4 +24,7 @@ export const useReceptionistService = () =>
 
         update: async (id: string, data: IUpdateReceptionistRequest) =>
             (await axiosInstance.put<INoContentResponse>(`${ApiBaseUrls.Receptionists}/${id}`, data)).data,
+
+        changeStatus: async (id: string, request: IChangeStatusRequest) =>
+            (await axiosInstance.patch<INoContentResponse>(`${ApiBaseUrls.Receptionists}/${id}`, request)).data,
     } as IReceptionistsService);

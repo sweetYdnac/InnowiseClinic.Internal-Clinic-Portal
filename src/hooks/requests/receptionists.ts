@@ -11,8 +11,8 @@ import { ICreateReceptionistRequest, IGetPagedReceptionistsRequest, IUpdateRecep
 import { IReceptionistsInformationResponse, IReceptionistsResponse } from '../../types/response/receptionists';
 import { useReceptionistService } from '../services/useReceptionistsService';
 import { useCreateReceptionistValidator } from '../validators/receptionists/create';
-import { IUpdateReceptionistForm } from '../validators/receptionists/create&update';
 import { IGetReceptionistsForm } from '../validators/receptionists/getPaged';
+import { IUpdateReceptionistForm } from '../validators/receptionists/update';
 
 export const useGetReceptionistByIdQuery = (id: string, enabled = false) => {
     const receptionistsService = useReceptionistService();

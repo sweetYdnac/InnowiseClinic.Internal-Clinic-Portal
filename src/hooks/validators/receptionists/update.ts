@@ -19,7 +19,6 @@ export const useReceptionistValidator = (receptionist?: IReceptionistsResponse) 
             ({
                 ...receptionist,
                 photoId: null,
-                status: AccountStatuses.Inactive,
             } as IUpdateReceptionistForm),
         [receptionist]
     );

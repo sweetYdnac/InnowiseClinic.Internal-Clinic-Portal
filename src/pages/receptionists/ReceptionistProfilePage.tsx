@@ -18,7 +18,7 @@ import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { useCreatePhotoCommand, useGetPhotoQuery, useUpdatePhotoCommand } from '../../hooks/requests/photos';
 import { useGetReceptionistByIdQuery, useUpdateReceptionistCommand } from '../../hooks/requests/receptionists';
 import { useAppDispatch, useAppSelector } from '../../hooks/store';
-import { useReceptionistValidator } from '../../hooks/validators/receptionists/create&update';
+import { useReceptionistValidator } from '../../hooks/validators/receptionists/update';
 import { IProfileState, selectProfile, setProfile } from '../../store/profileSlice';
 import { selectRole } from '../../store/roleSlice';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
