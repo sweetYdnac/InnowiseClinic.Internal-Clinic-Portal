@@ -16,6 +16,9 @@ import { OfficesPage } from '../pages/offices/OfficesPage';
 import { CreatePatientPage } from '../pages/patients/CreatePatientPage';
 import { PatientProfilePage } from '../pages/patients/PatientPage/PatientProfilePage';
 import { PatientsPage } from '../pages/patients/PatientsPage';
+import { CreateReceptionist } from '../pages/receptionists/CreateReceptionist';
+import { ReceptionistProfilePage } from '../pages/receptionists/ReceptionistProfilePage';
+import { ReceptionistsPage } from '../pages/receptionists/ReceptionistsPage';
 import { CreateSpecializationPage } from '../pages/specializations/CreateSpecializationPage';
 import { SpecializationInformationPage } from '../pages/specializations/SpecializationInformationPage';
 import { SpecializationsPage } from '../pages/specializations/SpecializationsPage';
@@ -152,6 +155,30 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <PatientProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.Receptionists}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <ReceptionistsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.CreateReceptionist}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <CreateReceptionist />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.ReceptionistProfile}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <ReceptionistProfilePage />
                             </ProtectedRoute>
                         }
                     />

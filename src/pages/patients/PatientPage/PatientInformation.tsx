@@ -19,8 +19,8 @@ import { usePatientValidator } from '../../../hooks/validators/patients/create&u
 export const PatientInformation = () => {
     const [workMode, setWorkMode] = useState<WorkMode>('view');
     const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-    const { id: patientId } = useParams();
-    const { data: patient, isFetching: isFetchingPatient } = useGetPatientByIdQuery(patientId as string, true);
+    const { id } = useParams();
+    const { data: patient, isFetching: isFetchingPatient } = useGetPatientByIdQuery(id as string, true);
     const { data: photoUrl, isFetching: isFetchingPhoto } = useGetPhotoQuery(patient?.photoId ?? null, !!patient?.photoId);
     const [photo, setPhoto] = useState(photoUrl as string);
     const { initialValues, formValidationScheme } = usePatientValidator(patient);
@@ -47,7 +47,7 @@ export const PatientInformation = () => {
         setPhoto(photoUrl as string);
     }, [photoUrl]);
 
-    const { mutate: updatePatient, isLoading: isUpdatingPatient } = useUpdatePatientCommand(patientId as string, watch(), setError);
+    const { mutate: updatePatient, isLoading: isUpdatingPatient } = useUpdatePatientCommand(id as string, watch(), setError);
     const { mutate: updatePhoto, isLoading: isUpdatingPhoto } = useUpdatePhotoCommand(watch('photoId') as string, photo as string);
     const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photo as string);
 

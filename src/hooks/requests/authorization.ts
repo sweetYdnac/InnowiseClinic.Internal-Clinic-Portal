@@ -76,25 +76,14 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
                     const doctor = await doctorsService.getById(id);
                     profile = {
                         id: id,
-                        photoId: doctor.photoId,
-                        firstName: doctor.firstName,
-                        lastName: doctor.lastName,
-                        middleName: doctor.middleName,
-                        officeAddress: doctor.officeAddress,
-                        dateOfBirth: doctor.dateOfBirth,
-                        specializationName: doctor.specializationName,
-                        status: doctor.status,
+                        ...doctor,
                     } as IProfileState;
                     break;
                 case Roles.Receptionist:
                     const receptionist = await receptionistsService.getById(id);
                     profile = {
                         id: id,
-                        photoId: receptionist.photoId,
-                        firstName: receptionist.firstName,
-                        lastName: receptionist.lastName,
-                        middleName: receptionist.middleName,
-                        officeAddress: receptionist.officeAddress,
+                        ...receptionist,
                     } as IProfileState;
                     break;
                 default:

@@ -35,6 +35,11 @@ export enum PatientsQueries {
     getPaged = 'get-patients',
 }
 
+export enum ReceptionistsQueries {
+    getById = 'get-receptionist-by-id',
+    getPaged = 'get-receptionists',
+}
+
 export enum PhotosQueries {
     getById = 'get-photo-by-id',
 }

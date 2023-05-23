@@ -1,11 +1,26 @@
 import { ApiBaseUrls } from '../../constants/ApiBaseUrls';
-import { IReceptionistsResponse } from '../../types/response/receptionists';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
+import { ICreateReceptionistRequest, IGetPagedReceptionistsRequest, IUpdateReceptionistRequest } from '../../types/request/receptionists';
+import { IReceptionistsInformationResponse, IReceptionistsResponse } from '../../types/response/receptionists';
 import { IReceptionistsService } from '../../types/services/IReceptionistsService';
+import { getQueryString } from '../../utils/functions';
 import { axiosInstance } from './axiosConfig';
 
 export const useReceptionistService = () =>
     ({
-        getById: async (id: string) => {
-            return (await axiosInstance.get<IReceptionistsResponse>(`${ApiBaseUrls.Receptionists}/${id}`)).data;
+        getById: async (id: string) => (await axiosInstance.get<IReceptionistsResponse>(`${ApiBaseUrls.Receptionists}/${id}`)).data,
+
+        getPaged: async (request: IGetPagedReceptionistsRequest) => {
+            const path = `${ApiBaseUrls.Receptionists}?${getQueryString(request)}`;
+
+            return (await axiosInstance.get<IPagedResponse<IReceptionistsInformationResponse>>(path)).data;
         },
+
+        remove: async (id: string) => (await axiosInstance.delete<INoContentResponse>(`${ApiBaseUrls.Receptionists}/${id}`)).data,
+
+        create: async (data: ICreateReceptionistRequest) =>
+            (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Receptionists, data)).data,
+
+        update: async (id: string, data: IUpdateReceptionistRequest) =>
+            (await axiosInstance.put<INoContentResponse>(`${ApiBaseUrls.Receptionists}/${id}`, data)).data,
     } as IReceptionistsService);

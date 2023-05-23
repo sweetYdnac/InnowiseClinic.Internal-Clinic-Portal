@@ -12,6 +12,14 @@ export enum AppRoutes {
     CreateDoctor = '/doctors/create',
     DoctorProfile = '/doctors/:id',
 
+    Patients = '/patients',
+    CreatePatient = '/patients/create',
+    PatientProfile = '/patients/:id',
+
+    Receptionists = '/receptionists',
+    CreateReceptionist = '/receptionists/create',
+    ReceptionistProfile = '/receptionists/:id',
+
     Offices = '/offices',
     CreateOffice = '/offices/create',
     OfficeInformation = '/offices/:id',
@@ -21,10 +29,4 @@ export enum AppRoutes {
     SpecializationInformation = '/specializations/:id',
 
     ServiceInformation = '/services/:id',
-
-    Patients = '/patients',
-    CreatePatient = '/patients/create',
-    PatientProfile = '/patients/:id',
-
-    Profile = '/profile',
 }
