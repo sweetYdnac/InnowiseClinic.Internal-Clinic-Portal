@@ -34,7 +34,6 @@ export const AppointmentsPage: FunctionComponent = () => {
             officeId: watch('officeId'),
             isApproved: watch('isApproved'),
         },
-        setError,
         true
     );
 

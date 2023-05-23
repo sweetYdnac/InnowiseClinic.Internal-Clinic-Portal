@@ -12,14 +12,20 @@ import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../type
 import {
     ICreateAppointmentRequest,
     IGetAppointmentsRequest,
+    IGetPatientHistoryRequest,
     IGetTimeSlotsRequest,
     IRescheduleAppointmentRequest,
 } from '../../types/request/appointments';
-import { IAppointmentResponse, IRescheduleAppointmentResponse, ITimeSlot } from '../../types/response/appointments';
+import {
+    IAppointmentHistoryResponse,
+    IAppointmentResponse,
+    IRescheduleAppointmentResponse,
+    ITimeSlot,
+} from '../../types/response/appointments';
 import { useAppointmentsService } from '../services/useAppointmentsService';
 import { ICreateAppointmentForm } from '../validators/appointments/create';
-import { IGetAppointmentsForm } from '../validators/appointments/getPaged';
 import { useGetTimeSlotsValidator } from '../validators/appointments/getTimeSlots';
+import { IPatientHistoryForm } from '../validators/appointments/patientHistory';
 import { IRescheduleAppointmentForm } from '../validators/appointments/reschedule';
 
 export const useAppointmentQuery = (id: string, enabled = false) => {
@@ -43,11 +49,7 @@ export const useAppointmentQuery = (id: string, enabled = false) => {
     });
 };
 
-export const usePagedAppointmentsQuery = (
-    request: IGetAppointmentsRequest,
-    setError: UseFormSetError<IGetAppointmentsForm>,
-    enabled = false
-) => {
+export const usePagedAppointmentsQuery = (request: IGetAppointmentsRequest, enabled = false) => {
     const appointmentsService = useAppointmentsService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -93,6 +95,28 @@ export const useTimeSlotsQuery = (queryString: IGetTimeSlotsRequest, enabled = f
         },
         enabled: enabled,
         retry: false,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
+            }
+        },
+    });
+};
+
+export const useGetPatientHistoryQuery = (patientId: string, form: IPatientHistoryForm, enabled = false) => {
+    const appointmentsService = useAppointmentsService();
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+
+    return useQuery<IPagedResponse<IAppointmentHistoryResponse>, AxiosError, IPagedResponse<IAppointmentHistoryResponse>, QueryKey>({
+        queryKey: [ApppointmentsQueries.getPatientHistory, patientId],
+        queryFn: async () => await appointmentsService.getPatientHistory(patientId, { ...form } as IGetPatientHistoryRequest),
+        enabled: enabled,
+        retry: false,
+        keepPreviousData: true,
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);

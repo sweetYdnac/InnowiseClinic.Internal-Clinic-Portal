@@ -52,9 +52,9 @@ export const CreateDoctorPage = () => {
         refetch: fetchOffices,
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
-    const { mutateAsync: createAccount, isLoading: isCreateAccountLoading } = useSignUpCommand(watch('email'));
-    const { mutateAsync: createPhoto, isLoading: isCreatePhotoLoading } = useCreatePhotoCommand(photoUrl);
-    const { mutateAsync: createDoctor, isLoading: isCreateDoctorLoading } = useCreateDoctorCommand(watch(), setError);
+    const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'));
+    const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photoUrl);
+    const { mutateAsync: createDoctor, isLoading: isCreatingDoctor } = useCreateDoctorCommand(watch(), setError);
 
     const onSubmit = useCallback(async () => {
         await createAccount().then(async (account) => {
@@ -186,7 +186,7 @@ export const CreateDoctorPage = () => {
                 </SubmitButton>
             </Box>
 
-            {(isCreateAccountLoading || isCreatePhotoLoading || isCreateDoctorLoading) && <Loader />}
+            {(isCreatingAccount || isCreatingPhoto || isCreatingDoctor) && <Loader />}
         </>
     );
 };

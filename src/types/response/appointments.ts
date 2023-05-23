@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export interface IAppointmentResponse {
     id: string;
     startTime: string;
@@ -34,4 +36,15 @@ export interface ITimeSlot {
 
 export interface ITimeSlotsResponse {
     timeSlots: ITimeSlot[];
+}
+
+export interface IAppointmentHistoryResponse {
+    id: string;
+    date: dayjs.Dayjs;
+    startTime: dayjs.Dayjs;
+    endTime: dayjs.Dayjs;
+    doctorFullName: string;
+    serviceName: string;
+    isApproved: boolean;
+    resultId: string | null;
 }

@@ -40,7 +40,7 @@ export const DoctorsPage = () => {
         title: watch('specializationInput'),
     });
 
-    const { data: doctors, isFetching: isDoctorsFetching } = usePagedDoctorsQuery(
+    const { data: doctors, isFetching: isFetchingDoctors } = usePagedDoctorsQuery(
         {
             currentPage: watch('currentPage'),
             pageSize: watch('pageSize'),
@@ -131,7 +131,7 @@ export const DoctorsPage = () => {
                 </Box>
             </Box>
 
-            {isDoctorsFetching && <Loader />}
+            {isFetchingDoctors && <Loader />}
         </Box>
     );
 };

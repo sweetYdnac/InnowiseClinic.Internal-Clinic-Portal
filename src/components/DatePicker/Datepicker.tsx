@@ -61,8 +61,14 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                             slotProps={{
                                 textField: {
                                     sx: { m: 1, width: '75%' },
-                                    color: fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success',
-                                    focused: !readonly && !fieldState.error?.message && (fieldState.isTouched || !!field.value),
+                                    color:
+                                        fieldState.error?.message && (fieldState.isTouched || (field.value as dayjs.Dayjs).isValid())
+                                            ? 'error'
+                                            : 'success',
+                                    focused:
+                                        !readonly &&
+                                        !fieldState.error?.message &&
+                                        (fieldState.isTouched || (field.value as dayjs.Dayjs).isValid()),
                                     variant: 'standard',
                                     helperText: fieldState.error?.message,
                                     error: !!fieldState.error?.message && (fieldState.isTouched || field.value),

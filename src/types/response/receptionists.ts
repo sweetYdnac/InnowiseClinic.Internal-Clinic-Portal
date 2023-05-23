@@ -1,3 +1,3 @@
-import { IProfile } from '../common/Responses';
+import { IEmployeeProfile } from '../common/Responses';
 
-export interface IReceptionistsResponse extends IProfile {}
+export interface IReceptionistsResponse extends IEmployeeProfile {}

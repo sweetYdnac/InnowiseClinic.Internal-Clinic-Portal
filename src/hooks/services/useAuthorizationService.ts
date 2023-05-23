@@ -59,6 +59,7 @@ export const useAuthorizationService = () => {
             const refreshToken = localStorage.getItem(LocalStorage.RefreshToken);
             if (!refreshToken) {
                 logout();
+                navigate(AppRoutes.SignIn);
                 return;
             }
 
@@ -81,7 +82,10 @@ export const useAuthorizationService = () => {
                 });
         },
 
-        logout: logout,
+        logout: () => {
+            logout();
+            navigate(AppRoutes.Home);
+        },
 
         isAuthorized: () => {
             const accessToken = getAccessToken();

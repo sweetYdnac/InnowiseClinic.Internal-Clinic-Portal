@@ -1,6 +1,6 @@
-import { IPagedResponse, IProfile } from '../common/Responses';
+import { IPagedResponse, IEmployeeProfile } from '../common/Responses';
 
-export interface IDoctorResponse extends IProfile {
+export interface IDoctorResponse extends IEmployeeProfile {
     dateOfBirth: string;
     specializationId: string;
     specializationName: string;

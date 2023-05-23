@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Roles } from '../constants/Roles';
 import { Home } from '../pages/Home';
@@ -12,12 +13,14 @@ import { Layout } from '../pages/layout/Layout';
 import { CreateOfficePage } from '../pages/offices/CreateOfficePage';
 import { OfficeInformationPage } from '../pages/offices/OfficeInformationPage';
 import { OfficesPage } from '../pages/offices/OfficesPage';
+import { CreatePatientPage } from '../pages/patients/CreatePatientPage';
+import { PatientProfilePage } from '../pages/patients/PatientPage/PatientProfilePage';
+import { PatientsPage } from '../pages/patients/PatientsPage';
 import { CreateSpecializationPage } from '../pages/specializations/CreateSpecializationPage';
 import { SpecializationInformationPage } from '../pages/specializations/SpecializationInformationPage';
 import { SpecializationsPage } from '../pages/specializations/SpecializationsPage';
 import { AppRoutes } from './AppRoutes';
 import { ProtectedRoute } from './ProtectedRoute';
-import { ReactNode } from 'react';
 
 interface AppRouterProps {
     children: ReactNode;
@@ -125,6 +128,30 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
                                 <SpecializationInformationPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.Patients}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <PatientsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.CreatePatient}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <CreatePatientPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.PatientProfile}
+                        element={
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                                <PatientProfilePage />
                             </ProtectedRoute>
                         }
                     />

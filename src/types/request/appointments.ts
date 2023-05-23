@@ -40,3 +40,7 @@ export interface IRescheduleAppointmentRequest {
     date: string;
     time: string;
 }
+
+export interface IGetPatientHistoryRequest extends IPagedRequest {
+    isFinished: boolean;
+}

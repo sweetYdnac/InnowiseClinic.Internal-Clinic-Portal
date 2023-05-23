@@ -1,5 +1,6 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ApartmentIcon from '@mui/icons-material/Apartment';
+import GroupIcon from '@mui/icons-material/Group';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -26,6 +27,9 @@ export const AsideNavigation = () => {
                 <AsideItem displayName='Appointments' handleClick={() => navigate(AppRoutes.Appointments)}>
                     <MonitorHeartIcon />
                 </AsideItem>
+                <AsideItem displayName='Patients' handleClick={() => navigate(AppRoutes.Patients)}>
+                    <GroupIcon />
+                </AsideItem>
                 <AsideItem displayName='Doctors' handleClick={() => navigate(AppRoutes.Doctors)}>
                     <LocalHospitalIcon />
                 </AsideItem>
@@ -35,9 +39,6 @@ export const AsideNavigation = () => {
                 <AsideItem displayName='Offices' handleClick={() => navigate(AppRoutes.Offices)}>
                     <ApartmentIcon />
                 </AsideItem>
-                {/*<AsideItem displayName='Services' handleClick={() => navigate('/services')}>
-                    <MedicalServicesIcon />
-                </AsideItem> */}
             </List>
         </>
     );

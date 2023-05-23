@@ -15,11 +15,14 @@ export interface ICreatedResponse {
 
 export interface INoContentResponse {}
 
-export interface IProfile {
+export interface IBaseProfile {
     photoId: string | null;
     firstName: string;
     lastName: string;
     middleName: string;
+}
+
+export interface IEmployeeProfile extends IBaseProfile {
     officeId: string;
     officeAddress: string;
 }
