@@ -15,4 +15,5 @@ body,
 #root,
 #root > div {
     height: 100%;
+    overflow: auto;
 }

@@ -1,34 +1,37 @@
-import { useEffect } from 'react';
-import AuthorizationService from './api/services/AuthorizationService';
+import { ReactNode, useEffect } from 'react';
+import { Loader } from './components/Loader/Loader';
+import { useInitialProfileQuery } from './hooks/requests/authorization';
+import { useAuthorizationService } from './hooks/services/useAuthorizationService';
 import { useAppDispatch } from './hooks/store';
-import { IProfileState, setProfile } from './store/profileSlice';
 import { setRole } from './store/roleSlice';
-import { getProfile, getRoleByName } from './utils/functions';
+import { getRoleByName } from './utils/functions';
 
-const Root = () => {
+interface RootProps {
+    children: ReactNode;
+}
+
+export const Root = ({ children }: RootProps) => {
+    const { isFetching, refetch } = useInitialProfileQuery();
+    const authorizationService = useAuthorizationService();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const initializeRole = async () => {
-            if (!AuthorizationService.isAuthorized()) {
-                await AuthorizationService.refresh();
+        const initializeStore = async () => {
+            if (!authorizationService.isAuthorized()) {
+                await authorizationService.refresh();
             }
 
-            const role = getRoleByName(AuthorizationService.getRoleName());
+            const role = getRoleByName(authorizationService.getRoleName());
             dispatch(setRole(role));
 
-            const accountId = AuthorizationService.getAccountId();
+            const accountId = authorizationService.getAccountId();
             if (accountId) {
-                const profile = await getProfile(AuthorizationService.getRoleName(), accountId);
-                if (profile) {
-                    dispatch(setProfile(profile as IProfileState));
-                }
+                refetch();
             }
         };
 
-        initializeRole();
+        initializeStore();
     }, []);
-    return <></>;
-};
 
-export default Root;
+    return isFetching ? <Loader /> : <>{children}</>;
+};

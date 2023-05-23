@@ -3,7 +3,6 @@ import { FunctionComponent } from 'react';
 
 interface DialogWindowProps {
     isOpen: boolean;
-    name: string;
     title: string;
     content: string;
     handleSubmit: () => void;
@@ -12,9 +11,8 @@ interface DialogWindowProps {
     declineText?: string;
 }
 
-const DialogWindow: FunctionComponent<DialogWindowProps> = ({
+export const DialogWindow: FunctionComponent<DialogWindowProps> = ({
     isOpen,
-    name,
     title,
     content,
     handleSubmit,
@@ -37,5 +35,3 @@ const DialogWindow: FunctionComponent<DialogWindowProps> = ({
         </Dialog>
     );
 };
-
-export default DialogWindow;

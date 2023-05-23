@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { Roles } from '../types/enums/Roles';
+import { Roles } from '../constants/Roles';
 import { RootState } from './store';
 
 export const defaultRole = Roles.None;

@@ -12,7 +12,7 @@ interface CustomizedModalProps {
     useDialog?: boolean;
 }
 
-const ModalWindow: FunctionComponent<CustomizedModalProps> = ({ isOpen, children }: CustomizedModalProps) => {
+export const ModalWindow: FunctionComponent<CustomizedModalProps> = ({ isOpen, children }: CustomizedModalProps) => {
     const handleClose = () => {};
 
     return (
@@ -28,5 +28,3 @@ const ModalWindow: FunctionComponent<CustomizedModalProps> = ({ isOpen, children
         </>
     );
 };
-
-export default ModalWindow;

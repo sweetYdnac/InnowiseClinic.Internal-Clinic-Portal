@@ -9,7 +9,7 @@ interface AsideProps {
     sx: DrawerProps['sx'];
 }
 
-const CustomDrawer: FunctionComponent<AsideProps> = ({ children, variant, sx }: AsideProps) => {
+export const CustomDrawer: FunctionComponent<AsideProps> = ({ children, variant, sx }: AsideProps) => {
     const isAsideOpen = useAppSelector(selectAside);
     const dispatch = useAppDispatch();
 
@@ -27,5 +27,3 @@ const CustomDrawer: FunctionComponent<AsideProps> = ({ children, variant, sx }: 
         </Drawer>
     );
 };
-
-export default CustomDrawer;

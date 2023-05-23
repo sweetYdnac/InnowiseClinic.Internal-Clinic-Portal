@@ -10,7 +10,7 @@ interface EmailAddressInputProps {
     displayName: string;
 }
 
-const EmailAddressInput: FunctionComponent<EmailAddressInputProps> = ({ id, control, displayName }: EmailAddressInputProps) => {
+export const EmailAddressInput: FunctionComponent<EmailAddressInputProps> = ({ id, control, displayName }: EmailAddressInputProps) => {
     return (
         <Controller
             name={id}
@@ -43,5 +43,3 @@ const EmailAddressInput: FunctionComponent<EmailAddressInputProps> = ({ id, cont
         />
     );
 };
-
-export default EmailAddressInput;

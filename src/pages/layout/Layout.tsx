@@ -1,17 +1,18 @@
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import AuthorizationService from '../../api/services/AuthorizationService';
-import Popup from '../../components/Popup/Popup';
-import Header from './Header';
-import Aside from './aside/Aside';
+import { useAuthorizationService } from '../../hooks/services/useAuthorizationService';
+import ModalsReducer from '../../reducers/ModalsReducer';
+import { Header } from './Header';
+import { Aside } from './aside/Aside';
 
-const Layout = () => {
-    const [isAuthorized, setIsAuthorized] = useState(AuthorizationService.isAuthorized());
+export const Layout = () => {
+    const authorizationService = useAuthorizationService();
+    const [isAuthorized, setIsAuthorized] = useState(authorizationService.isAuthorized());
 
     useEffect(() => {
         const handleStorageChange = () => {
-            setIsAuthorized(AuthorizationService.isAuthorized());
+            setIsAuthorized(authorizationService.isAuthorized());
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -19,7 +20,7 @@ const Layout = () => {
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
-    }, []);
+    }, [authorizationService]);
 
     return (
         <Box style={{ display: 'flex', flexDirection: 'column' }}>
@@ -28,12 +29,9 @@ const Layout = () => {
                 {isAuthorized && <Aside />}
                 <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
                     <Outlet />
+                    <ModalsReducer />
                 </Box>
             </Box>
-
-            <Popup />
         </Box>
     );
 };
-
-export default Layout;
