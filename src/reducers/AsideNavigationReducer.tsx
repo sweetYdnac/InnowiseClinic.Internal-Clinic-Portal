@@ -1,8 +1,8 @@
-import { Roles } from '../../../../constants/Roles';
-import { useAppSelector } from '../../../../hooks/store';
-import { selectRole } from '../../../../store/roleSlice';
-import { DoctorNavigation } from './DoctorNavigation';
-import { ReceptionistNavigation } from './ReceptionistNavigation';
+import { Roles } from '../constants/Roles';
+import { useAppSelector } from '../hooks/store';
+import { selectRole } from '../store/roleSlice';
+import { DoctorNavigation } from '../pages/layout/aside/navigation/DoctorNavigation';
+import { ReceptionistNavigation } from '../pages/layout/aside/navigation/ReceptionistNavigation';
 
 export const AsideNavigationReducer = () => {
     const role = useAppSelector(selectRole);

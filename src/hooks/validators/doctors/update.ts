@@ -59,7 +59,7 @@ export const useUpdateDoctorValidator = (doctor: IDoctorResponse | undefined) =>
         officeAddress: Yup.string().required('Invalid office address'),
         dateOfBirth: Yup.date()
             .max(dayjs(), 'Date could not be future')
-            .required('Please, enter a valid date')
+            .required('Please, enter a date')
             .typeError('Please, enter a valid date'),
         specializationId: Yup.string().required('Please, choose the specialisation'),
         specializationName: Yup.string().required('Invalid specialization name'),

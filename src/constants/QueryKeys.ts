@@ -28,6 +28,7 @@ export enum ServiceCategoriesQueries {
 export enum DoctorsQueries {
     getById = 'get-doctor-by-id',
     getPaged = 'get-doctors',
+    getSchedule = 'get-doctor-schedule',
 }
 
 export enum PatientsQueries {

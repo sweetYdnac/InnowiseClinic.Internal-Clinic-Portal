@@ -7,12 +7,20 @@ import { useNavigate } from 'react-router-dom';
 import { dateApiFormat } from '../../constants/Formats';
 import { DoctorsQueries } from '../../constants/QueryKeys';
 import { AppRoutes } from '../../routes/AppRoutes';
+import { selectProfile } from '../../store/profileSlice';
 import { IChangeStatusRequest } from '../../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../../types/request/doctors';
-import { IDoctorInformationResponse, IDoctorResponse } from '../../types/response/doctors';
+import {
+    ICreateDoctorRequest,
+    IGetDoctorScheduleRequest,
+    IGetPagedDoctorsRequest,
+    IUpdateDoctorRequest,
+} from '../../types/request/doctors';
+import { IDoctorInformationResponse, IDoctorResponse, IDoctorScheduledAppointmentResponse } from '../../types/response/doctors';
 import { useDoctorsService } from '../services/useDoctorsService';
+import { useAppSelector } from '../store';
 import { ICreateDoctorForm } from '../validators/doctors/create';
+import { IGetDoctorScheduleForm } from '../validators/doctors/getSchedule';
 import { IUpdateDoctorForm } from '../validators/doctors/update';
 
 export const useDoctorQuery = (id: string, enabled = false) => {
@@ -44,6 +52,38 @@ export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled =
     return useQuery<IPagedResponse<IDoctorInformationResponse>, AxiosError, IPagedResponse<IDoctorInformationResponse>, QueryKey>({
         queryKey: [DoctorsQueries.getPaged, { ...request }],
         queryFn: async () => await doctorsService.getPaged(request),
+        enabled: enabled,
+        retry: false,
+        keepPreviousData: true,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
+            }
+        },
+    });
+};
+
+export const useGetDoctorScheduleQuery = (request: IGetDoctorScheduleForm, enabled = false) => {
+    const doctorsService = useDoctorsService();
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+    const profile = useAppSelector(selectProfile);
+
+    return useQuery<
+        IPagedResponse<IDoctorScheduledAppointmentResponse>,
+        AxiosError,
+        IPagedResponse<IDoctorScheduledAppointmentResponse>,
+        QueryKey
+    >({
+        queryKey: [DoctorsQueries.getSchedule, { ...request }],
+        queryFn: async () =>
+            await doctorsService.getSchedule(profile.id, {
+                ...request,
+                date: request.date.format(dateApiFormat),
+            } as IGetDoctorScheduleRequest),
         enabled: enabled,
         retry: false,
         keepPreviousData: true,

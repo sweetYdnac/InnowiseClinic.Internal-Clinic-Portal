@@ -2,13 +2,13 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePag
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader } from '../../components/Loader/Loader';
-import { SelectStatus } from '../../components/Select/SelectStatus';
-import { AppRoutes } from '../../routes/AppRoutes';
-import { dateViewFormat } from '../../constants/Formats';
-import { useChangeDoctorStatusCommand } from '../../hooks/requests/doctors';
-import { IPagingData } from '../../types/common/Responses';
-import { IDoctorInformationResponse } from '../../types/response/doctors';
+import { Loader } from '../../../components/Loader/Loader';
+import { SelectStatus } from '../../../components/Select/SelectStatus';
+import { dateViewFormat } from '../../../constants/Formats';
+import { useChangeDoctorStatusCommand } from '../../../hooks/requests/doctors';
+import { AppRoutes } from '../../../routes/AppRoutes';
+import { IPagingData } from '../../../types/common/Responses';
+import { IDoctorInformationResponse } from '../../../types/response/doctors';
 
 interface DoctorsTableProps {
     doctors: IDoctorInformationResponse[];

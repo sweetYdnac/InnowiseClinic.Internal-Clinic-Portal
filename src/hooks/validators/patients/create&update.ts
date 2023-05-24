@@ -34,7 +34,7 @@ export const usePatientValidator = (patient?: IPatientResponse) => {
         middleName: Yup.string().notRequired(),
         dateOfBirth: Yup.date()
             .max(dayjs(), 'Date could not be future')
-            .required('Please, enter a valid date')
+            .required('Please, enter a date')
             .typeError('Please, enter a valid date'),
         phoneNumber: Yup.string().required('Please, enter a phone number').matches(/^\d+$/, `You've entered an invalid phone number`),
     });

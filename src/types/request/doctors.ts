@@ -34,3 +34,7 @@ export interface IUpdateDoctorRequest {
     careerStartYear: number;
     status: number;
 }
+
+export interface IGetDoctorScheduleRequest extends IPagedRequest {
+    date: string;
+}

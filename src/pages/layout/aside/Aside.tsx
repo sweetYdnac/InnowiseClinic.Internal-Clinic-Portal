@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { AsideNavigationReducer } from './navigation/AsideNavigationReducer';
+import { AsideNavigationReducer } from '../../../reducers/AsideNavigationReducer';
 import { CustomDrawer } from './CustomDrawer';
 
 const drawerWidth = 240;

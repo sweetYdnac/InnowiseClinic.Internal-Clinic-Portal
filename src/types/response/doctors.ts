@@ -1,4 +1,4 @@
-import { IPagedResponse, IEmployeeProfile } from '../common/Responses';
+import { IEmployeeProfile, IPagedResponse } from '../common/Responses';
 
 export interface IDoctorResponse extends IEmployeeProfile {
     dateOfBirth: string;
@@ -22,3 +22,19 @@ export interface IDoctorInformationResponse {
 }
 
 export interface IPagedDoctorsResponse extends IPagedResponse<IDoctorInformationResponse> {}
+
+export interface IDoctorScheduledAppointmentResponse {
+    id: string;
+    startTime: string;
+    endTime: string;
+    patientId: string;
+    patientFullName: string;
+    patientDateOfBirth: string;
+    doctorFullName: string;
+    doctorSpecializationName: string;
+    serviceName: string;
+    isApproved: boolean;
+    resultId: string | null;
+}
+
+export interface IDoctorScheduleReponse extends IPagedResponse<IDoctorScheduledAppointmentResponse> {}

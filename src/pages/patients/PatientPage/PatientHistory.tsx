@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
@@ -12,7 +13,7 @@ import { IPagedRequest } from '../../../types/common/Requests';
 
 export const PatientHistory = () => {
     const navigate = useNavigate();
-    const { patientId } = useParams();
+    const { id } = useParams();
     const { initialValues, validationScheme } = usePatientHistoryValidator({ currentPage: 1, pageSize: 10 } as IPagedRequest);
     const { setValue, watch } = useForm({
         mode: 'onBlur',
@@ -20,7 +21,7 @@ export const PatientHistory = () => {
         defaultValues: initialValues,
     });
 
-    const { data: history, isFetching: isFetchingHistory } = useGetPatientHistoryQuery(patientId as string, watch(), true);
+    const { data: history, isFetching: isFetchingHistory } = useGetPatientHistoryQuery(id as string, watch(), true);
 
     const handleAppointmentResultClick = useCallback(
         (resultId: string) => navigate(AppRoutes.AppointmentResult.replace(':id', `${resultId}`)),
@@ -58,7 +59,10 @@ export const PatientHistory = () => {
                                     <TableCell align='center'>{item.doctorFullName}</TableCell>
                                     <TableCell align='center'>{item.serviceName}</TableCell>
                                     <TableCell align='center'>
-                                        <Button onClick={() => handleAppointmentResultClick(item.resultId as string)}>View result</Button>
+                                        <Button onClick={() => handleAppointmentResultClick(item.resultId as string)}>
+                                            View result
+                                            <DescriptionIcon fontSize='medium' />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
