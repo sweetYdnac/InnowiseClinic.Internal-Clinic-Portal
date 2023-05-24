@@ -65,7 +65,7 @@ export const useChangeOfficeStatusCommand = () => {
         retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData<IOfficeResponse>([OfficesQueries.getById, variables.id], (prev) => {
-                if (prev !== undefined) {
+                if (prev) {
                     return {
                         ...prev,
                         isActive: variables.isActive,

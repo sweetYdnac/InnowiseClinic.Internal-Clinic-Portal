@@ -1,5 +1,6 @@
 import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
@@ -142,7 +143,16 @@ export const useCreateAppointmentCommand = (
         retry: false,
         onSuccess: (response) => {
             queryClient.setQueryData([ApppointmentsQueries.getById, response.id], request as IRescheduleAppointmentResponse);
-            queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    const queryName = query.queryKey[0];
+                    const queryString = query.queryKey[1] as IGetAppointmentsRequest;
+
+                    return (
+                        queryName === ApppointmentsQueries.getPaged && queryString.date === request.date && queryString.isApproved !== true
+                    );
+                },
+            });
             navigate(AppRoutes.Appointments);
             enqueueSnackbar('Appointment created successfully!', {
                 variant: 'success',
@@ -199,6 +209,7 @@ export const useCreateAppointmentCommand = (
 export const useRescheduleAppointmentCommand = (
     id: string,
     form: IRescheduleAppointmentForm,
+    oldDate: dayjs.Dayjs | null,
     setError: UseFormSetError<IRescheduleAppointmentForm>
 ) => {
     const appointmentsService = useAppointmentsService();
@@ -218,13 +229,26 @@ export const useRescheduleAppointmentCommand = (
     return useMutation<INoContentResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await appointmentsService.reschedule(id, request),
         onSuccess: () => {
-            queryClient.setQueryData<IRescheduleAppointmentResponse>([ApppointmentsQueries.getById, id], (oldData) => {
-                return {
-                    ...oldData,
-                    ...request,
-                } as IRescheduleAppointmentResponse;
+            queryClient.setQueryData<IRescheduleAppointmentResponse>(
+                [ApppointmentsQueries.getById, id],
+                (oldData) =>
+                    ({
+                        ...oldData,
+                        ...request,
+                    } as IRescheduleAppointmentResponse)
+            );
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    const queryName = query.queryKey[0];
+                    const queryString = query.queryKey[1] as IGetAppointmentsRequest;
+
+                    return (
+                        queryName === ApppointmentsQueries.getPaged &&
+                        (queryString.date === request.date || queryString.date === oldDate?.format(dateApiFormat)) &&
+                        queryString.isApproved !== true
+                    );
+                },
             });
-            queryClient.invalidateQueries([ApppointmentsQueries.getPaged, { date: request.date }]);
             navigate(AppRoutes.Appointments);
             enqueueSnackbar('Appointment rescheduled successfully!', {
                 variant: 'success',
@@ -251,7 +275,7 @@ export const useRescheduleAppointmentCommand = (
     });
 };
 
-export const useApproveAppointmentCommand = () => {
+export const useApproveAppointmentCommand = (date: dayjs.Dayjs) => {
     const appointmentsService = useAppointmentsService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -260,19 +284,35 @@ export const useApproveAppointmentCommand = () => {
         mutationFn: async ({ id }) => await appointmentsService.approve(id),
         retry: false,
         onSuccess: (data, variables) => {
-            queryClient.setQueriesData<IPagedResponse<IAppointmentResponse>>([ApppointmentsQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === variables.id) {
-                            return {
-                                ...item,
-                                isApproved: true,
-                            };
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<IAppointmentResponse>;
+            queryClient.removeQueries([ApppointmentsQueries.getById, variables.id]);
+            queryClient.setQueriesData<IPagedResponse<IAppointmentResponse>>(
+                [ApppointmentsQueries.getPaged, { date: date.format(dateApiFormat) }],
+                (prev) => {
+                    return {
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === variables.id) {
+                                return {
+                                    ...item,
+                                    isApproved: true,
+                                };
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<IAppointmentResponse>;
+                }
+            );
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    const queryName = query.queryKey[0];
+                    const queryString = query.queryKey[1] as IGetAppointmentsRequest;
+
+                    return (
+                        queryName === ApppointmentsQueries.getPaged &&
+                        queryString.date === date.format(dateApiFormat) &&
+                        queryString.isApproved !== null
+                    );
+                },
             });
             enqueueSnackbar('Appointment approved successfully!', {
                 variant: 'success',
@@ -286,7 +326,7 @@ export const useApproveAppointmentCommand = () => {
     });
 };
 
-export const useCancelAppointmentCommand = (id: string) => {
+export const useCancelAppointmentCommand = (id: string, date: dayjs.Dayjs) => {
     const appointmentsService = useAppointmentsService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -297,8 +337,12 @@ export const useCancelAppointmentCommand = (id: string) => {
         mutationFn: async () => await appointmentsService.cancel(cancelAppointmentId as string),
         retry: false,
         onSuccess: (data, variables) => {
+            queryClient.invalidateQueries({
+                predicate: (query) =>
+                    query.queryKey[0] === ApppointmentsQueries.getPaged &&
+                    (query.queryKey[1] as IGetAppointmentsRequest).date === date.format(dateApiFormat),
+            });
             queryClient.removeQueries([ApppointmentsQueries.getById, variables.id]);
-            queryClient.invalidateQueries([ApppointmentsQueries.getPaged]);
             enqueueSnackbar('Appointment canceled successfully!', {
                 variant: 'success',
             });

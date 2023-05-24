@@ -21,16 +21,16 @@ export const SignIn: FunctionComponent = () => {
         setError,
         control,
         formState: { errors, touchedFields },
-        watch,
+        getValues,
     } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
     });
 
-    const { data: tokenResponse, refetch } = useSignInQuery(watch(), setError);
+    const { data: tokenResponse, refetch } = useSignInQuery(getValues(), setError);
 
-    const t = useMemo(() => {
+    const token = useMemo(() => {
         if (tokenResponse) {
             const decoded = jwt<IJwtToken>(tokenResponse?.accessToken as string);
 
@@ -46,7 +46,7 @@ export const SignIn: FunctionComponent = () => {
         }
     }, [tokenResponse]);
 
-    useInitialProfileQuery(t.accountId, t.role, !!tokenResponse?.accessToken);
+    useInitialProfileQuery(token.accountId, token.role, !!tokenResponse?.accessToken);
 
     return (
         <Box

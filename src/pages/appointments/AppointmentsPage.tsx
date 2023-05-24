@@ -18,7 +18,7 @@ import { AppointmentsTable } from './AppointmentsTable';
 export const AppointmentsPage: FunctionComponent = () => {
     const { validationScheme, initialValues } = useAppointmentsValidator();
 
-    const { register, setError, control, getValues, watch, setValue } = useForm({
+    const { register, control, getValues, watch, setValue } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
@@ -182,6 +182,7 @@ export const AppointmentsPage: FunctionComponent = () => {
                 <Box>
                     {appointments && (
                         <AppointmentsTable
+                            date={watch('date')}
                             appointments={appointments.items}
                             pagingData={{
                                 currentPage: appointments.currentPage,

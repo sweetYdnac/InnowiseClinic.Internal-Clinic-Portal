@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import jwt from 'jwt-decode';
 import { useSnackbar } from 'notistack';
 import randomize from 'randomatic';
+import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { AuthorizationQueries } from '../../constants/QueryKeys';
@@ -22,11 +23,13 @@ import { useReceptionistService } from '../services/useReceptionistsService';
 import { useAppDispatch } from '../store';
 import { ISignInForm } from '../validators/authorization/signIn';
 
-export const useSignInQuery = (form: ISignInForm, setError: UseFormSetError<ISignInForm>, enabled = false) => {
+export const useSignInQuery = (values: ISignInForm, setError: UseFormSetError<ISignInForm>, enabled = false) => {
     const authorizationService = useAuthorizationService();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
+
+    const form = useMemo(() => values, [values]);
 
     return useQuery<ITokenResponse, AxiosError<any, any>, ITokenResponse, QueryKey>({
         queryKey: [AuthorizationQueries.signIn, { ...form }],
@@ -67,7 +70,7 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
     const { enqueueSnackbar } = useSnackbar();
 
     return useQuery<any, AxiosError<any, any>, IProfileState, QueryKey>({
-        queryKey: [AuthorizationQueries.getInitialProfile],
+        queryKey: [AuthorizationQueries.getInitialProfile, { accountId: accountId, roleName: roleName }],
         queryFn: async () => {
             let profile: IProfileState | null = null;
             const id = accountId ?? authorizationService.getAccountId();

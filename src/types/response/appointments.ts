@@ -4,6 +4,7 @@ export interface IAppointmentResponse {
     id: string;
     startTime: string;
     endTime: string;
+    patientId: string;
     patientFullName: string;
     patientPhoneNumber: string;
     doctorFullName: string;

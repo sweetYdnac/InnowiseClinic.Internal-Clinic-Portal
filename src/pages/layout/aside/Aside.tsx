@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { AsideNavigation } from './AsideNavigation';
+import { AsideNavigationReducer } from './navigation/AsideNavigationReducer';
 import { CustomDrawer } from './CustomDrawer';
 
 const drawerWidth = 240;
@@ -15,7 +15,7 @@ export const Aside = () => {
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                 }}
             >
-                <AsideNavigation />
+                <AsideNavigationReducer />
             </CustomDrawer>
 
             <CustomDrawer
@@ -26,7 +26,7 @@ export const Aside = () => {
                     '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, position: 'inherit' },
                 }}
             >
-                <AsideNavigation />
+                <AsideNavigationReducer />
             </CustomDrawer>
         </Box>
     );

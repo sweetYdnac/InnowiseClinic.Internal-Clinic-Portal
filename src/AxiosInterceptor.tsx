@@ -40,6 +40,11 @@ export const AxiosInterceptor = () => {
                     break;
                 }
                 case 404:
+                    navigate(AppRoutes.Home);
+                    enqueueSnackbar(error.response.data.Message, {
+                        variant: 'info',
+                    });
+                    break;
                 case 409:
                     enqueueSnackbar(error.response.data.Message, {
                         variant: 'info',

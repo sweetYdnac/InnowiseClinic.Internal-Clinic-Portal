@@ -24,6 +24,7 @@ import { SpecializationInformationPage } from '../pages/specializations/Speciali
 import { SpecializationsPage } from '../pages/specializations/SpecializationsPage';
 import { AppRoutes } from './AppRoutes';
 import { ProtectedRoute } from './ProtectedRoute';
+import { DoctorSchedulePage } from '../pages/doctors/DoctorSchedulePage';
 
 interface AppRouterProps {
     children: ReactNode;
@@ -81,8 +82,16 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                     <Route
                         path={AppRoutes.DoctorProfile}
                         element={
-                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist, Roles.Doctor]}>
                                 <DoctorProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.DoctorSchedule}
+                        element={
+                            <ProtectedRoute roles={[Roles.Doctor, Roles.Admin]}>
+                                <DoctorSchedulePage />
                             </ProtectedRoute>
                         }
                     />
