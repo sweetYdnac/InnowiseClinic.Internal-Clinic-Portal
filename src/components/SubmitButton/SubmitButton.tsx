@@ -14,9 +14,7 @@ export const SubmitButton = <T extends FieldValues>({ errors, shouldBeTouched, c
             type='submit'
             variant='contained'
             color='success'
-            disabled={
-                Object.keys(errors).some((key) => errors[key]?.message) || shouldBeTouched?.some((field) => field === (false || undefined))
-            }
+            disabled={Object.keys(errors).some((key) => errors[key]?.message) || shouldBeTouched?.some((field) => !field)}
         >
             {children}
         </Button>

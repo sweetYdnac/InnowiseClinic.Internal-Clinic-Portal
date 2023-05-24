@@ -36,10 +36,9 @@ export const usePagedServicesQuery = (request: IGetPagedServicesRequest, enabled
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
-    const { specializationId, ...rest } = request;
 
     return useQuery<IPagedResponse<IServiceInformationResponse>, AxiosError, IPagedResponse<IServiceInformationResponse>, QueryKey>({
-        queryKey: [ServicesQueries.getPaged, { ...rest }],
+        queryKey: [ServicesQueries.getPaged, { ...request }],
         queryFn: async () => await servicesService.getPaged(request),
         enabled: enabled,
         retry: false,
@@ -182,7 +181,7 @@ export const useUpdateServiceCommand = (form: IServiceForm, setError: UseFormSet
     });
 };
 
-export const useChangeServiceStatusCommand = () => {
+export const useChangeServiceStatusCommand = (specializationId: string) => {
     const serviceService = useServicesService();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -200,20 +199,22 @@ export const useChangeServiceStatusCommand = () => {
                 }
                 return prev;
             });
-            queryClient.setQueriesData<IPagedResponse<IServiceInformationResponse>>([ServicesQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === variables.id) {
-                            return {
-                                ...item,
-                                isActive: variables.isActive,
-                            };
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<IServiceInformationResponse>;
-            });
+            queryClient.setQueriesData<IPagedResponse<IServiceInformationResponse>>(
+                [ServicesQueries.getPaged, { specializationId: specializationId } as IGetPagedServicesRequest],
+                (prev) =>
+                    ({
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === variables.id) {
+                                return {
+                                    ...item,
+                                    isActive: variables.isActive,
+                                };
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<IServiceInformationResponse>)
+            );
             enqueueSnackbar('Status changed successfully!', {
                 variant: 'success',
             });

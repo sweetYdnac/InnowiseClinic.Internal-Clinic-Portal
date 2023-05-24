@@ -13,12 +13,15 @@ import { Textfield } from '../../components/Textfield/Textfield';
 import { WorkMode } from '../../constants/WorkModes';
 import { useCreateServiceCommand, usePagedServicesQuery } from '../../hooks/requests/services';
 import { useSpecializationQuery, useUpdateSpecializationCommand } from '../../hooks/requests/specializations';
+import { useAppSelector } from '../../hooks/store';
 import { useSpecializationValidator } from '../../hooks/validators/specializations/create&update';
+import { selectServices } from '../../store/servicesSlice';
 import { IPagedRequest } from '../../types/common/Requests';
 import { ServicesTable } from '../services/ServicesTable';
 
 export const SpecializationInformationPage = () => {
     const { id } = useParams();
+    const newServices = useAppSelector(selectServices);
     const [workMode, setWorkMode] = useState<WorkMode>('view');
     const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
     const [servicesPagingData, setServicesPagingData] = useState<IPagedRequest>({
@@ -87,8 +90,8 @@ export const SpecializationInformationPage = () => {
             setWorkMode('view');
         }
 
-        watch('services').forEach((item) => createService({ ...item, specializationId: id as string }));
-    }, [createService, defaultValues, id, reset, updateSpecialization, watch]);
+        newServices.forEach((item) => createService({ ...item, specializationId: id as string }));
+    }, [createService, defaultValues, id, newServices, reset, updateSpecialization, watch]);
 
     return (
         <>
@@ -137,7 +140,7 @@ export const SpecializationInformationPage = () => {
                         )}
 
                         {workMode === 'edit' && (
-                            <div
+                            <Box
                                 style={{
                                     width: '75%',
                                     display: 'flex',
@@ -149,7 +152,7 @@ export const SpecializationInformationPage = () => {
                                     Cancel
                                 </Button>
                                 <SubmitButton errors={errors}>Save changes</SubmitButton>
-                            </div>
+                            </Box>
                         )}
                     </Box>
 
