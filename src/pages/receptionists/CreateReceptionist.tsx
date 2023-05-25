@@ -39,16 +39,16 @@ export const CreateReceptionist = () => {
         refetch: fetchOffices,
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
 
-    const officesOptions = useMemo(() => {
-        return (
+    const officesOptions = useMemo(
+        () =>
             offices?.items?.map((item) => {
                 return {
                     label: item.address,
                     id: item.id,
                 } as IAutoCompleteItem;
-            }) ?? []
-        );
-    }, [offices]);
+            }) ?? [],
+        [offices]
+    );
 
     const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'));
     const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photoUrl);
@@ -57,11 +57,9 @@ export const CreateReceptionist = () => {
     const onSubmit = useCallback(async () => {
         await createAccount().then(async (account) => {
             if (photoUrl) {
-                await createPhoto().then(
-                    async (photo) => await CreateReceptionist({ accountId: account?.id as string, photoId: photo.id })
-                );
+                await createPhoto().then(async (photo) => CreateReceptionist({ accountId: account?.id as string, photoId: photo.id }));
             } else {
-                await CreateReceptionist({ accountId: account?.id as string, photoId: null });
+                CreateReceptionist({ accountId: account?.id as string, photoId: null });
             }
         });
     }, [CreateReceptionist, createAccount, createPhoto, photoUrl]);

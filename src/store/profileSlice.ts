@@ -3,13 +3,14 @@ import { RootState } from './store';
 
 export interface IProfileState {
     id: string;
-    photoId: string;
+    photoId: string | null;
     firstName: string;
     lastName: string;
     middleName: string;
     officeId: string;
     officeAddress: string;
     dateOfBirth: string;
+    specializationId: string;
     specializationName: string;
     careerStartYear: number;
     status: number;
@@ -17,13 +18,14 @@ export interface IProfileState {
 
 export const defaultProfile: IProfileState = {
     id: '',
-    photoId: '',
+    photoId: null,
     firstName: '',
     lastName: '',
     middleName: '',
     officeId: '',
     officeAddress: '',
     dateOfBirth: '',
+    specializationId: '',
     specializationName: '',
     careerStartYear: 2000,
     status: 1,

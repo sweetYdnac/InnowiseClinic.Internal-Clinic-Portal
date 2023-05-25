@@ -6,9 +6,10 @@ export interface IGetReceptionistsForm extends IPagedRequest {}
 
 export const useGetReceptionistsValidator = (pagedData: IPagedRequest) => {
     const initialValues = useMemo(
-        () => ({
-            ...pagedData,
-        }),
+        () =>
+            ({
+                ...pagedData,
+            } as IGetReceptionistsForm),
         [pagedData]
     );
 

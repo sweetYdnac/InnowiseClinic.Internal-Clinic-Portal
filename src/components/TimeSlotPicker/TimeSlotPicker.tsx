@@ -35,55 +35,53 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                 name={id}
                 control={control}
                 render={({ field, fieldState }) => (
-                    <>
-                        <MobileTimePicker
-                            {...field}
-                            open={isOpen && !isLoading}
-                            onClose={() => setIsOpen(false)}
-                            onOpen={() => {
-                                setIsOpen(true);
-                                handleOpen();
-                            }}
-                            disabled={disabled}
-                            readOnly={disabled}
-                            label={displayName}
-                            format={timeSlotFormat}
-                            minutesStep={10}
-                            ampmInClock={true}
-                            closeOnSelect={true}
-                            shouldDisableTime={(value: dayjs.Dayjs, view) => {
-                                if (view === 'hours') {
-                                    return !timeSlots.some((slot) => dayjs(slot.time, timeSlotFormat).hour() === value.hour());
-                                } else if (view === 'minutes') {
-                                    return !timeSlots.some((slot) => slot.time === value.format(timeSlotFormat));
-                                }
+                    <MobileTimePicker
+                        {...field}
+                        open={isOpen && !isLoading}
+                        onClose={() => setIsOpen(false)}
+                        onOpen={() => {
+                            setIsOpen(true);
+                            handleOpen();
+                        }}
+                        disabled={disabled}
+                        readOnly={disabled}
+                        label={displayName}
+                        format={timeSlotFormat}
+                        minutesStep={10}
+                        ampmInClock={true}
+                        closeOnSelect={true}
+                        shouldDisableTime={(value: dayjs.Dayjs, view) => {
+                            if (view === 'hours') {
+                                return !timeSlots.some((slot) => dayjs(slot.time, timeSlotFormat).hour() === value.hour());
+                            } else if (view === 'minutes') {
+                                return !timeSlots.some((slot) => slot.time === value.format(timeSlotFormat));
+                            }
 
-                                return false;
-                            }}
-                            defaultValue={field?.value ?? null}
-                            value={field?.value ?? null}
-                            onChange={(time) => field.onChange(time)}
-                            onAccept={(time) => field.onBlur()}
-                            onSelectedSectionsChange={() => field.onBlur()}
-                            slotProps={{
-                                textField: {
-                                    sx: { m: 1, width: '75%' },
-                                    variant: 'standard',
-                                    color: fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success',
-                                    focused: !fieldState.error?.message && (fieldState.isTouched || !!field.value),
-                                    helperText: fieldState.isTouched ? fieldState.error?.message : '',
-                                    error: !!fieldState.error?.message && (fieldState.isTouched || !!field.value),
-                                    InputProps: {
-                                        endAdornment: (
-                                            <InputAdornment position='end'>
-                                                <AccessTimeIcon />
-                                            </InputAdornment>
-                                        ),
-                                    },
+                            return false;
+                        }}
+                        defaultValue={field?.value ?? null}
+                        value={field?.value ?? null}
+                        onChange={(time) => field.onChange(time)}
+                        onAccept={(time) => field.onBlur()}
+                        onSelectedSectionsChange={() => field.onBlur()}
+                        slotProps={{
+                            textField: {
+                                sx: { m: 1, width: '75%' },
+                                variant: 'standard',
+                                color: fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success',
+                                focused: !fieldState.error?.message && (fieldState.isTouched || !!field.value),
+                                helperText: fieldState.isTouched ? fieldState.error?.message : '',
+                                error: !!fieldState.error?.message && (fieldState.isTouched || !!field.value),
+                                InputProps: {
+                                    endAdornment: (
+                                        <InputAdornment position='end'>
+                                            <AccessTimeIcon />
+                                        </InputAdornment>
+                                    ),
                                 },
-                            }}
-                        />
-                    </>
+                            },
+                        }}
+                    />
                 )}
             />
         </LocalizationProvider>

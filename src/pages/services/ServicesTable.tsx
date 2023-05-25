@@ -3,8 +3,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import { FunctionComponent, useCallback, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { Modals } from '../../constants/Modals';
 import { WorkMode } from '../../constants/WorkModes';
 import { useChangeServiceStatusCommand } from '../../hooks/requests/services';
@@ -17,7 +18,7 @@ import { IServiceInformationResponse } from '../../types/response/services';
 import { ToCurrency } from '../../utils/currencyFormatter';
 
 interface ServicesTableProps {
-    existedServices: IServiceInformationResponse[];
+    existedServices?: IServiceInformationResponse[];
     pagingData: IPagingData;
     handlePageChange: (e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
     workMode?: WorkMode;
@@ -29,7 +30,8 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
     handlePageChange,
     workMode = 'view',
 }) => {
-    const { mutate, isLoading } = useChangeServiceStatusCommand();
+    const { id } = useParams();
+    const { mutate, isLoading } = useChangeServiceStatusCommand(id as string);
     const dispatch = useAppDispatch();
     const newServices = useAppSelector(selectServices);
 
@@ -91,37 +93,43 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
                                 </TableCell>
                             </TableRow>
                         ))}
-                        {existedServices.map((service) => (
-                            <TableRow
-                                key={service.id}
-                                hover
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer', backgroundColor: 'lightgrey' }}
-                            >
-                                <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
-                                    {service.title}
-                                </TableCell>
-                                <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
-                                    {ToCurrency(service.price)}
-                                </TableCell>
-                                <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
-                                    {service.categoryTitle}
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <ToggleSwitch
-                                        value={service.isActive}
-                                        handleChange={(value) => mutate({ id: service.id, isActive: value })}
-                                    />
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <IconButton onClick={() => handleOpenEditServiceModal(service.id)}>
-                                        <ModeEditIcon fontSize='medium' />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {existedServices &&
+                            existedServices.map((service) => (
+                                <TableRow
+                                    key={service.id}
+                                    hover
+                                    sx={{
+                                        '&:last-child td, &:last-child th': { border: 0 },
+                                        cursor: 'pointer',
+                                        backgroundColor: 'lightgrey',
+                                    }}
+                                >
+                                    <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
+                                        {service.title}
+                                    </TableCell>
+                                    <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
+                                        {ToCurrency(service.price)}
+                                    </TableCell>
+                                    <TableCell onClick={() => handleOpenServiceInformationModal(service.id)} align='center'>
+                                        {service.categoryTitle}
+                                    </TableCell>
+                                    <TableCell align='center'>
+                                        <ToggleSwitch
+                                            value={service.isActive}
+                                            handleChange={(value) => mutate({ id: service.id, isActive: value })}
+                                        />
+                                    </TableCell>
+                                    <TableCell align='center'>
+                                        <IconButton onClick={() => handleOpenEditServiceModal(service.id)}>
+                                            <ModeEditIcon fontSize='medium' />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+
             <TablePagination
                 component='div'
                 count={pagingData.totalCount}

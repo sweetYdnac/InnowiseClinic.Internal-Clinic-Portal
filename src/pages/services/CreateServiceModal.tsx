@@ -6,15 +6,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
-import '../../components/Modal/ModalWindow.css';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
 import { Textfield } from '../../components/Textfield/Textfield';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { useGetAllServiceCategories } from '../../hooks/requests/servicesCategories';
 import { useAppDispatch } from '../../hooks/store';
 import { useServiceValidator } from '../../hooks/validators/services/create&update';
 import { closeModal } from '../../store/modalsSlice';
 import { addService } from '../../store/servicesSlice';
+import '../../styles/ModalWindow.css';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const CreateServiceModal = () => {

@@ -9,8 +9,8 @@ import { Loader } from '../../components/Loader/Loader';
 import { ReadonlyTextfield } from '../../components/ReadonlyTextfield/ReadonlyTextfield';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { TimeSlotPicker } from '../../components/TimeSlotPicker/TimeSlotPicker';
-import { endTime, startTime } from '../../constants/WorkingDay';
 import { dateApiFormat, timeSlotFormat } from '../../constants/Formats';
+import { endTime, startTime } from '../../constants/WorkingDay';
 import { useAppointmentQuery, useRescheduleAppointmentCommand, useTimeSlotsQuery } from '../../hooks/requests/appointments';
 import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';
 import { useRescheduleAppointmentValidator } from '../../hooks/validators/appointments/reschedule';
@@ -68,7 +68,8 @@ export const RescheduleAppointment = () => {
 
     const { mutate: rescheduleAppointment, isLoading: isRescheduleAppointmentLoading } = useRescheduleAppointmentCommand(
         id as string,
-        getValues(),
+        watch(),
+        initialValues.date,
         setError
     );
 

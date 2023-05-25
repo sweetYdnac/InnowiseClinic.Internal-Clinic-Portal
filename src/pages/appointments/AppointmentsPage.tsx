@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@mui/material';
-import { FunctionComponent, useCallback, useEffect } from 'react';
+import { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
@@ -18,24 +18,11 @@ import { AppointmentsTable } from './AppointmentsTable';
 export const AppointmentsPage: FunctionComponent = () => {
     const { validationScheme, initialValues } = useAppointmentsValidator();
 
-    const { register, setError, control, getValues, watch, setValue } = useForm({
+    const { register, control, getValues, watch, setValue } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
     });
-
-    const { data: appointments, isFetching: isFetchingAppointments } = usePagedAppointmentsQuery(
-        {
-            currentPage: watch('currentPage'),
-            pageSize: watch('pageSize'),
-            date: watch('date')?.format(dateApiFormat) as string,
-            doctorFullName: watch('doctorInput'),
-            serviceId: watch('serviceId'),
-            officeId: watch('officeId'),
-            isApproved: watch('isApproved'),
-        },
-        true
-    );
 
     const {
         data: offices,
@@ -68,6 +55,24 @@ export const AppointmentsPage: FunctionComponent = () => {
         specializationId: watch('specializationId'),
     });
 
+    const doctorFullName = useMemo(
+        () => doctors?.items.find((item) => item.id === getValues('doctorId'))?.fullName ?? getValues('doctorInput'),
+        [doctors?.items, getValues]
+    );
+
+    const { data: appointments, isFetching: isFetchingAppointments } = usePagedAppointmentsQuery(
+        {
+            currentPage: watch('currentPage'),
+            pageSize: watch('pageSize'),
+            date: getValues('date')?.format(dateApiFormat) as string,
+            doctorFullName: doctorFullName,
+            serviceId: getValues('serviceId'),
+            officeId: getValues('officeId'),
+            isApproved: getValues('isApproved'),
+        },
+        true
+    );
+
     useEffect(() => {
         if (!getValues('doctorId') && !getValues('serviceId')) {
             setValue('specializationId', '');
@@ -89,7 +94,15 @@ export const AppointmentsPage: FunctionComponent = () => {
 
     useEffect(() => {
         setValue('currentPage', 1);
-    }, [watch('pageSize'), watch('date'), watch('doctorInput'), watch('serviceId'), watch('officeId'), watch('isApproved')]);
+    }, [
+        watch('pageSize'),
+        watch('date'),
+        watch('doctorId'),
+        getValues('doctorInput'),
+        watch('serviceId'),
+        watch('officeId'),
+        watch('isApproved'),
+    ]);
 
     const getDoctorsOptions = useCallback(() => {
         if (getValues('doctorId')) {
@@ -182,6 +195,7 @@ export const AppointmentsPage: FunctionComponent = () => {
                 <Box>
                     {appointments && (
                         <AppointmentsTable
+                            date={watch('date')}
                             appointments={appointments.items}
                             pagingData={{
                                 currentPage: appointments.currentPage,

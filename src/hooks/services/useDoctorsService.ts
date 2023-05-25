@@ -1,8 +1,13 @@
 import { ApiBaseUrls } from '../../constants/ApiBaseUrls';
 import { IChangeStatusRequest } from '../../types/common/Requests';
-import { ICreatedResponse, INoContentResponse } from '../../types/common/Responses';
-import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../../types/request/doctors';
-import { IDoctorResponse, IPagedDoctorsResponse } from '../../types/response/doctors';
+import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
+import {
+    ICreateDoctorRequest,
+    IGetDoctorScheduleRequest,
+    IGetPagedDoctorsRequest,
+    IUpdateDoctorRequest,
+} from '../../types/request/doctors';
+import { IDoctorResponse, IDoctorScheduledAppointmentResponse, IPagedDoctorsResponse } from '../../types/response/doctors';
 import { IDoctorsService } from '../../types/services/IDoctorsService';
 import { getQueryString } from '../../utils/functions';
 import { axiosInstance } from './axiosConfig';
@@ -13,10 +18,13 @@ export const useDoctorsService = () =>
             return (await axiosInstance.get<IDoctorResponse>(`${ApiBaseUrls.Doctors}/${id}`)).data;
         },
 
-        getPaged: async (data: IGetPagedDoctorsRequest) => {
-            const path = `${ApiBaseUrls.Doctors}?${getQueryString(data)}`;
+        getPaged: async (data: IGetPagedDoctorsRequest) =>
+            (await axiosInstance.get<IPagedDoctorsResponse>(`${ApiBaseUrls.Doctors}?${getQueryString(data)}`)).data,
 
-            return (await axiosInstance.get<IPagedDoctorsResponse>(path)).data;
+        getSchedule: async (id: string, data: IGetDoctorScheduleRequest) => {
+            const path = `${ApiBaseUrls.Doctors}/${id}${ApiBaseUrls.Appointments}?${getQueryString(data)}`;
+
+            return (await axiosInstance.get<IPagedResponse<IDoctorScheduledAppointmentResponse>>(path)).data;
         },
 
         create: async (data: ICreateDoctorRequest) => (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Doctors, data)).data,

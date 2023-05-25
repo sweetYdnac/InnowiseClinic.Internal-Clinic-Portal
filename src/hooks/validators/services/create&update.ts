@@ -17,7 +17,7 @@ export const useServiceValidator = (service?: IServiceResponse) => {
         () =>
             ({
                 title: service?.title ?? '',
-                price: service?.price,
+                price: service?.price ?? 0,
                 specializationId: service?.specializationId ?? '',
                 categoryId: service?.categoryId ?? '',
                 categoryInput: service?.categoryTitle ?? '',

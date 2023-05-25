@@ -27,8 +27,8 @@ export const useRescheduleAppointmentValidator = (appointment?: IRescheduleAppoi
         doctorId: Yup.string().required('Please choose the doctor'),
         doctorInput: Yup.string().notRequired(),
         date: Yup.date()
-            .min(dayjs(), 'Date could not be past')
-            .required('Please, enter a valid date')
+            .min(dayjs().subtract(1, 'day'), 'Date could not be past')
+            .required('Please, enter a date')
             .typeError('Please, enter a valid date'),
         time: Yup.date().required('Please, enter a valid timeslot').typeError('Please, enter a valid timeslot'),
     });

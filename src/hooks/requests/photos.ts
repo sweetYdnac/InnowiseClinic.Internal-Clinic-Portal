@@ -2,8 +2,8 @@ import { QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react
 import { AxiosError } from 'axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
-import { AppRoutes } from '../../routes/AppRoutes';
 import { PhotosQueries } from '../../constants/QueryKeys';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { ICreatedResponse, INoContentResponse } from '../../types/common/Responses';
 import { usePhotosService } from '../services/usePhotosService';
 

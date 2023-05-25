@@ -23,34 +23,32 @@ export const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, contr
             name={id}
             control={control}
             render={({ field, fieldState }) => (
-                <>
-                    <FormControl
-                        sx={{ m: 1, width: '75%' }}
-                        error={(fieldState.error?.message?.length ?? 0) > 0 && fieldState.isTouched}
-                        required
-                    >
-                        <InputLabel>
-                            {(fieldState.error?.message?.length ?? 0) > 0 && fieldState.isTouched ? 'Error' : displayName}
-                        </InputLabel>
-                        <Input
-                            {...field}
-                            type={showPassword ? 'text' : 'password'}
-                            startAdornment={
-                                <InputAdornment position='start'>
-                                    <KeyIcon />
-                                </InputAdornment>
-                            }
-                            endAdornment={
-                                <InputAdornment position='end'>
-                                    <IconButton onClick={() => setShowPassword(true)} onMouseDown={() => setShowPassword(false)}>
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                        />
-                        <FormHelperText>{fieldState.isTouched ? fieldState.error?.message : ''}</FormHelperText>
-                    </FormControl>
-                </>
+                <FormControl
+                    sx={{ m: 1, width: '75%' }}
+                    error={!!fieldState.error?.message && (fieldState.isTouched || !!field.value)}
+                    color={fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success'}
+                    focused={!fieldState.error?.message && (fieldState.isTouched || !!field.value)}
+                    required
+                >
+                    <InputLabel>{(fieldState.error?.message?.length ?? 0) > 0 && fieldState.isTouched ? 'Error' : displayName}</InputLabel>
+                    <Input
+                        {...field}
+                        type={showPassword ? 'text' : 'password'}
+                        startAdornment={
+                            <InputAdornment position='start'>
+                                <KeyIcon />
+                            </InputAdornment>
+                        }
+                        endAdornment={
+                            <InputAdornment position='end'>
+                                <IconButton onClick={() => setShowPassword(true)} onMouseDown={() => setShowPassword(false)}>
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                    <FormHelperText>{fieldState.isTouched ? fieldState.error?.message : ''}</FormHelperText>
+                </FormControl>
             )}
         />
     );

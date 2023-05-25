@@ -65,7 +65,7 @@ export const useChangeOfficeStatusCommand = () => {
         retry: false,
         onSuccess: (data, variables) => {
             queryClient.setQueryData<IOfficeResponse>([OfficesQueries.getById, variables.id], (prev) => {
-                if (prev !== undefined) {
+                if (prev) {
                     return {
                         ...prev,
                         isActive: variables.isActive,
@@ -73,20 +73,22 @@ export const useChangeOfficeStatusCommand = () => {
                 }
                 return prev;
             });
-            queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>([OfficesQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === variables.id) {
-                            return {
-                                ...item,
-                                isActive: variables.isActive,
-                            };
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<IOfficeInformationResponse>;
-            });
+            queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>(
+                [OfficesQueries.getPaged],
+                (prev) =>
+                    ({
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === variables.id) {
+                                return {
+                                    ...item,
+                                    isActive: variables.isActive,
+                                };
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<IOfficeInformationResponse>)
+            );
             enqueueSnackbar('Status changed successfully!', {
                 variant: 'success',
             });
@@ -118,22 +120,24 @@ export const useUpdateOfficeCommand = (id: string, form: IUpdateOfficeForm, setE
                 registryPhoneNumber: form.registryPhoneNumber,
                 isActive: form.isActive,
             } as IOfficeResponse);
-            queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>([OfficesQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === id) {
-                            return {
-                                id: id,
-                                address: `${form.city}, ${form.street}, ${form.houseNumber}, ${form.officeNumber}`,
-                                registryPhoneNumber: form.registryPhoneNumber,
-                                isActive: form.isActive,
-                            } as IOfficeInformationResponse;
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<IOfficeInformationResponse>;
-            });
+            queryClient.setQueriesData<IPagedResponse<IOfficeInformationResponse>>(
+                [OfficesQueries.getPaged],
+                (prev) =>
+                    ({
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === id) {
+                                return {
+                                    id: id,
+                                    address: `${form.city}, ${form.street}, ${form.houseNumber}, ${form.officeNumber}`,
+                                    registryPhoneNumber: form.registryPhoneNumber,
+                                    isActive: form.isActive,
+                                } as IOfficeInformationResponse;
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<IOfficeInformationResponse>)
+            );
             enqueueSnackbar('Office updated successfully!', {
                 variant: 'success',
             });

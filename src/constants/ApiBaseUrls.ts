@@ -1,5 +1,6 @@
 export enum ApiBaseUrls {
     Appointments = '/appointments',
+    AppointmentsResult = '/appointments/results',
     Authorization = '/authorization',
     Doctors = '/doctors',
     Offices = '/offices',

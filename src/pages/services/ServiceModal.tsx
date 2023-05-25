@@ -10,16 +10,16 @@ import { useForm } from 'react-hook-form';
 import { AutoComplete } from '../../components/AutoComplete/AutoComplete';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
-import '../../components/Modal/ModalWindow.css';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
 import { Textfield } from '../../components/Textfield/Textfield';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { WorkMode } from '../../constants/WorkModes';
 import { useGetServiceByIdQuery, useUpdateServiceCommand } from '../../hooks/requests/services';
 import { useGetAllServiceCategories } from '../../hooks/requests/servicesCategories';
 import { useAppDispatch } from '../../hooks/store';
 import { useServiceValidator } from '../../hooks/validators/services/create&update';
 import { closeModal } from '../../store/modalsSlice';
+import '../../styles/ModalWindow.css';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 interface ServiceModalProps {

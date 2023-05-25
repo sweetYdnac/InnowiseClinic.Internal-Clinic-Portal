@@ -33,7 +33,10 @@ export const useAppointmentsValidator = () => {
     const validationScheme = Yup.object().shape({
         currentPage: Yup.number().moreThan(0, 'Page number should be greater than 0').required(),
         pageSize: Yup.number().min(1).max(50).required('Page size is required'),
-        date: Yup.date().min(dayjs(), 'Date could not be past').required('Please, enter a date'),
+        date: Yup.date()
+            .min(dayjs().subtract(1, 'day'), 'Date could not be past')
+            .required('Please, enter a date')
+            .typeError('Please, enter a valid date'),
         doctorId: Yup.string().notRequired(),
         doctorInput: Yup.string().notRequired(),
         serviceId: Yup.string().notRequired(),

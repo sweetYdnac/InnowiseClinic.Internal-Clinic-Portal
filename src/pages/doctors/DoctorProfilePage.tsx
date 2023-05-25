@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Box, Button, IconButton } from '@mui/material';
+import dayjs from 'dayjs';
 import { deepEqual } from 'fast-equals';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -13,22 +14,38 @@ import { Loader } from '../../components/Loader/Loader';
 import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
+import { dateApiFormat } from '../../constants/Formats';
+import { Roles } from '../../constants/Roles';
 import { WorkMode } from '../../constants/WorkModes';
 import { useDoctorQuery, useUpdateDoctorCommand } from '../../hooks/requests/doctors';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { useCreatePhotoCommand, useGetPhotoQuery, useUpdatePhotoCommand } from '../../hooks/requests/photos';
 import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
+import { useAppDispatch, useAppSelector } from '../../hooks/store';
 import { useUpdateDoctorValidator } from '../../hooks/validators/doctors/update';
+import { IProfileState, selectProfile, setProfile } from '../../store/profileSlice';
+import { selectRole } from '../../store/roleSlice';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
 
 export const DoctorProfilePage = () => {
     const [workMode, setWorkMode] = useState<WorkMode>('view');
     const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
     const { id } = useParams();
-    const { data: doctor, isFetching: isFetchingDoctor } = useDoctorQuery(id as string, true);
-    const { data: photoUrl, isFetching: isFetchingPhoto } = useGetPhotoQuery(doctor?.photoId ?? null, !!doctor?.photoId);
+    const dispatch = useAppDispatch();
+
+    const storeProfile = useAppSelector(selectProfile);
+    const role = useAppSelector(selectRole);
+    const isOwnPage = useMemo(() => role === Roles.Doctor && storeProfile.id === (id as string), [id, role, storeProfile.id]);
+
+    const { data: doctor, isFetching: isFetchingDoctor } = useDoctorQuery(id as string, !isOwnPage);
+    const profile = useMemo(
+        () => (role === Roles.Doctor && storeProfile.id === (id as string) ? storeProfile : doctor),
+        [id, doctor, role, storeProfile]
+    );
+
+    const { data: photoUrl, isFetching: isFetchingPhoto } = useGetPhotoQuery(profile?.photoId ?? null, !!profile?.photoId);
     const [photo, setPhoto] = useState(photoUrl as string);
-    const { initialValues, validationScheme } = useUpdateDoctorValidator(doctor);
+    const { initialValues, validationScheme } = useUpdateDoctorValidator(profile);
 
     const {
         register,
@@ -69,11 +86,11 @@ export const DoctorProfilePage = () => {
               }) ?? []
             : [
                   {
-                      label: doctor?.officeAddress,
-                      id: doctor?.officeId,
+                      label: profile?.officeAddress,
+                      id: profile?.officeId,
                   } as IAutoCompleteItem,
               ];
-    }, [doctor?.officeAddress, doctor?.officeId, offices]);
+    }, [offices, profile?.officeAddress, profile?.officeId]);
 
     const {
         data: specializations,
@@ -83,7 +100,7 @@ export const DoctorProfilePage = () => {
         currentPage: 1,
         pageSize: 20,
         isActive: true,
-        title: watch('specializationInput'),
+        title: watch('specializationName'),
     });
 
     const specializationsOptions = useMemo(
@@ -97,11 +114,11 @@ export const DoctorProfilePage = () => {
                   }) ?? []
                 : [
                       {
-                          label: doctor?.specializationName,
-                          id: doctor?.specializationId,
+                          label: profile?.specializationName,
+                          id: profile?.specializationId,
                       } as IAutoCompleteItem,
                   ],
-        [doctor?.specializationId, doctor?.specializationName, specializations]
+        [profile?.specializationId, profile?.specializationName, specializations]
     );
 
     const { mutate: updateDoctor, isLoading: isUpdatingDoctor } = useUpdateDoctorCommand(id as string, watch(), setError);
@@ -112,12 +129,22 @@ export const DoctorProfilePage = () => {
         (photoId: string) => {
             updateDoctor(photoId, {
                 onSuccess: () => {
+                    if (isOwnPage) {
+                        dispatch(
+                            setProfile({
+                                ...watch(),
+                                id: id,
+                                dateOfBirth: dayjs(watch('dateOfBirth')).format(dateApiFormat),
+                                careerStartYear: watch('careerStartYear')?.year() ?? 0,
+                            } as IProfileState)
+                        );
+                    }
                     reset(watch());
                     setWorkMode('view');
                 },
             });
         },
-        [reset, updateDoctor, watch]
+        [dispatch, id, isOwnPage, reset, updateDoctor, watch]
     );
 
     const tryUpdateDoctor = useCallback(() => {
@@ -197,7 +224,7 @@ export const DoctorProfilePage = () => {
                                 }
                             }}
                             handleInputChange={() => fetchOffices()}
-                            inputFieldName={register('officeInput').name}
+                            inputFieldName={register('officeAddress').name}
                             debounceDelay={2000}
                         />
 
@@ -214,7 +241,7 @@ export const DoctorProfilePage = () => {
                                 }
                             }}
                             handleInputChange={() => fetchSpecializations()}
-                            inputFieldName={register('specializationInput').name}
+                            inputFieldName={register('specializationName').name}
                             debounceDelay={2000}
                         />
 

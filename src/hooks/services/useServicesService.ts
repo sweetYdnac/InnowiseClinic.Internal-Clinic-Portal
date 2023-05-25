@@ -10,11 +10,9 @@ export const useServicesService = () =>
     ({
         getById: async (id: string) => (await axiosInstance.get<IServiceResponse>(`${ApiBaseUrls.Services}/${id}`)).data,
 
-        getPaged: async (request: IGetPagedServicesRequest) => {
-            const path = `${ApiBaseUrls.Services}?${getQueryString(request)}`;
-
-            return (await axiosInstance.get<IPagedResponse<IServiceInformationResponse>>(path)).data;
-        },
+        getPaged: async (request: IGetPagedServicesRequest) =>
+            (await axiosInstance.get<IPagedResponse<IServiceInformationResponse>>(`${ApiBaseUrls.Services}?${getQueryString(request)}`))
+                .data,
 
         create: async (request: ICreateServiceRequest) => (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Services, request)).data,
 

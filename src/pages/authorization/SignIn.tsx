@@ -1,12 +1,13 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AccountCircle } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import jwt from 'jwt-decode';
 import { FunctionComponent, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { EmailAddressInput } from '../../components/EmailAddressInput/EmailAddressInput';
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
+import { Textfield } from '../../components/Textfield/Textfield';
 import { useInitialProfileQuery, useSignInQuery } from '../../hooks/requests/authorization';
 import { useLoginValidator } from '../../hooks/validators/authorization/signIn';
 import '../../styles/ModalForm.css';
@@ -21,16 +22,16 @@ export const SignIn: FunctionComponent = () => {
         setError,
         control,
         formState: { errors, touchedFields },
-        watch,
+        getValues,
     } = useForm({
         mode: 'onBlur',
         resolver: yupResolver(validationScheme),
         defaultValues: initialValues,
     });
 
-    const { data: tokenResponse, refetch } = useSignInQuery(watch(), setError);
+    const { data: tokenResponse, refetch } = useSignInQuery(getValues(), setError);
 
-    const t = useMemo(() => {
+    const token = useMemo(() => {
         if (tokenResponse) {
             const decoded = jwt<IJwtToken>(tokenResponse?.accessToken as string);
 
@@ -46,7 +47,7 @@ export const SignIn: FunctionComponent = () => {
         }
     }, [tokenResponse]);
 
-    useInitialProfileQuery(t.accountId, t.role, !!tokenResponse?.accessToken);
+    useInitialProfileQuery(token.accountId, token.role, !!tokenResponse?.accessToken);
 
     return (
         <Box
@@ -67,7 +68,15 @@ export const SignIn: FunctionComponent = () => {
                 Sign In
             </Typography>
 
-            <EmailAddressInput id={register('email').name} control={control} displayName='Email Address' />
+            <Textfield
+                id={register('email').name}
+                control={control}
+                inputMode='email'
+                displayName='Email Address'
+                placeholder='example@gmail.com'
+                workMode='edit'
+                startAdornment={<AccountCircle />}
+            />
             <PasswordInput id={register('password').name} control={control} displayName='Password' />
 
             <SubmitButton errors={errors} shouldBeTouched={[touchedFields.email, touchedFields.password]}>

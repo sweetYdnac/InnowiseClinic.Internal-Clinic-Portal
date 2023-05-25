@@ -1,14 +1,17 @@
 import { ReactNode } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Roles } from '../constants/Roles';
-import { Home } from '../pages/Home';
+import { AppointmentResultPage } from '../pages/appointmentResults/AppointmentResultPage';
+import { CreateAppointmentResultPage } from '../pages/appointmentResults/CreateAppointmentResultPage';
 import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
 import { CreateAppointment } from '../pages/appointments/CreateAppointment';
 import { RescheduleAppointment } from '../pages/appointments/RescheduleAppointmentPage';
 import { SignIn } from '../pages/authorization/SignIn';
 import { CreateDoctorPage } from '../pages/doctors/CreateDoctorPage';
 import { DoctorProfilePage } from '../pages/doctors/DoctorProfilePage';
-import { DoctorsPage } from '../pages/doctors/DoctorsPage';
+import { DoctorsPage } from '../pages/doctors/DoctorsPage/DoctorsPage';
+import { DoctorSchedulePage } from '../pages/doctors/SchedulePage/DoctorSchedulePage';
+import { Home } from '../pages/home/HomePage';
 import { Layout } from '../pages/layout/Layout';
 import { CreateOfficePage } from '../pages/offices/CreateOfficePage';
 import { OfficeInformationPage } from '../pages/offices/OfficeInformationPage';
@@ -63,6 +66,22 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                         }
                     />
                     <Route
+                        path={AppRoutes.AppointmentResult}
+                        element={
+                            <ProtectedRoute roles={[Roles.Doctor]}>
+                                <AppointmentResultPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.CreateAppointmentResult}
+                        element={
+                            <ProtectedRoute roles={[Roles.Doctor]}>
+                                <CreateAppointmentResultPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
                         path={AppRoutes.Doctors}
                         element={
                             <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
@@ -81,8 +100,16 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                     <Route
                         path={AppRoutes.DoctorProfile}
                         element={
-                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist, Roles.Doctor]}>
                                 <DoctorProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={AppRoutes.DoctorSchedule}
+                        element={
+                            <ProtectedRoute roles={[Roles.Doctor]}>
+                                <DoctorSchedulePage />
                             </ProtectedRoute>
                         }
                     />
@@ -153,7 +180,7 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                     <Route
                         path={AppRoutes.PatientProfile}
                         element={
-                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist]}>
+                            <ProtectedRoute roles={[Roles.Admin, Roles.Receptionist, Roles.Doctor]}>
                                 <PatientProfilePage />
                             </ProtectedRoute>
                         }

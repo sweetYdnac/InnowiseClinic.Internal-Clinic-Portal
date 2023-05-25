@@ -1,5 +1,5 @@
 import { PhotoCamera } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { WorkMode } from '../../constants/WorkModes';
 
@@ -29,7 +29,7 @@ export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setIm
     );
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <Box display={'flex'} flexDirection={'row'}>
             <img width='100' alt='profilePhoto' src={imageUrl} />
 
             {workMode === 'edit' && (
@@ -38,6 +38,6 @@ export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setIm
                     <PhotoCamera />
                 </IconButton>
             )}
-        </div>
+        </Box>
     );
 };

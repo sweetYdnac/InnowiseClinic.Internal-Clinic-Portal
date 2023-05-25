@@ -10,11 +10,8 @@ export const usePatientsService = () =>
     ({
         getById: async (id: string) => (await axiosInstance.get<IPatientResponse>(`${ApiBaseUrls.Patients}/${id}`)).data,
 
-        getPaged: async (request: IGetPagedPatientsRequest) => {
-            const path = `${ApiBaseUrls.Patients}?${getQueryString(request)}`;
-
-            return (await axiosInstance.get<IPagedPatientResponse>(path)).data;
-        },
+        getPaged: async (request: IGetPagedPatientsRequest) =>
+            (await axiosInstance.get<IPagedPatientResponse>(`${ApiBaseUrls.Patients}?${getQueryString(request)}`)).data,
 
         create: async (data: ICreatePatientRequest) => (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Patients, data)).data,
 

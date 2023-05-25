@@ -10,11 +10,11 @@ export interface IUpdateDoctorForm {
     firstName: string;
     lastName: string;
     middleName?: string;
+    officeId: string;
+    officeAddress: string;
     dateOfBirth: dayjs.Dayjs | null;
     specializationId: string;
-    specializationInput: string;
-    officeId: string;
-    officeInput: string;
+    specializationName: string;
     careerStartYear: dayjs.Dayjs | null;
     status: AccountStatuses;
 }
@@ -27,11 +27,11 @@ export const useUpdateDoctorValidator = (doctor: IDoctorResponse | undefined) =>
                 firstName: doctor?.firstName ?? '',
                 lastName: doctor?.lastName ?? '',
                 middleName: doctor?.middleName ?? '',
+                officeId: doctor?.officeId,
+                officeAddress: doctor?.officeAddress,
                 dateOfBirth: dayjs(doctor?.dateOfBirth, dateApiFormat),
                 specializationId: doctor?.specializationId,
-                specializationInput: doctor?.specializationName,
-                officeId: doctor?.officeId,
-                officeInput: doctor?.officeAddress,
+                specializationName: doctor?.specializationName,
                 careerStartYear: dayjs(doctor?.careerStartYear.toString(), 'YYYY'),
                 status: doctor?.status ?? AccountStatuses.None,
             } as IUpdateDoctorForm),
@@ -55,14 +55,14 @@ export const useUpdateDoctorValidator = (doctor: IDoctorResponse | undefined) =>
         firstName: Yup.string().required('Please, enter the first name'),
         lastName: Yup.string().required('Please, enter the last name'),
         middleName: Yup.string().notRequired(),
+        officeId: Yup.string().required('Please, choose the office'),
+        officeAddress: Yup.string().required('Invalid office address'),
         dateOfBirth: Yup.date()
             .max(dayjs(), 'Date could not be future')
-            .required('Please, enter a valid date')
+            .required('Please, enter a date')
             .typeError('Please, enter a valid date'),
         specializationId: Yup.string().required('Please, choose the specialisation'),
-        specializationInput: Yup.string().required('Invalid specialization name'),
-        officeId: Yup.string().required('Please, choose the office'),
-        officeInput: Yup.string().required('Invalid office address'),
+        specializationName: Yup.string().required('Invalid specialization name'),
         careerStartYear: Yup.date()
             .required('Please, select the year')
             .typeError('Please, enter a valid date')

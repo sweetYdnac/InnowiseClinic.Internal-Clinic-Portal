@@ -1,10 +1,10 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { useChangeOfficeStatusCommand } from '../../hooks/requests/offices';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { IPagingData } from '../../types/common/Responses';
 import { IOfficeInformationResponse } from '../../types/response/offices';
 
@@ -51,14 +51,21 @@ export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pa
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TablePagination
-                component='div'
-                count={pagingData.totalCount}
-                rowsPerPage={pagingData.pageSize}
-                page={pagingData.currentPage - 1}
-                rowsPerPageOptions={[]}
-                onPageChange={handlePageChange}
-            />
+
+            {offices.length === 0 ? (
+                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
+                    <Typography alignSelf={'center'}>No appointments</Typography>
+                </Box>
+            ) : (
+                <TablePagination
+                    component='div'
+                    count={pagingData.totalCount}
+                    rowsPerPage={pagingData.pageSize}
+                    page={pagingData.currentPage - 1}
+                    rowsPerPageOptions={[]}
+                    onPageChange={handlePageChange}
+                />
+            )}
 
             {isLoading && <Loader />}
         </>

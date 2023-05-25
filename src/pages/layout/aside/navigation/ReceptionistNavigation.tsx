@@ -9,14 +9,14 @@ import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import { Divider, List } from '@mui/material';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Roles } from '../../../constants/Roles';
-import { useAppSelector } from '../../../hooks/store';
-import { AppRoutes } from '../../../routes/AppRoutes';
-import { selectProfile } from '../../../store/profileSlice';
-import { selectRole } from '../../../store/roleSlice';
-import { AsideItem } from './AsideItem';
+import { Roles } from '../../../../constants/Roles';
+import { useAppSelector } from '../../../../hooks/store';
+import { AppRoutes } from '../../../../routes/AppRoutes';
+import { selectProfile } from '../../../../store/profileSlice';
+import { selectRole } from '../../../../store/roleSlice';
+import { AsideItem } from '../AsideItem';
 
-export const AsideNavigation = () => {
+export const ReceptionistNavigation = () => {
     const navigate = useNavigate();
     const profile = useAppSelector(selectProfile);
     const role = useAppSelector(selectRole);
@@ -26,13 +26,10 @@ export const AsideNavigation = () => {
             case Roles.Receptionist:
                 navigate(AppRoutes.ReceptionistProfile.replace(':id', `${profile.id}`));
                 break;
-            case Roles.Doctor:
-                navigate(AppRoutes.DoctorProfile.replace(':id', `${profile.id}`));
-                break;
             default:
                 break;
         }
-    }, [navigate, profile.id, role]);
+    }, [navigate, profile, role]);
 
     return (
         <List>

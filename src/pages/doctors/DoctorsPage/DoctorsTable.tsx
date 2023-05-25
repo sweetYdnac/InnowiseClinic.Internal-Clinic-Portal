@@ -1,14 +1,14 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader } from '../../components/Loader/Loader';
-import { SelectStatus } from '../../components/Select/SelectStatus';
-import { AppRoutes } from '../../routes/AppRoutes';
-import { dateViewFormat } from '../../constants/Formats';
-import { useChangeDoctorStatusCommand } from '../../hooks/requests/doctors';
-import { IPagingData } from '../../types/common/Responses';
-import { IDoctorInformationResponse } from '../../types/response/doctors';
+import { Loader } from '../../../components/Loader/Loader';
+import { SelectStatus } from '../../../components/Select/SelectStatus';
+import { dateViewFormat } from '../../../constants/Formats';
+import { useChangeDoctorStatusCommand } from '../../../hooks/requests/doctors';
+import { AppRoutes } from '../../../routes/AppRoutes';
+import { IPagingData } from '../../../types/common/Responses';
+import { IDoctorInformationResponse } from '../../../types/response/doctors';
 
 interface DoctorsTableProps {
     doctors: IDoctorInformationResponse[];
@@ -61,14 +61,21 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TablePagination
-                component='div'
-                count={pagingData.totalCount}
-                rowsPerPage={pagingData.pageSize}
-                page={pagingData.currentPage - 1}
-                rowsPerPageOptions={[]}
-                onPageChange={handlePageChange}
-            />
+
+            {doctors.length === 0 ? (
+                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
+                    <Typography alignSelf={'center'}>No doctors</Typography>
+                </Box>
+            ) : (
+                <TablePagination
+                    component='div'
+                    count={pagingData.totalCount}
+                    rowsPerPage={pagingData.pageSize}
+                    page={pagingData.currentPage - 1}
+                    rowsPerPageOptions={[]}
+                    onPageChange={handlePageChange}
+                />
+            )}
 
             {isLoading && <Loader />}
         </>

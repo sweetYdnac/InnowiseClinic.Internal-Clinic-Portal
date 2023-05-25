@@ -37,7 +37,7 @@ export const useCreateDoctorValidator = () => {
         middleName: Yup.string().notRequired(),
         dateOfBirth: Yup.date()
             .max(dayjs(), 'Date could not be future')
-            .required('Please, enter a valid date')
+            .required('Please, enter a date')
             .typeError('Please, enter a valid date'),
         email: Yup.string().required('Please, enter the email').email(`You've entered an invalid email`),
         specializationId: Yup.string().required('Please, choose the specialization'),

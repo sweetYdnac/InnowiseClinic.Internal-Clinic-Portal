@@ -7,12 +7,20 @@ import { useNavigate } from 'react-router-dom';
 import { dateApiFormat } from '../../constants/Formats';
 import { DoctorsQueries } from '../../constants/QueryKeys';
 import { AppRoutes } from '../../routes/AppRoutes';
+import { selectProfile } from '../../store/profileSlice';
 import { IChangeStatusRequest } from '../../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
-import { ICreateDoctorRequest, IGetPagedDoctorsRequest, IUpdateDoctorRequest } from '../../types/request/doctors';
-import { IDoctorInformationResponse, IDoctorResponse } from '../../types/response/doctors';
+import {
+    ICreateDoctorRequest,
+    IGetDoctorScheduleRequest,
+    IGetPagedDoctorsRequest,
+    IUpdateDoctorRequest,
+} from '../../types/request/doctors';
+import { IDoctorInformationResponse, IDoctorResponse, IDoctorScheduledAppointmentResponse } from '../../types/response/doctors';
 import { useDoctorsService } from '../services/useDoctorsService';
+import { useAppSelector } from '../store';
 import { ICreateDoctorForm } from '../validators/doctors/create';
+import { IGetDoctorScheduleForm } from '../validators/doctors/getSchedule';
 import { IUpdateDoctorForm } from '../validators/doctors/update';
 
 export const useDoctorQuery = (id: string, enabled = false) => {
@@ -58,6 +66,38 @@ export const usePagedDoctorsQuery = (request: IGetPagedDoctorsRequest, enabled =
     });
 };
 
+export const useGetDoctorScheduleQuery = (request: IGetDoctorScheduleForm, enabled = false) => {
+    const doctorsService = useDoctorsService();
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+    const profile = useAppSelector(selectProfile);
+
+    return useQuery<
+        IPagedResponse<IDoctorScheduledAppointmentResponse>,
+        AxiosError,
+        IPagedResponse<IDoctorScheduledAppointmentResponse>,
+        QueryKey
+    >({
+        queryKey: [DoctorsQueries.getSchedule, { ...request }],
+        queryFn: async () =>
+            await doctorsService.getSchedule(profile.id, {
+                ...request,
+                date: request.date.format(dateApiFormat),
+            } as IGetDoctorScheduleRequest),
+        enabled: enabled,
+        retry: false,
+        keepPreviousData: true,
+        onError: (error) => {
+            if (error.response?.status === 400) {
+                navigate(AppRoutes.Home);
+                enqueueSnackbar('Something went wrong.', {
+                    variant: 'error',
+                });
+            }
+        },
+    });
+};
+
 export const useChangeDoctorStatusCommand = () => {
     const doctorsService = useDoctorsService();
     const queryClient = useQueryClient();
@@ -76,20 +116,22 @@ export const useChangeDoctorStatusCommand = () => {
                 }
                 return prev;
             });
-            queryClient.setQueriesData<IPagedResponse<IDoctorInformationResponse>>([DoctorsQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === variables.id) {
-                            return {
-                                ...item,
-                                status: variables.status,
-                            };
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<IDoctorInformationResponse>;
-            });
+            queryClient.setQueriesData<IPagedResponse<IDoctorInformationResponse>>(
+                [DoctorsQueries.getPaged],
+                (prev) =>
+                    ({
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === variables.id) {
+                                return {
+                                    ...item,
+                                    status: variables.status,
+                                };
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<IDoctorInformationResponse>)
+            );
             enqueueSnackbar('Status changed successfully!', {
                 variant: 'success',
             });
@@ -202,9 +244,9 @@ export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setE
                 middleName: form.middleName,
                 dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
                 officeId: form.officeId,
-                officeAddress: form.officeInput,
+                officeAddress: form.officeAddress,
                 specializationId: form.specializationId,
-                specializationName: form.specializationInput,
+                specializationName: form.specializationName,
                 careerStartYear: form.careerStartYear?.year() ?? 0,
                 status: form.status,
             } as IUpdateDoctorRequest),
@@ -214,11 +256,11 @@ export const useUpdateDoctorCommand = (id: string, form: IUpdateDoctorForm, setE
             form.firstName,
             form.lastName,
             form.middleName,
+            form.officeAddress,
             form.officeId,
-            form.officeInput,
             form.photoId,
             form.specializationId,
-            form.specializationInput,
+            form.specializationName,
             form.status,
         ]
     );

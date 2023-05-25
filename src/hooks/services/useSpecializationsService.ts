@@ -16,11 +16,9 @@ export const useSpecializationsService = () =>
             return (await axiosInstance.get<ISpecializationResponse>(`${ApiBaseUrls.Specializations}/${id}`)).data;
         },
 
-        getPaged: async (data: IGetPagedSpecializationsRequest) => {
-            const path = `${ApiBaseUrls.Specializations}?${getQueryString(data)}`;
-
-            return (await axiosInstance.get<IPagedResponse<ISpecializationResponse>>(path)).data;
-        },
+        getPaged: async (data: IGetPagedSpecializationsRequest) =>
+            (await axiosInstance.get<IPagedResponse<ISpecializationResponse>>(`${ApiBaseUrls.Specializations}?${getQueryString(data)}`))
+                .data,
 
         create: async (data: ICreateSpecializationRequest) =>
             (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Specializations, data)).data,

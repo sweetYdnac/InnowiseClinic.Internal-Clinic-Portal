@@ -13,7 +13,7 @@ import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../type
 import { ICreatePatientRequest, IUpdatePatientRequest } from '../../types/request/patients';
 import { IPatientInformationResponse, IPatientResponse } from '../../types/response/patients';
 import { usePatientsService } from '../services/usePatientsService';
-import { IPatientForm, usePatientValidator } from '../validators/patients/create&update';
+import { IPatientForm } from '../validators/patients/create&update';
 import { IGetPatientsForm } from '../validators/patients/getPaged';
 
 export const useGetPatientByIdQuery = (id: string, enabled = false) => {
@@ -64,7 +64,6 @@ export const useCreatePatientCommand = (form: IPatientForm, setError: UseFormSet
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
-    const { createRequestValidationScheme } = usePatientValidator();
 
     const id = useMemo(() => uuid(), []);
 
@@ -124,14 +123,10 @@ export const useUpdatePatientCommand = (id: string, form: IPatientForm, setError
     let request = useMemo(
         () =>
             ({
-                photoId: form.photoId,
-                firstName: form.firstName,
-                lastName: form.lastName,
-                middleName: form.middleName,
+                ...form,
                 dateOfBirth: form.dateOfBirth?.format(dateApiFormat) ?? '',
-                phoneNumber: form.phoneNumber,
             } as IUpdatePatientRequest),
-        [form.dateOfBirth, form.firstName, form.lastName, form.middleName, form.phoneNumber, form.photoId]
+        [form]
     );
 
     return useMutation<INoContentResponse, AxiosError<any, any>, { photoId: string }>({

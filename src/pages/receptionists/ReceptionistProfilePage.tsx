@@ -34,7 +34,6 @@ export const ReceptionistProfilePage = () => {
     const isOwnPage = useMemo(() => role === Roles.Receptionist && storeProfile.id === (id as string), [id, role, storeProfile.id]);
 
     const { data: receptionist, isFetching: isFetchingReceptionist } = useGetReceptionistByIdQuery(id as string, !isOwnPage);
-
     const profile = useMemo(
         () => (role === Roles.Receptionist && storeProfile.id === (id as string) ? storeProfile : receptionist),
         [id, receptionist, role, storeProfile]
