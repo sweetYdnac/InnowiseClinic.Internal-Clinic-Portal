@@ -18,11 +18,8 @@ export const useDoctorsService = () =>
             return (await axiosInstance.get<IDoctorResponse>(`${ApiBaseUrls.Doctors}/${id}`)).data;
         },
 
-        getPaged: async (data: IGetPagedDoctorsRequest) => {
-            const path = `${ApiBaseUrls.Doctors}?${getQueryString(data)}`;
-
-            return (await axiosInstance.get<IPagedDoctorsResponse>(path)).data;
-        },
+        getPaged: async (data: IGetPagedDoctorsRequest) =>
+            (await axiosInstance.get<IPagedDoctorsResponse>(`${ApiBaseUrls.Doctors}?${getQueryString(data)}`)).data,
 
         getSchedule: async (id: string, data: IGetDoctorScheduleRequest) => {
             const path = `${ApiBaseUrls.Doctors}/${id}${ApiBaseUrls.Appointments}?${getQueryString(data)}`;

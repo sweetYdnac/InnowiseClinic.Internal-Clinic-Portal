@@ -19,5 +19,4 @@ export const servicesSlice = createSlice({
 
 export const { addService, removeService, clearServices } = servicesSlice.actions;
 export const selectServices = (state: RootState) => state.services;
-
 export default servicesSlice.reducer;

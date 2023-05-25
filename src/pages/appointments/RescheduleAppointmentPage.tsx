@@ -29,7 +29,7 @@ export const RescheduleAppointment = () => {
         watch,
         reset,
         setValue,
-        formState: { errors, defaultValues },
+        formState: { errors },
         control,
     } = useForm({
         mode: 'onBlur',

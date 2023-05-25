@@ -85,6 +85,7 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
                     </TableBody>
                 </Table>
             </TableContainer>
+
             {appointments.length === 0 ? (
                 <Box display={'flex'} justifyContent={'center'} marginTop={2}>
                     <Typography alignSelf={'center'}>No appointments</Typography>

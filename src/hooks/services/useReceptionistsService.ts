@@ -11,11 +11,12 @@ export const useReceptionistService = () =>
     ({
         getById: async (id: string) => (await axiosInstance.get<IReceptionistsResponse>(`${ApiBaseUrls.Receptionists}/${id}`)).data,
 
-        getPaged: async (request: IGetPagedReceptionistsRequest) => {
-            const path = `${ApiBaseUrls.Receptionists}?${getQueryString(request)}`;
-
-            return (await axiosInstance.get<IPagedResponse<IReceptionistsInformationResponse>>(path)).data;
-        },
+        getPaged: async (request: IGetPagedReceptionistsRequest) =>
+            (
+                await axiosInstance.get<IPagedResponse<IReceptionistsInformationResponse>>(
+                    `${ApiBaseUrls.Receptionists}?${getQueryString(request)}`
+                )
+            ).data,
 
         remove: async (id: string) => (await axiosInstance.delete<INoContentResponse>(`${ApiBaseUrls.Receptionists}/${id}`)).data,
 

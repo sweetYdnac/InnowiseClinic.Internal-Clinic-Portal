@@ -90,7 +90,10 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
                     } as IProfileState;
                     break;
                 default:
-                    console.log('invalid role');
+                    console.log('Invalid role');
+                    enqueueSnackbar('Invalid role', {
+                        variant: 'error',
+                    });
                     break;
             }
 

@@ -23,17 +23,11 @@ export const useAppointmentsService = () => {
     return {
         getById: async (id: string) => (await axiosInstance.get<IRescheduleAppointmentResponse>(`${ApiBaseUrls.Appointments}/${id}`)).data,
 
-        getPaged: async (request: IGetAppointmentsRequest) => {
-            const queryString = `${ApiBaseUrls.Appointments}?${getQueryString(request)}`;
+        getPaged: async (request: IGetAppointmentsRequest) =>
+            (await axiosInstance.get<IPagedResponse<IAppointmentResponse>>(`${ApiBaseUrls.Appointments}?${getQueryString(request)}`)).data,
 
-            return (await axiosInstance.get<IPagedResponse<IAppointmentResponse>>(queryString)).data;
-        },
-
-        getTimeSlots: async (request: IGetTimeSlotsRequest) => {
-            const path = `${ApiBaseUrls.Appointments}/timeslots?${getQueryString(request)}`;
-
-            return (await axiosInstance.get<ITimeSlotsResponse>(path)).data;
-        },
+        getTimeSlots: async (request: IGetTimeSlotsRequest) =>
+            (await axiosInstance.get<ITimeSlotsResponse>(`${ApiBaseUrls.Appointments}/timeslots?${getQueryString(request)}`)).data,
 
         getPatientHistory: async (patientId: string, request: IGetPatientHistoryRequest) => {
             const path = `${ApiBaseUrls.Patients}/${patientId}${ApiBaseUrls.Appointments}?${getQueryString(request)}`;

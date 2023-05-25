@@ -70,6 +70,7 @@ export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients,
                     </TableBody>
                 </Table>
             </TableContainer>
+
             {patients.length === 0 ? (
                 <Box display={'flex'} justifyContent={'center'} marginTop={2}>
                     <Typography alignSelf={'center'}>No patients</Typography>

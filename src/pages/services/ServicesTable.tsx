@@ -5,7 +5,7 @@ import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHe
 import { FunctionComponent, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { Modals } from '../../constants/Modals';
 import { WorkMode } from '../../constants/WorkModes';
 import { useChangeServiceStatusCommand } from '../../hooks/requests/services';
@@ -129,6 +129,7 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
                     </TableBody>
                 </Table>
             </TableContainer>
+
             <TablePagination
                 component='div'
                 count={pagingData.totalCount}

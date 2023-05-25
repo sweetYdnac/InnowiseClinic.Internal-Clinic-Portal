@@ -144,7 +144,7 @@ export const DoctorProfilePage = () => {
                 },
             });
         },
-        [reset, updateDoctor, watch]
+        [dispatch, id, isOwnPage, reset, updateDoctor, watch]
     );
 
     const tryUpdateDoctor = useCallback(() => {

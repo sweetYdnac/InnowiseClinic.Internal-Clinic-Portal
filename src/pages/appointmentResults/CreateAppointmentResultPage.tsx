@@ -5,7 +5,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Datepicker } from '../../components/DatePicker/Datepicker';
 import { Loader } from '../../components/Loader/Loader';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
-import { TextArea } from '../../components/Textarea/TextArea';
+import { TextArea } from '../../components/TextArea/TextArea';
 import { Textfield } from '../../components/Textfield/Textfield';
 import { useCreateAppointmentResultCommand } from '../../hooks/requests/appointmentResults';
 import { useCreateAppointmentResultValidator } from '../../hooks/validators/appointmentResults/create';

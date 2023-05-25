@@ -9,7 +9,7 @@ import { Datepicker } from '../../components/DatePicker/Datepicker';
 import { DialogWindow } from '../../components/Dialog/DialogWindow';
 import { Loader } from '../../components/Loader/Loader';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
-import { TextArea } from '../../components/Textarea/TextArea';
+import { TextArea } from '../../components/TextArea/TextArea';
 import { Textfield } from '../../components/Textfield/Textfield';
 import { WorkMode } from '../../constants/WorkModes';
 import { useGetAppointmentResultById, useUpdateAppointmentResultCommand } from '../../hooks/requests/appointmentResults';

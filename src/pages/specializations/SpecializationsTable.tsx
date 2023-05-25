@@ -2,7 +2,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePag
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { useChangeSpecializationStatusCommand } from '../../hooks/requests/specializations';
 import { AppRoutes } from '../../routes/AppRoutes';
 import { IPagingData } from '../../types/common/Responses';
@@ -46,6 +46,7 @@ export const SpecializationsTable: FunctionComponent<SpecializationsTableProps> 
                     </TableBody>
                 </Table>
             </TableContainer>
+
             <TablePagination
                 component='div'
                 count={pagingData.totalCount}

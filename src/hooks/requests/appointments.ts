@@ -228,6 +228,7 @@ export const useRescheduleAppointmentCommand = (
 
     return useMutation<INoContentResponse, AxiosError<any, any>, void>({
         mutationFn: async () => await appointmentsService.reschedule(id, request),
+        retry: false,
         onSuccess: () => {
             queryClient.setQueryData<IRescheduleAppointmentResponse>(
                 [ApppointmentsQueries.getById, id],
@@ -271,7 +272,6 @@ export const useRescheduleAppointmentCommand = (
                 });
             }
         },
-        retry: false,
     });
 };
 

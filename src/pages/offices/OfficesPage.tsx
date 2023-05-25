@@ -2,8 +2,8 @@ import { Box, Button } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
-import { AppRoutes } from '../../routes/AppRoutes';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
+import { AppRoutes } from '../../routes/AppRoutes';
 import { IPagedRequest } from '../../types/common/Requests';
 import { OfficesTable } from './OfficesTable';
 

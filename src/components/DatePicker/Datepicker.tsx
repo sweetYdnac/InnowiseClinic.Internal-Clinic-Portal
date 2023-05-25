@@ -39,46 +39,44 @@ export const Datepicker: FunctionComponent<DatepickerProps> = ({
                 control={control}
                 defaultValue=''
                 render={({ field, fieldState }) => (
-                    <>
-                        <DatePicker
-                            {...field}
-                            disabled={disabled}
-                            readOnly={readonly}
-                            disableFuture={disableFuture}
-                            disablePast={disablePast}
-                            label={displayName}
-                            views={views}
-                            openTo={openTo}
-                            format={format}
-                            defaultValue={field.value as dayjs.Dayjs}
-                            value={field.value as dayjs.Dayjs}
-                            onChange={(date) => field.onChange(date)}
-                            onAccept={() => {
-                                field.onBlur();
-                                handleValueChange?.();
-                            }}
-                            onSelectedSectionsChange={() => field.onBlur()}
-                            slotProps={{
-                                textField: {
-                                    sx: { m: 1, width: '75%' },
-                                    color:
-                                        fieldState.error?.message && (fieldState.isTouched || (field.value as dayjs.Dayjs)?.isValid())
-                                            ? 'error'
-                                            : 'success',
-                                    focused:
-                                        !readonly &&
-                                        !fieldState.error?.message &&
-                                        (fieldState.isTouched || (field.value as dayjs.Dayjs)?.isValid()),
-                                    variant: 'standard',
-                                    helperText: fieldState.error?.message,
-                                    error: !!fieldState.error?.message && (fieldState.isTouched || field.value),
-                                },
-                                popper: {
-                                    placement: 'bottom',
-                                },
-                            }}
-                        />
-                    </>
+                    <DatePicker
+                        {...field}
+                        disabled={disabled}
+                        readOnly={readonly}
+                        disableFuture={disableFuture}
+                        disablePast={disablePast}
+                        label={displayName}
+                        views={views}
+                        openTo={openTo}
+                        format={format}
+                        defaultValue={field.value as dayjs.Dayjs}
+                        value={field.value as dayjs.Dayjs}
+                        onChange={(date) => field.onChange(date)}
+                        onAccept={() => {
+                            field.onBlur();
+                            handleValueChange?.();
+                        }}
+                        onSelectedSectionsChange={() => field.onBlur()}
+                        slotProps={{
+                            textField: {
+                                sx: { m: 1, width: '75%' },
+                                color:
+                                    fieldState.error?.message && (fieldState.isTouched || (field.value as dayjs.Dayjs)?.isValid())
+                                        ? 'error'
+                                        : 'success',
+                                focused:
+                                    !readonly &&
+                                    !fieldState.error?.message &&
+                                    (fieldState.isTouched || (field.value as dayjs.Dayjs)?.isValid()),
+                                variant: 'standard',
+                                helperText: fieldState.error?.message,
+                                error: !!fieldState.error?.message && (fieldState.isTouched || field.value),
+                            },
+                            popper: {
+                                placement: 'bottom',
+                            },
+                        }}
+                    />
                 )}
             />
         </LocalizationProvider>

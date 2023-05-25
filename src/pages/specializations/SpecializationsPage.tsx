@@ -20,12 +20,10 @@ export const SpecializationsPage = () => {
     );
 
     const handleChangePage = useCallback((page: number) => {
-        setPagedRequestData((prev) => {
-            return {
-                ...prev,
-                currentPage: page,
-            };
-        });
+        setPagedRequestData((prev) => ({
+            ...prev,
+            currentPage: page,
+        }));
     }, []);
 
     return (

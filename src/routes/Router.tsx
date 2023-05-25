@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Roles } from '../constants/Roles';
-import { Home } from '../pages/Home';
 import { AppointmentResultPage } from '../pages/appointmentResults/AppointmentResultPage';
 import { CreateAppointmentResultPage } from '../pages/appointmentResults/CreateAppointmentResultPage';
 import { AppointmentsPage } from '../pages/appointments/AppointmentsPage';
@@ -12,6 +11,7 @@ import { CreateDoctorPage } from '../pages/doctors/CreateDoctorPage';
 import { DoctorProfilePage } from '../pages/doctors/DoctorProfilePage';
 import { DoctorsPage } from '../pages/doctors/DoctorsPage/DoctorsPage';
 import { DoctorSchedulePage } from '../pages/doctors/SchedulePage/DoctorSchedulePage';
+import { Home } from '../pages/home/HomePage';
 import { Layout } from '../pages/layout/Layout';
 import { CreateOfficePage } from '../pages/offices/CreateOfficePage';
 import { OfficeInformationPage } from '../pages/offices/OfficeInformationPage';

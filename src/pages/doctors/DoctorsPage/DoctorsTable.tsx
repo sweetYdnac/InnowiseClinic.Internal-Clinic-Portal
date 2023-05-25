@@ -61,6 +61,7 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
                     </TableBody>
                 </Table>
             </TableContainer>
+
             {doctors.length === 0 ? (
                 <Box display={'flex'} justifyContent={'center'} marginTop={2}>
                     <Typography alignSelf={'center'}>No doctors</Typography>

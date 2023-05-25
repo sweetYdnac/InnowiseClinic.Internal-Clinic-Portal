@@ -5,7 +5,7 @@ import { CreateServiceModal } from '../pages/services/CreateServiceModal';
 import { ServiceModal } from '../pages/services/ServiceModal';
 import { selectModal } from '../store/modalsSlice';
 
-const ModalsReducer = () => {
+export const ModalsReducer = () => {
     const modal = useAppSelector(selectModal);
 
     switch (modal.name) {
@@ -19,5 +19,3 @@ const ModalsReducer = () => {
             return <></>;
     }
 };
-
-export default ModalsReducer;

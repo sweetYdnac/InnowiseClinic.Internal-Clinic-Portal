@@ -164,20 +164,22 @@ export const useChangeSpecializationStatusCommand = () => {
                 }
                 return prev;
             });
-            queryClient.setQueriesData<IPagedResponse<ISpecializationResponse>>([SpecializationsQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === variables.id) {
-                            return {
-                                ...item,
-                                isActive: variables.isActive,
-                            };
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<ISpecializationResponse>;
-            });
+            queryClient.setQueriesData<IPagedResponse<ISpecializationResponse>>(
+                [SpecializationsQueries.getPaged],
+                (prev) =>
+                    ({
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === variables.id) {
+                                return {
+                                    ...item,
+                                    isActive: variables.isActive,
+                                };
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<ISpecializationResponse>)
+            );
             enqueueSnackbar('Status changed successfully!', {
                 variant: 'success',
             });

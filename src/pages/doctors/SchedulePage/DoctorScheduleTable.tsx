@@ -100,6 +100,7 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
                     </TableBody>
                 </Table>
             </TableContainer>
+
             {appointments.length === 0 ? (
                 <Box display={'flex'} justifyContent={'center'} marginTop={2}>
                     <Typography alignSelf={'center'}>No appointments</Typography>

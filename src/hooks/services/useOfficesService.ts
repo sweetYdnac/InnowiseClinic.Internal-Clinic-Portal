@@ -10,11 +10,8 @@ export const useOfficesService = () =>
     ({
         getById: async (id: string) => (await axiosInstance.get<IOfficeResponse>(`${ApiBaseUrls.Offices}/${id}`)).data,
 
-        getPaged: async (request: IGetPagedOfficesRequest) => {
-            const path = `${ApiBaseUrls.Offices}?${getQueryString(request)}`;
-
-            return (await axiosInstance.get<IPagedOfficeResponse>(path)).data;
-        },
+        getPaged: async (request: IGetPagedOfficesRequest) =>
+            (await axiosInstance.get<IPagedOfficeResponse>(`${ApiBaseUrls.Offices}?${getQueryString(request)}`)).data,
 
         create: async (data: ICreateOfficeRequest) => (await axiosInstance.post<ICreatedResponse>(ApiBaseUrls.Offices, data)).data,
 

@@ -116,20 +116,22 @@ export const useChangeDoctorStatusCommand = () => {
                 }
                 return prev;
             });
-            queryClient.setQueriesData<IPagedResponse<IDoctorInformationResponse>>([DoctorsQueries.getPaged], (prev) => {
-                return {
-                    ...prev,
-                    items: prev?.items.map((item) => {
-                        if (item.id === variables.id) {
-                            return {
-                                ...item,
-                                status: variables.status,
-                            };
-                        }
-                        return item;
-                    }),
-                } as IPagedResponse<IDoctorInformationResponse>;
-            });
+            queryClient.setQueriesData<IPagedResponse<IDoctorInformationResponse>>(
+                [DoctorsQueries.getPaged],
+                (prev) =>
+                    ({
+                        ...prev,
+                        items: prev?.items.map((item) => {
+                            if (item.id === variables.id) {
+                                return {
+                                    ...item,
+                                    status: variables.status,
+                                };
+                            }
+                            return item;
+                        }),
+                    } as IPagedResponse<IDoctorInformationResponse>)
+            );
             enqueueSnackbar('Status changed successfully!', {
                 variant: 'success',
             });

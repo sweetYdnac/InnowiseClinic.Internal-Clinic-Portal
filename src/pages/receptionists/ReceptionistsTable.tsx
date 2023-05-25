@@ -74,6 +74,7 @@ export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({
                     </TableBody>
                 </Table>
             </TableContainer>
+
             {receptionists.length === 0 ? (
                 <Box display={'flex'} justifyContent={'center'} marginTop={2}>
                     <Typography alignSelf={'center'}>No receptionists</Typography>

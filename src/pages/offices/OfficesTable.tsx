@@ -2,7 +2,7 @@ import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, Tab
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader/Loader';
-import { ToggleSwitch } from '../../components/Switch/ToggleSwitch';
+import { ToggleSwitch } from '../../components/ToggleSwitch/ToggleSwitch';
 import { useChangeOfficeStatusCommand } from '../../hooks/requests/offices';
 import { AppRoutes } from '../../routes/AppRoutes';
 import { IPagingData } from '../../types/common/Responses';
@@ -51,6 +51,7 @@ export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pa
                     </TableBody>
                 </Table>
             </TableContainer>
+
             {offices.length === 0 ? (
                 <Box display={'flex'} justifyContent={'center'} marginTop={2}>
                     <Typography alignSelf={'center'}>No appointments</Typography>
