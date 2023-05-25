@@ -1,12 +1,25 @@
 import DescriptionIcon from '@mui/icons-material/Description';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import {
+    Box,
+    Button,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import dayjs from 'dayjs';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { timeSlotFormat } from '../../../constants/Formats';
 import { AppRoutes } from '../../../routes/AppRoutes';
 import { IPagingData } from '../../../types/common/Responses';
+import { ICreateAppointmentResultDTO } from '../../../types/dto/appointmentResults';
 import { IDoctorScheduledAppointmentResponse } from '../../../types/response/doctors';
 
 interface DoctorScheduleTableProps {
@@ -17,6 +30,26 @@ interface DoctorScheduleTableProps {
 
 export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = ({ appointments, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
+
+    const handleOpenCreateAppointmentResultPage = useCallback(
+        (appointment: IDoctorScheduledAppointmentResponse) => {
+            navigate(AppRoutes.CreateAppointmentResult.replace(':id', `${appointment.id}`), {
+                state: {
+                    patientFullName: appointment.patientFullName,
+                    patientDateOfBirth: appointment.patientDateOfBirth,
+                    doctorFullName: appointment.doctorFullName,
+                    doctorSpecializationName: appointment.doctorSpecializationName,
+                    serviceName: appointment.serviceName,
+                } as ICreateAppointmentResultDTO,
+            });
+        },
+        [navigate]
+    );
+
+    const handleOpenViewAppointmentResultPage = useCallback(
+        (resultId: string | null) => navigate(AppRoutes.AppointmentResult.replace(':id', `${resultId}`)),
+        [navigate]
+    );
 
     return (
         <>
@@ -51,12 +84,12 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
                                 <TableCell align='center'>{item.isApproved ? 'Approved' : 'Not Approved'}</TableCell>
                                 <TableCell align='center'>
                                     {item.resultId ? (
-                                        <Button onClick={() => navigate(AppRoutes.AppointmentResult.replace(':id', `${item.resultId}`))}>
+                                        <Button onClick={() => handleOpenViewAppointmentResultPage(item.resultId)}>
                                             View result
                                             <DescriptionIcon fontSize='medium' />
                                         </Button>
                                     ) : (
-                                        <Button onClick={() => navigate(AppRoutes.CreateAppointmentResult.replace(':id', `${item.id}`))}>
+                                        <Button onClick={() => handleOpenCreateAppointmentResultPage(item)}>
                                             Add result
                                             <NoteAddIcon fontSize='medium' />
                                         </Button>
@@ -67,14 +100,20 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TablePagination
-                component='div'
-                count={pagingData.totalCount}
-                rowsPerPage={pagingData.pageSize}
-                page={pagingData.currentPage - 1}
-                rowsPerPageOptions={[]}
-                onPageChange={handlePageChange}
-            />
+            {appointments.length === 0 ? (
+                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
+                    <Typography alignSelf={'center'}>No appointments</Typography>
+                </Box>
+            ) : (
+                <TablePagination
+                    component='div'
+                    count={pagingData.totalCount}
+                    rowsPerPage={pagingData.pageSize}
+                    page={pagingData.currentPage - 1}
+                    rowsPerPageOptions={[]}
+                    onPageChange={handlePageChange}
+                />
+            )}
         </>
     );
 };

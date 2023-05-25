@@ -5,6 +5,10 @@ export enum ApppointmentsQueries {
     getPatientHistory = 'get-patient-history',
 }
 
+export enum ApppointmentResultsQueries {
+    getById = 'get-appointment-result-by-id',
+}
+
 export enum OfficesQueries {
     getById = 'get-office-by-id',
     getPaged = 'get-offices',

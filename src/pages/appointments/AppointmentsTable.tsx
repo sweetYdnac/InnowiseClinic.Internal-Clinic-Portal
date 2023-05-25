@@ -1,4 +1,16 @@
-import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import {
+    Box,
+    Button,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
+    Typography,
+} from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -73,14 +85,20 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TablePagination
-                component='div'
-                count={pagingData.totalCount}
-                rowsPerPage={pagingData.pageSize}
-                page={pagingData.currentPage - 1}
-                rowsPerPageOptions={[]}
-                onPageChange={handlePageChange}
-            />
+            {appointments.length === 0 ? (
+                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
+                    <Typography alignSelf={'center'}>No appointments</Typography>
+                </Box>
+            ) : (
+                <TablePagination
+                    component='div'
+                    count={pagingData.totalCount}
+                    rowsPerPage={pagingData.pageSize}
+                    page={pagingData.currentPage - 1}
+                    rowsPerPageOptions={[]}
+                    onPageChange={handlePageChange}
+                />
+            )}
 
             <DialogWindow
                 isOpen={cancelAppointmentId !== null}

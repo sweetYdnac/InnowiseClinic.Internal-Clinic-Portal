@@ -31,7 +31,6 @@ export const CreateSpecializationPage = () => {
         setError,
         handleSubmit,
         setValue,
-        reset,
         formState: { errors, touchedFields },
     } = useForm({
         mode: 'onBlur',
