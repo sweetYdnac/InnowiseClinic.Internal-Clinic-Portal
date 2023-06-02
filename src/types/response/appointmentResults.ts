@@ -1,5 +1,4 @@
 export interface IAppointmentResultResponse {
-    id: string;
     date: string;
     patientFullName: string;
     patientDateOfBirth: string;

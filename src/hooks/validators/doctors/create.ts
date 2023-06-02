@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { AccountStatuses } from '../../../constants/AccountStatuses';
+import { PasswordBoundaries } from '../../../constants/Validation';
 import { Yup } from '../YupConfiguration';
 
 export interface ICreateDoctorForm {
@@ -31,7 +32,7 @@ export const useCreateDoctorValidator = () => {
         status: AccountStatuses.Inactive,
     };
 
-    const validationScheme = Yup.object().shape({
+    const formValidationScheme = Yup.object().shape({
         firstName: Yup.string().required('Please, enter the first name'),
         lastName: Yup.string().required('Please, enter the last name'),
         middleName: Yup.string().notRequired(),
@@ -60,5 +61,13 @@ export const useCreateDoctorValidator = () => {
             .required('Please, select the status'),
     });
 
-    return { validationScheme, initialValues };
+    const requestValidationScheme = Yup.object().shape({
+        id: Yup.string().required(),
+        password: Yup.string()
+            .min(PasswordBoundaries.min, `Password must be at least ${PasswordBoundaries.min} characters`)
+            .max(PasswordBoundaries.max, `Password must be less than ${PasswordBoundaries.max} characters`)
+            .required('Please, enter the password'),
+    });
+
+    return { formValidationScheme, initialValues, requestValidationScheme };
 };

@@ -1,4 +1,6 @@
+import randomize from 'randomatic';
 import { Roles } from '../constants/Roles';
+import { PasswordBoundaries } from '../constants/Validation';
 
 export const getQueryString = (data: { [key: string]: any }) => {
     const params = [];
@@ -18,3 +20,6 @@ export const getQueryString = (data: { [key: string]: any }) => {
 
 export const getRoleByName = (title: string) =>
     Object.values(Roles).find((role) => role.toLowerCase() === title.toLowerCase()) ?? Roles.None;
+
+export const generatePassword = () =>
+    randomize('Aa0', Math.floor(Math.random() * (PasswordBoundaries.max - PasswordBoundaries.min + 1) + PasswordBoundaries.min));

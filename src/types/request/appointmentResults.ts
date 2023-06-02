@@ -1,4 +1,5 @@
 export interface ICreateAppointmentResultRequest {
+    Id: string;
     patientFullName: string;
     patientDateOfBirth: string;
     doctorFullName: string;
@@ -7,9 +8,8 @@ export interface ICreateAppointmentResultRequest {
     complaints: string;
     conclusion: string;
     recommendations: string;
-    appointmentId: string;
 }
 
-export interface IUpdateAppointmentResultRequest extends Omit<ICreateAppointmentResultRequest, 'specializationId'> {
+export interface IUpdateAppointmentResultRequest extends Omit<ICreateAppointmentResultRequest, 'id'> {
     date: string;
 }

@@ -19,6 +19,8 @@ export interface ICreateDoctorRequest {
     specializationName: string;
     careerStartYear: number;
     status: number;
+    email: string;
+    password: string;
 }
 
 export interface IUpdateDoctorRequest {

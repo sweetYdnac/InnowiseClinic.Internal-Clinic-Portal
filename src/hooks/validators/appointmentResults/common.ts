@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { Yup } from '../YupConfiguration';
 
 export interface IAppointmentResultForm {
+    Id: string;
     date: dayjs.Dayjs;
     patientFullName: string;
     patientDateOfBirth: dayjs.Dayjs;
@@ -12,7 +13,6 @@ export interface IAppointmentResultForm {
     complaints: string;
     conclusion: string;
     recommendations: string;
-    appointmentId: string;
 }
 
 export const appointmentResultValidationScheme = Yup.object().shape({

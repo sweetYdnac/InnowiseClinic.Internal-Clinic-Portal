@@ -80,7 +80,7 @@ export const useCreateAppointmentResultCommand = (form: IAppointmentResultForm, 
                     message: error.response.data.errors?.Recommendations?.[0] || error.response.data.Message || '',
                 });
 
-                if (error.response.data.errors?.AppointmentId?.[0]) {
+                if (error.response.data.errors?.Id?.[0]) {
                     navigate(AppRoutes.Home);
                     enqueueSnackbar('Something went wrong.', {
                         variant: 'error',

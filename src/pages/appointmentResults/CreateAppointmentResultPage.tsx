@@ -12,10 +12,10 @@ import { useCreateAppointmentResultValidator } from '../../hooks/validators/appo
 import { ICreateAppointmentResultDTO } from '../../types/dto/appointmentResults';
 
 export const CreateAppointmentResultPage = () => {
-    const { id: appointmentId } = useParams();
+    const { id } = useParams();
     const location = useLocation();
     const dto = location.state as ICreateAppointmentResultDTO;
-    const { initialValues, formValidationScheme } = useCreateAppointmentResultValidator(dto, appointmentId as string);
+    const { initialValues, formValidationScheme } = useCreateAppointmentResultValidator(dto, id as string);
     const {
         register,
         control,

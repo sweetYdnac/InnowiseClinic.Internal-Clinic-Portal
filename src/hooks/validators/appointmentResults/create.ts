@@ -4,8 +4,9 @@ import { ICreateAppointmentResultDTO } from '../../../types/dto/appointmentResul
 import { Yup } from '../YupConfiguration';
 import { IAppointmentResultForm, appointmentResultValidationScheme } from './common';
 
-export const useCreateAppointmentResultValidator = (dto: ICreateAppointmentResultDTO, appointmentId: string) => {
+export const useCreateAppointmentResultValidator = (dto: ICreateAppointmentResultDTO, Id: string) => {
     const initialValues = {
+        Id: Id,
         date: dayjs(),
         patientFullName: dto.patientFullName,
         patientDateOfBirth: dayjs(dto.patientDateOfBirth, dateApiFormat),
@@ -15,7 +16,6 @@ export const useCreateAppointmentResultValidator = (dto: ICreateAppointmentResul
         complaints: '',
         conclusion: '',
         recommendations: '',
-        appointmentId: appointmentId,
     } as IAppointmentResultForm;
 
     const requestValidationScheme = Yup.object().shape({

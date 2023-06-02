@@ -15,6 +15,7 @@ import { useCreatePhotoCommand } from '../../hooks/requests/photos';
 import { useCreateReceptionistCommand } from '../../hooks/requests/receptionists';
 import { useCreateReceptionistValidator } from '../../hooks/validators/receptionists/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { generatePassword } from '../../utils/functions';
 
 export const CreateReceptionist = () => {
     const [photoUrl, setPhotoUrl] = useState('');
@@ -37,7 +38,7 @@ export const CreateReceptionist = () => {
         data: offices,
         isFetching: isFetchingOffices,
         refetch: fetchOffices,
-    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
+    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: null });
 
     const officesOptions = useMemo(
         () =>
@@ -55,11 +56,15 @@ export const CreateReceptionist = () => {
     const { mutate: CreateReceptionist, isLoading: isCreatingReceptionist } = useCreateReceptionistCommand(watch(), setError);
 
     const onSubmit = useCallback(async () => {
-        await createAccount().then(async (account) => {
+        const password = generatePassword();
+
+        await createAccount({ password: password }).then(async (account) => {
             if (photoUrl) {
-                await createPhoto().then(async (photo) => CreateReceptionist({ accountId: account?.id as string, photoId: photo.id }));
+                await createPhoto().then(async (photo) =>
+                    CreateReceptionist({ accountId: account?.id as string, photoId: photo.id, password: password })
+                );
             } else {
-                CreateReceptionist({ accountId: account?.id as string, photoId: null });
+                CreateReceptionist({ accountId: account?.id as string, photoId: null, password: password });
             }
         });
     }, [CreateReceptionist, createAccount, createPhoto, photoUrl]);

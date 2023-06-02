@@ -14,4 +14,6 @@ export interface IUpdateReceptionistRequest {
 
 export interface ICreateReceptionistRequest extends IUpdateReceptionistRequest {
     id: string;
+    email: string;
+    password: string;
 }

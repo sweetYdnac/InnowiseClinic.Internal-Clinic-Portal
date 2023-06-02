@@ -19,7 +19,7 @@ import {
 import { IDoctorInformationResponse, IDoctorResponse, IDoctorScheduledAppointmentResponse } from '../../types/response/doctors';
 import { useDoctorsService } from '../services/useDoctorsService';
 import { useAppSelector } from '../store';
-import { ICreateDoctorForm } from '../validators/doctors/create';
+import { ICreateDoctorForm, useCreateDoctorValidator } from '../validators/doctors/create';
 import { IGetDoctorScheduleForm } from '../validators/doctors/getSchedule';
 import { IUpdateDoctorForm } from '../validators/doctors/update';
 
@@ -146,6 +146,7 @@ export const useChangeDoctorStatusCommand = () => {
 
 export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFormSetError<ICreateDoctorForm>) => {
     const doctorsService = useDoctorsService();
+    const { requestValidationScheme } = useCreateDoctorValidator();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -163,10 +164,12 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
                 specializationName: form.specializationInput,
                 officeAddress: form.officeInput,
                 status: form.status,
+                email: form.email,
             } as ICreateDoctorRequest),
         [
             form.careerStartYear,
             form.dateOfBirth,
+            form.email,
             form.firstName,
             form.lastName,
             form.middleName,
@@ -178,10 +181,12 @@ export const useCreateDoctorCommand = (form: ICreateDoctorForm, setError: UseFor
         ]
     );
 
-    return useMutation<ICreatedResponse, AxiosError<any, any>, { accountId: string; photoId: string | null }>({
-        mutationFn: async ({ accountId, photoId }) => {
+    return useMutation<ICreatedResponse, AxiosError<any, any>, { accountId: string; password: string; photoId: string | null }>({
+        mutationFn: async ({ accountId, password, photoId }) => {
             request.id = accountId;
+            request.password = password;
             request.photoId = photoId;
+            await requestValidationScheme.validate(request);
 
             return await doctorsService.create(request);
         },

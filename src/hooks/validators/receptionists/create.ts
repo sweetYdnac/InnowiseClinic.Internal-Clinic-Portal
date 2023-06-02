@@ -1,4 +1,5 @@
 import { AccountStatuses } from '../../../constants/AccountStatuses';
+import { PasswordBoundaries } from '../../../constants/Validation';
 import { Yup } from '../YupConfiguration';
 
 export interface ICreateReceptionistForm {
@@ -35,9 +36,13 @@ export const useCreateReceptionistValidator = () => {
         status: Yup.mixed<AccountStatuses>().oneOf(Object.values(AccountStatuses) as AccountStatuses[], 'Please select the status'),
     });
 
-    const createRequestValidationScheme = Yup.object().shape({
+    const requestValidationScheme = Yup.object().shape({
         id: Yup.string().required(),
+        password: Yup.string()
+            .min(PasswordBoundaries.min, `Password must be at least ${PasswordBoundaries.min} characters`)
+            .max(PasswordBoundaries.max, `Password must be less than ${PasswordBoundaries.max} characters`)
+            .required('Please, enter the password'),
     });
 
-    return { formValidationScheme, createRequestValidationScheme, initialValues };
+    return { formValidationScheme, requestValidationScheme, initialValues };
 };

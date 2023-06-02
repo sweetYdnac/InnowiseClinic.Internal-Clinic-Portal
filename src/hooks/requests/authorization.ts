@@ -2,13 +2,11 @@ import { QueryKey, useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import jwt from 'jwt-decode';
 import { useSnackbar } from 'notistack';
-import randomize from 'randomatic';
 import { useMemo } from 'react';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { AuthorizationQueries } from '../../constants/QueryKeys';
 import { Roles } from '../../constants/Roles';
-import { PasswordBoundaries } from '../../constants/Validation';
 import { AppRoutes } from '../../routes/AppRoutes';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
@@ -120,14 +118,11 @@ export const useSignUpCommand = (email: string) => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
-    return useMutation<ICreatedResponse | void, AxiosError<any, any>, void>({
-        mutationFn: async () => {
+    return useMutation<ICreatedResponse | void, AxiosError<any, any>, { password: string }>({
+        mutationFn: async ({ password }) => {
             const request: IRegisterRequest = {
                 email: email,
-                password: randomize(
-                    'Aa0',
-                    Math.floor(Math.random() * (PasswordBoundaries.max - PasswordBoundaries.min + 1) + PasswordBoundaries.min)
-                ),
+                password: password,
             };
 
             return await authorizationService.signUp(request);

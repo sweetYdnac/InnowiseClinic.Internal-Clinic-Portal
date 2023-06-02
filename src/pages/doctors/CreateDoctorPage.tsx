@@ -17,10 +17,11 @@ import { useCreatePhotoCommand } from '../../hooks/requests/photos';
 import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { useCreateDoctorValidator } from '../../hooks/validators/doctors/create';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { generatePassword } from '../../utils/functions';
 
 export const CreateDoctorPage = () => {
     const [photoUrl, setPhotoUrl] = useState('');
-    const { initialValues, validationScheme } = useCreateDoctorValidator();
+    const { initialValues, formValidationScheme } = useCreateDoctorValidator();
     const {
         register,
         control,
@@ -31,7 +32,7 @@ export const CreateDoctorPage = () => {
         formState: { errors, touchedFields },
     } = useForm({
         mode: 'onBlur',
-        resolver: yupResolver(validationScheme),
+        resolver: yupResolver(formValidationScheme),
         defaultValues: initialValues,
     });
 
@@ -50,18 +51,22 @@ export const CreateDoctorPage = () => {
         data: offices,
         isFetching: isOfficesFetching,
         refetch: fetchOffices,
-    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: true });
+    } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: null });
 
     const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'));
     const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photoUrl);
     const { mutateAsync: createDoctor, isLoading: isCreatingDoctor } = useCreateDoctorCommand(watch(), setError);
 
     const onSubmit = useCallback(async () => {
-        await createAccount().then(async (account) => {
+        const password = generatePassword();
+
+        await createAccount({ password: password }).then(async (account) => {
             if (photoUrl) {
-                await createPhoto().then(async (photo) => await createDoctor({ accountId: account?.id as string, photoId: photo.id }));
+                await createPhoto().then(
+                    async (photo) => await createDoctor({ accountId: account?.id as string, photoId: photo.id, password: password })
+                );
             } else {
-                await createDoctor({ accountId: account?.id as string, photoId: null });
+                await createDoctor({ accountId: account?.id as string, photoId: null, password: password });
             }
         });
     }, [createAccount, createDoctor, createPhoto, photoUrl]);
@@ -179,7 +184,6 @@ export const CreateDoctorPage = () => {
                         touchedFields.officeId,
                         touchedFields.specializationId,
                         touchedFields.careerStartYear as boolean,
-                        touchedFields.status,
                     ]}
                 >
                     Create

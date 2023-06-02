@@ -10,7 +10,7 @@ import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../type
 import { ICreateReceptionistRequest, IGetPagedReceptionistsRequest, IUpdateReceptionistRequest } from '../../types/request/receptionists';
 import { IReceptionistsInformationResponse, IReceptionistsResponse } from '../../types/response/receptionists';
 import { useReceptionistService } from '../services/useReceptionistsService';
-import { useCreateReceptionistValidator } from '../validators/receptionists/create';
+import { ICreateReceptionistForm, useCreateReceptionistValidator } from '../validators/receptionists/create';
 import { IGetReceptionistsForm } from '../validators/receptionists/getPaged';
 import { IUpdateReceptionistForm } from '../validators/receptionists/update';
 
@@ -142,9 +142,9 @@ export const useUpdateReceptionistCommand = (
     });
 };
 
-export const useCreateReceptionistCommand = (form: IUpdateReceptionistForm, setError: UseFormSetError<IUpdateReceptionistForm>) => {
+export const useCreateReceptionistCommand = (form: ICreateReceptionistForm, setError: UseFormSetError<ICreateReceptionistForm>) => {
     const receptionistsService = useReceptionistService();
-    const { createRequestValidationScheme } = useCreateReceptionistValidator();
+    const { requestValidationScheme } = useCreateReceptionistValidator();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -153,15 +153,17 @@ export const useCreateReceptionistCommand = (form: IUpdateReceptionistForm, setE
         () =>
             ({
                 ...form,
+                id: '',
             } as ICreateReceptionistRequest),
         [form]
     );
 
-    return useMutation<ICreatedResponse, AxiosError<any, any>, { accountId: string; photoId: string | null }>({
-        mutationFn: async ({ accountId, photoId }) => {
+    return useMutation<ICreatedResponse, AxiosError<any, any>, { accountId: string; password: string; photoId: string | null }>({
+        mutationFn: async ({ accountId, password, photoId }) => {
             request.id = accountId;
+            request.password = password;
             request.photoId = photoId;
-            await createRequestValidationScheme.validate(request);
+            await requestValidationScheme.validate(request);
 
             return await receptionistsService.create(request);
         },
