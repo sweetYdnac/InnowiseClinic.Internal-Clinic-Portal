@@ -9,6 +9,7 @@ import { Loader } from '../../components/Loader/Loader';
 import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
+import { Roles } from '../../constants/Roles';
 import { useSignUpCommand } from '../../hooks/requests/authorization';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { useCreatePhotoCommand } from '../../hooks/requests/photos';
@@ -51,7 +52,7 @@ export const CreateReceptionist = () => {
         [offices]
     );
 
-    const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'));
+    const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'), Roles.Receptionist);
     const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photoUrl);
     const { mutate: CreateReceptionist, isLoading: isCreatingReceptionist } = useCreateReceptionistCommand(watch(), setError);
 

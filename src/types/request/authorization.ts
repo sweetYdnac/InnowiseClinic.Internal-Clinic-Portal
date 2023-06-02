@@ -1,6 +1,8 @@
-export interface IRegisterRequest {
+export interface ILoginRequest {
     email: string;
     password: string;
 }
 
-export interface ILoginRequest extends IRegisterRequest {}
+export interface IRegisterRequest extends ILoginRequest {
+    role: string;
+}

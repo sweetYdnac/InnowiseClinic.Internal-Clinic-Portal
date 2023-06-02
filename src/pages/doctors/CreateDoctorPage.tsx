@@ -10,6 +10,7 @@ import { Loader } from '../../components/Loader/Loader';
 import { SelectFormStatus } from '../../components/Select/SelectFormStatus';
 import { SubmitButton } from '../../components/SubmitButton/SubmitButton';
 import { Textfield } from '../../components/Textfield/Textfield';
+import { Roles } from '../../constants/Roles';
 import { useSignUpCommand } from '../../hooks/requests/authorization';
 import { useCreateDoctorCommand } from '../../hooks/requests/doctors';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
@@ -53,7 +54,7 @@ export const CreateDoctorPage = () => {
         refetch: fetchOffices,
     } = usePagedOfficesQuery({ currentPage: 1, pageSize: 50, isActive: null });
 
-    const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'));
+    const { mutateAsync: createAccount, isLoading: isCreatingAccount } = useSignUpCommand(watch('email'), Roles.Doctor);
     const { mutateAsync: createPhoto, isLoading: isCreatingPhoto } = useCreatePhotoCommand(photoUrl);
     const { mutateAsync: createDoctor, isLoading: isCreatingDoctor } = useCreateDoctorCommand(watch(), setError);
 
@@ -178,7 +179,6 @@ export const CreateDoctorPage = () => {
                     shouldBeTouched={[
                         touchedFields.firstName,
                         touchedFields.lastName,
-                        touchedFields.middleName,
                         touchedFields.dateOfBirth as boolean,
                         touchedFields.email,
                         touchedFields.officeId,

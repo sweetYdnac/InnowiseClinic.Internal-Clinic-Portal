@@ -25,7 +25,7 @@ export const SelectFormStatus: FunctionComponent<SelectFormStatusProps> = ({ id,
                     <InputLabel>Status</InputLabel>
                     <Select readOnly={readonly} {...field}>
                         {Object.keys(AccountStatuses)
-                            .filter((v) => isNaN(Number(v)))
+                            .filter((v) => isNaN(Number(v)) && v !== AccountStatuses[AccountStatuses.None])
                             .map((status, index) => (
                                 <MenuItem key={index} value={AccountStatuses[status as keyof typeof AccountStatuses]}>
                                     {getStatusLabel(AccountStatuses[status as keyof typeof AccountStatuses])}

@@ -113,7 +113,7 @@ export const useInitialProfileQuery = (accountId?: string, roleName?: string, en
     });
 };
 
-export const useSignUpCommand = (email: string) => {
+export const useSignUpCommand = (email: string, role: Roles) => {
     const authorizationService = useAuthorizationService();
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -123,6 +123,7 @@ export const useSignUpCommand = (email: string) => {
             const request: IRegisterRequest = {
                 email: email,
                 password: password,
+                role: role,
             };
 
             return await authorizationService.signUp(request);
