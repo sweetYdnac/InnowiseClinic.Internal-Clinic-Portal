@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiBaseUrls } from '../../constants/ApiBaseUrls';
 import { LocalStorage } from '../../constants/LocalStorage';
 import { Roles } from '../../constants/Roles';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { IJwtToken } from '../../types/common/IJwtToken';
 import { ICreatedResponse } from '../../types/common/Responses';
 import { ILoginRequest, IRegisterRequest } from '../../types/request/authorization';

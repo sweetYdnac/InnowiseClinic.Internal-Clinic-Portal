@@ -1,0 +1,1 @@
+export { ReceptionistsPage } from './ReceptionistsPage';

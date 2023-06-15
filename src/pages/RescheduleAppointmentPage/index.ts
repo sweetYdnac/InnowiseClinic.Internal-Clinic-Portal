@@ -1,0 +1,1 @@
+export { RescheduleAppointmentPage } from './RescheduleAppointmentPage';

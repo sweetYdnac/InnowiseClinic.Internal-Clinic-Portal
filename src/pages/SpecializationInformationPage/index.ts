@@ -1,0 +1,1 @@
+export { SpecializationInformationPage } from './SpecializationInformationPage';

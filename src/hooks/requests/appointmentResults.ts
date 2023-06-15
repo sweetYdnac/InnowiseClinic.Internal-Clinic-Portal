@@ -5,7 +5,7 @@ import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { dateApiFormat } from '../../constants/Formats';
 import { ApppointmentResultsQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { ICreatedResponse, INoContentResponse } from '../../types/common/Responses';
 import { ICreateAppointmentResultRequest, IUpdateAppointmentResultRequest } from '../../types/request/appointmentResults';
 import { IAppointmentResultResponse } from '../../types/response/appointmentResults';

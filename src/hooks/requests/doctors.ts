@@ -6,7 +6,7 @@ import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { dateApiFormat } from '../../constants/Formats';
 import { DoctorsQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { selectProfile } from '../../store/profileSlice';
 import { IChangeStatusRequest } from '../../types/common/Requests';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';

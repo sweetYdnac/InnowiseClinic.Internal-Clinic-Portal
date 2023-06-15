@@ -1,0 +1,1 @@
+export { CreateReceptionistPage } from './CreateReceptionistPage';

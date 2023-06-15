@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { OfficesQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { IGetPagedOfficesRequest } from '../../types/request/offices';
 import { IOfficeInformationResponse, IOfficeResponse } from '../../types/response/offices';

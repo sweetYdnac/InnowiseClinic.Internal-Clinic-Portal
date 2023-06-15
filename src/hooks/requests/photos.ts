@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { PhotosQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { ICreatedResponse, INoContentResponse } from '../../types/common/Responses';
 import { usePhotosService } from '../services/usePhotosService';
 

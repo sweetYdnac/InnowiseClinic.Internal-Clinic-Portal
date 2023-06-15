@@ -8,7 +8,7 @@ import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { ValidationError } from 'yup';
 import { dateApiFormat, timeApiFormat } from '../../constants/Formats';
 import { ApppointmentsQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import {
     ICreateAppointmentRequest,

@@ -1,7 +1,7 @@
+import { DoctorNavigation } from '../components/Layout/Aside/Navigation/DoctorNavigation';
+import { ReceptionistNavigation } from '../components/Layout/Aside/Navigation/ReceptionistNavigation';
 import { Roles } from '../constants/Roles';
 import { useAppSelector } from '../hooks/store';
-import { DoctorNavigation } from '../pages/layout/aside/navigation/DoctorNavigation';
-import { ReceptionistNavigation } from '../pages/layout/aside/navigation/ReceptionistNavigation';
 import { selectRole } from '../store/roleSlice';
 
 export const AsideNavigationReducer = () => {

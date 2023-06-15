@@ -7,7 +7,7 @@ import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { AuthorizationQueries } from '../../constants/QueryKeys';
 import { Roles } from '../../constants/Roles';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { IProfileState, setProfile } from '../../store/profileSlice';
 import { setRole } from '../../store/roleSlice';
 import { IJwtToken } from '../../types/common/IJwtToken';

@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { ServiceCategoriesQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { IServiceCategoryResponse } from '../../types/response/serviceCategories';
 import { useServiceCategoriesService } from '../services/useServicesCategories';
 

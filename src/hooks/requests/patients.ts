@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { dateApiFormat } from '../../constants/Formats';
 import { PatientsQueries } from '../../constants/QueryKeys';
-import { AppRoutes } from '../../routes/AppRoutes';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import { ICreatePatientRequest, IUpdatePatientRequest } from '../../types/request/patients';
 import { IPatientInformationResponse, IPatientResponse } from '../../types/response/patients';

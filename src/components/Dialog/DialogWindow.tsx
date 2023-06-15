@@ -1,15 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { FunctionComponent } from 'react';
-
-interface DialogWindowProps {
-    isOpen: boolean;
-    title: string;
-    content: string;
-    handleSubmit: () => void;
-    handleDecline: () => void;
-    submitText?: string;
-    declineText?: string;
-}
+import { DialogWindowProps } from './DialogWindow.interface';
 
 export const DialogWindow: FunctionComponent<DialogWindowProps> = ({
     isOpen,

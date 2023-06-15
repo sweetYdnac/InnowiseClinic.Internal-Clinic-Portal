@@ -1,0 +1,1 @@
+export { CreateSpecializationPage } from './CreateSpecializationPage';
