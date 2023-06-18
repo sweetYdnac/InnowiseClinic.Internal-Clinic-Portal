@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@mui/material';
-import { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
+import { FunctionComponent, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
@@ -13,6 +13,7 @@ import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { usePagedServicesQuery } from '../../hooks/requests/services';
 import { useAppointmentsValidator } from '../../hooks/validators/appointments/getPaged';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { FiltersBody, StyledForm } from './AppointmentsPage.styles';
 import { AppointmentsTable } from './AppointmentsTable/AppointmentsTable';
 
 export const AppointmentsPage: FunctionComponent = () => {
@@ -104,7 +105,7 @@ export const AppointmentsPage: FunctionComponent = () => {
         watch('isApproved'),
     ]);
 
-    const getDoctorsOptions = useCallback(() => {
+    const getOfficesOptions = useMemo(() => {
         if (getValues('doctorId')) {
             const doctor = doctors?.items?.find((doctor) => doctor.id === getValues('doctorId'));
             return [
@@ -123,22 +124,26 @@ export const AppointmentsPage: FunctionComponent = () => {
         );
     }, [doctors, getValues, offices]);
 
+    const getDoctorsOptions = useMemo(
+        () =>
+            doctors?.items?.map((item) => {
+                return {
+                    label: item.fullName,
+                    id: item.id,
+                } as IAutoCompleteItem;
+            }) ?? [],
+        [doctors?.items]
+    );
+
     return (
-        <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box component={'form'} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <>
+            <StyledForm component={'form'}>
+                <FiltersBody>
                     <AutoComplete
                         valueFieldName={register('doctorId').name}
                         control={control}
                         displayName='Doctor'
-                        options={
-                            doctors?.items?.map((item) => {
-                                return {
-                                    label: item.fullName,
-                                    id: item.id,
-                                } as IAutoCompleteItem;
-                            }) ?? []
-                        }
+                        options={getDoctorsOptions}
                         isFetching={isDoctorsFetching}
                         handleOpen={() => {
                             if (!getValues('doctorId')) {
@@ -154,7 +159,7 @@ export const AppointmentsPage: FunctionComponent = () => {
                         valueFieldName={register('officeId').name}
                         control={control}
                         displayName='Office'
-                        options={getDoctorsOptions()}
+                        options={getOfficesOptions}
                         isFetching={isOfficesFetching}
                         handleOpen={() => {
                             if (!getValues('officeId') && !getValues('doctorId')) {
@@ -191,7 +196,7 @@ export const AppointmentsPage: FunctionComponent = () => {
 
                     <SelectBoolean id={register('isApproved').name} control={control} displayName='Status' />
                     <Datepicker id={register('date').name} control={control} displayName='Date' />
-                </Box>
+                </FiltersBody>
                 <Box>
                     {appointments && (
                         <AppointmentsTable
@@ -207,9 +212,9 @@ export const AppointmentsPage: FunctionComponent = () => {
                         />
                     )}
                 </Box>
-            </Box>
+            </StyledForm>
 
             {isFetchingAppointments && <Loader />}
-        </Box>
+        </>
     );
 };

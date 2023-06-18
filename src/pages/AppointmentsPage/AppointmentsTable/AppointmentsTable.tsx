@@ -1,25 +1,15 @@
-import {
-    Box,
-    Button,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { Button, TablePagination, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../../components/Dialog';
 import { Loader } from '../../../components/Loader';
+import { CustomCell, CustomTable } from '../../../components/Table';
+import { AppRoutes } from '../../../constants/AppRoutes';
 import { timeSlotFormat } from '../../../constants/Formats';
 import { useApproveAppointmentCommand, useCancelAppointmentCommand } from '../../../hooks/requests/appointments';
-import { AppRoutes } from '../../../constants/AppRoutes';
 import { AppointmentsListProps } from './AppointmentsTable.interface';
+import { NoAppointmentsContainer, StyledRow } from './AppointmentsTable.styles';
 
 export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ date, appointments, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -35,53 +25,50 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Time</TableCell>
-                            <TableCell align='center'>Doctor's full name</TableCell>
-                            <TableCell align='center'>Patient's full name</TableCell>
-                            <TableCell align='center'>Patient's phone number</TableCell>
-                            <TableCell align='center'>Service</TableCell>
-                            <TableCell align='center'>Manage</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {appointments.map((item) => (
-                            <TableRow key={item.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell align='center'>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
-                                    item.endTime,
-                                    timeSlotFormat
-                                ).format(timeSlotFormat)}`}</TableCell>
-                                <TableCell align='center'>{item.doctorFullName}</TableCell>
-                                <TableCell align='center'>
-                                    <Link to={AppRoutes.PatientProfile.replace(':id', `${item.patientId}`)}>{item.patientFullName}</Link>
-                                </TableCell>
-                                <TableCell align='center'>{item.patientPhoneNumber}</TableCell>
-                                <TableCell align='center'>{item.serviceName}</TableCell>
-                                <TableCell align='center'>
-                                    {item.isApproved ? (
-                                        <Button onClick={() => setCancelAppointmentId(item.id)}>Cancel</Button>
-                                    ) : (
-                                        <>
-                                            <Button onClick={() => navigate(AppRoutes.RescheduleAppointment.replace(':id', `${item.id}`))}>
-                                                Reschedule
-                                            </Button>
-                                            <Button onClick={() => approveAppointment({ id: item.id })}>Approve</Button>
-                                        </>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Time</CustomCell>
+                        <CustomCell>Doctor's full name</CustomCell>
+                        <CustomCell>Patient's full name</CustomCell>
+                        <CustomCell>Patient's phone number</CustomCell>
+                        <CustomCell>Service</CustomCell>
+                        <CustomCell>Manage</CustomCell>
+                    </>
+                }
+            >
+                {appointments.map((item) => (
+                    <StyledRow key={item.id} hover>
+                        <CustomCell>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
+                            item.endTime,
+                            timeSlotFormat
+                        ).format(timeSlotFormat)}`}</CustomCell>
+                        <CustomCell>{item.doctorFullName}</CustomCell>
+                        <CustomCell>
+                            <Link to={AppRoutes.PatientProfile.replace(':id', `${item.patientId}`)}>{item.patientFullName}</Link>
+                        </CustomCell>
+                        <CustomCell>{item.patientPhoneNumber}</CustomCell>
+                        <CustomCell>{item.serviceName}</CustomCell>
+                        <CustomCell>
+                            {item.isApproved ? (
+                                <Button onClick={() => setCancelAppointmentId(item.id)}>Cancel</Button>
+                            ) : (
+                                <>
+                                    <Button onClick={() => navigate(AppRoutes.RescheduleAppointment.replace(':id', `${item.id}`))}>
+                                        Reschedule
+                                    </Button>
+                                    <Button onClick={() => approveAppointment({ id: item.id })}>Approve</Button>
+                                </>
+                            )}
+                        </CustomCell>
+                    </StyledRow>
+                ))}
+            </CustomTable>
 
             {appointments.length === 0 ? (
-                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
-                    <Typography alignSelf={'center'}>No appointments</Typography>
-                </Box>
+                <NoAppointmentsContainer>
+                    <Typography>No appointments</Typography>
+                </NoAppointmentsContainer>
             ) : (
                 <TablePagination
                     component='div'

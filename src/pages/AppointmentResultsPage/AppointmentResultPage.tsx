@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { Box, Button, IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { deepEqual } from 'fast-equals';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -14,6 +14,7 @@ import { Textfield } from '../../components/UI/Textfield';
 import { WorkMode } from '../../constants/WorkModes';
 import { useGetAppointmentResultById, useUpdateAppointmentResultCommand } from '../../hooks/requests/appointmentResults';
 import { useUpdateAppointmentResultValidator } from '../../hooks/validators/appointmentResults/update';
+import { StyledForm, StyledOperationsButtons } from './AppointmentResultPage.styles';
 
 export const AppointmentResultPage = () => {
     const [workMode, setWorkMode] = useState<WorkMode>('view');
@@ -70,19 +71,7 @@ export const AppointmentResultPage = () => {
                         </IconButton>
                     )}
 
-                    <Box
-                        onSubmit={handleSubmit(() => onSubmit())}
-                        component='form'
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                        }}
-                        noValidate
-                        autoComplete='on'
-                    >
+                    <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
                         <Datepicker
                             id={register('date').name}
                             readonly={workMode === 'view'}
@@ -124,21 +113,14 @@ export const AppointmentResultPage = () => {
                         />
 
                         {workMode === 'edit' && (
-                            <Box
-                                style={{
-                                    width: '75%',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-evenly',
-                                }}
-                            >
+                            <StyledOperationsButtons>
                                 <Button variant='contained' color='error' onClick={() => setIsDiscardDialogOpen(true)}>
                                     Cancel
                                 </Button>
                                 <SubmitButton errors={errors}>Save changes</SubmitButton>
-                            </Box>
+                            </StyledOperationsButtons>
                         )}
-                    </Box>
+                    </StyledForm>
 
                     <DialogWindow
                         isOpen={isDiscardDialogOpen}
