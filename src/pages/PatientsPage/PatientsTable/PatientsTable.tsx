@@ -9,6 +9,8 @@ import { AppRoutes } from '../../../constants/AppRoutes';
 import { useRemovePatientCommand } from '../../../hooks/requests/patients';
 import { PatientsTableProps } from './PatientsTable.interface';
 import { NoPatientsContainer, StyledPatientRow } from './PatientsTable.styles';
+import { PatientsTableHeader } from './data/patientsTableHeader';
+import { RemovePatientDialogMessages } from './data/removePatientDialogMessages';
 
 export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -28,9 +30,9 @@ export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients,
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Full name</CustomCell>
-                        <CustomCell>Phone number</CustomCell>
-                        <CustomCell>Manage</CustomCell>
+                        {PatientsTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >
@@ -64,8 +66,8 @@ export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients,
 
             <DialogWindow
                 isOpen={!!deletePatientId}
-                title='Remove patient?'
-                content='Do you really want to delete? Data will be lost.'
+                title={RemovePatientDialogMessages.title}
+                content={RemovePatientDialogMessages.content}
                 handleSubmit={handleRemovePatient}
                 handleDecline={() => setDeletePatientId(null)}
             />

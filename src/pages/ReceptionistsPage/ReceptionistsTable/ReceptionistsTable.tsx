@@ -9,6 +9,8 @@ import { AppRoutes } from '../../../constants/AppRoutes';
 import { useRemoveReceptionistCommand } from '../../../hooks/requests/receptionists';
 import { ReceptionistsTableProps } from './ReceptionistsTable.interface';
 import { NoReceptionistContainer, StyledReceptionistRow } from './ReceptionistsTable.styles';
+import { ReceptionistsTableHeader } from './data/receptionistsTableHeader';
+import { RemoveReceptionistDialogMessages } from './data/removeReceptionistDialogMessages';
 
 export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({ receptionists, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -28,9 +30,9 @@ export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Full name</CustomCell>
-                        <CustomCell>Phone number</CustomCell>
-                        <CustomCell>Manage</CustomCell>
+                        {ReceptionistsTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >
@@ -64,8 +66,8 @@ export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({
 
             <DialogWindow
                 isOpen={!!deleteReceptionistId}
-                title='Remove patient?'
-                content='Do you really want to delete? Data will be lost.'
+                title={RemoveReceptionistDialogMessages.title}
+                content={RemoveReceptionistDialogMessages.content}
                 handleSubmit={handleRemovePatient}
                 handleDecline={() => setDeleteReceptionistId(null)}
             />

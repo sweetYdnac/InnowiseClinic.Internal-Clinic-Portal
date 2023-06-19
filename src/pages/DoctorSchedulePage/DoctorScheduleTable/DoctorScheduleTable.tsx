@@ -11,6 +11,7 @@ import { ICreateAppointmentResultDTO } from '../../../types/dto/appointmentResul
 import { IDoctorScheduledAppointmentResponse } from '../../../types/response/doctors';
 import { DoctorScheduleTableProps } from './DoctorScheduleTable.interface';
 import { NoDoctorsContainer, StyledDoctorRow } from './DoctorScheduleTable.styles';
+import { DoctorScheduleTableHeader } from './data/doctorScheduleTableHeader';
 
 export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = ({ appointments, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -40,11 +41,9 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Time</CustomCell>
-                        <CustomCell>Patient's full name</CustomCell>
-                        <CustomCell>Service</CustomCell>
-                        <CustomCell>Status</CustomCell>
-                        <CustomCell>Manage</CustomCell>
+                        {DoctorScheduleTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >

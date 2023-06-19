@@ -10,6 +10,7 @@ import { dateViewFormat } from '../../../constants/Formats';
 import { useChangeDoctorStatusCommand } from '../../../hooks/requests/doctors';
 import { DoctorsTableProps } from './DoctorsTable.interface';
 import { NoDoctorsContainer, StyledDoctorRow } from './DoctorsTable.styles';
+import { DoctorsTableHeader } from './data/doctorsTableHeader';
 
 export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -22,11 +23,9 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Full name</CustomCell>
-                        <CustomCell>Specialization</CustomCell>
-                        <CustomCell>Status</CustomCell>
-                        <CustomCell>Date of birth</CustomCell>
-                        <CustomCell>Office address</CustomCell>
+                        {DoctorsTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >

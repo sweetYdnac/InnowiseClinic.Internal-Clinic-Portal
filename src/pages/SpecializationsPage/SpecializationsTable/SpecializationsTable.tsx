@@ -8,6 +8,7 @@ import { AppRoutes } from '../../../constants/AppRoutes';
 import { useChangeSpecializationStatusCommand } from '../../../hooks/requests/specializations';
 import { SpecializationsTableProps } from './SpecializationsTable.interface';
 import { StyledSpecializationRow } from './SpecializationsTable.styles';
+import { SpecializationsTableHeader } from './data/specializationsTableHeader';
 
 export const SpecializationsTable: FunctionComponent<SpecializationsTableProps> = ({ specializations, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -19,8 +20,9 @@ export const SpecializationsTable: FunctionComponent<SpecializationsTableProps> 
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Title</CustomCell>
-                        <CustomCell>Status</CustomCell>
+                        {SpecializationsTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >

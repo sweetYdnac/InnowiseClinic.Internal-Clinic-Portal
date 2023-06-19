@@ -10,6 +10,8 @@ import { timeSlotFormat } from '../../../constants/Formats';
 import { useApproveAppointmentCommand, useCancelAppointmentCommand } from '../../../hooks/requests/appointments';
 import { AppointmentsListProps } from './AppointmentsTable.interface';
 import { NoAppointmentsContainer, StyledRow } from './AppointmentsTable.styles';
+import { AppointmentsTableHeader } from './data/appointmentsTableHeader';
+import { CancelAppointmentDialogMessages } from './data/cancelAppointmentDialogMessages';
 
 export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ date, appointments, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -28,12 +30,9 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Time</CustomCell>
-                        <CustomCell>Doctor's full name</CustomCell>
-                        <CustomCell>Patient's full name</CustomCell>
-                        <CustomCell>Patient's phone number</CustomCell>
-                        <CustomCell>Service</CustomCell>
-                        <CustomCell>Manage</CustomCell>
+                        {AppointmentsTableHeader.map((item) => (
+                            <CustomCell key={item}>{item}</CustomCell>
+                        ))}
                     </>
                 }
             >
@@ -82,8 +81,8 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
 
             <DialogWindow
                 isOpen={cancelAppointmentId !== null}
-                title='Cancel appointment'
-                content='Do you really want to cancel the appointment? It will be permanently deleted.'
+                title={CancelAppointmentDialogMessages.title}
+                content={CancelAppointmentDialogMessages.content}
                 handleSubmit={handleCancelAppointment}
                 handleDecline={() => setCancelAppointmentId(null)}
             />

@@ -12,6 +12,7 @@ import { useGetPatientHistoryQuery } from '../../../hooks/requests/appointments'
 import { usePatientHistoryValidator } from '../../../hooks/validators/appointments/patientHistory';
 import { IPagedRequest } from '../../../types/common/Requests';
 import { StyledPatientHistoryRow } from './PatientHistory.styles';
+import { PatientHistoryTableHeader } from './data/patientHistoryTableHeader';
 
 export const PatientHistory = () => {
     const navigate = useNavigate();
@@ -40,11 +41,9 @@ export const PatientHistory = () => {
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Date</CustomCell>
-                        <CustomCell>Time</CustomCell>
-                        <CustomCell>Doctor full name</CustomCell>
-                        <CustomCell>Service</CustomCell>
-                        <CustomCell>Manage</CustomCell>
+                        {PatientHistoryTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >

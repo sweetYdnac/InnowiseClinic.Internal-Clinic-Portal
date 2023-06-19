@@ -8,6 +8,7 @@ import { AppRoutes } from '../../../constants/AppRoutes';
 import { useChangeOfficeStatusCommand } from '../../../hooks/requests/offices';
 import { OfficesTableProps } from './OfficesTable.interface';
 import { NoOfficesContainer, StyledOfficeRow } from './OfficesTable.styles';
+import { OfficesTableHeader } from './data/officesTableHeader';
 
 export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -20,9 +21,9 @@ export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pa
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Address</CustomCell>
-                        <CustomCell>Status</CustomCell>
-                        <CustomCell>Phone number</CustomCell>
+                        {OfficesTableHeader.map((title) => (
+                            <CustomCell key={title}>{title}</CustomCell>
+                        ))}
                     </>
                 }
             >
