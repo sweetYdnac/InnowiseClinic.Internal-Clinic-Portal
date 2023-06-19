@@ -1,18 +1,18 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { ServicesTable } from '../../components/ServicesTable';
 import { SubmitButton } from '../../components/UI/SubmitButton';
 import { Textfield } from '../../components/UI/Textfield';
 import { ToggleSwitch } from '../../components/UI/ToggleSwitch';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { useCreateServiceCommand } from '../../hooks/requests/services';
 import { useCreateSpecializationCommand } from '../../hooks/requests/specializations';
 import { useAppSelector } from '../../hooks/store';
 import { useSpecializationValidator } from '../../hooks/validators/specializations/create&update';
-import { AppRoutes } from '../../constants/AppRoutes';
 import { selectServices } from '../../store/servicesSlice';
 import { IPagedRequest } from '../../types/common/Requests';
 
@@ -59,19 +59,7 @@ export const CreateSpecializationPage = () => {
 
     return (
         <>
-            <Box
-                onSubmit={handleSubmit(() => onSubmit())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='on'
-            >
+            <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
                 <Textfield id={register('title').name} control={control} displayName='Title' workMode='edit' />
                 <ToggleSwitch
                     value={watch('isActive')}
@@ -91,7 +79,7 @@ export const CreateSpecializationPage = () => {
                 <SubmitButton errors={errors} shouldBeTouched={[touchedFields.title, services.length > 0]}>
                     Create
                 </SubmitButton>
-            </Box>
+            </StyledForm>
 
             {isLoading && <Loader />}
         </>

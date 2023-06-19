@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { DialogWindow } from '../../components/Dialog';
+import { StyledForm, StyledOperationsButtons } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { Datepicker } from '../../components/UI/DatePicker';
 import { SubmitButton } from '../../components/UI/SubmitButton';
@@ -14,7 +15,6 @@ import { Textfield } from '../../components/UI/Textfield';
 import { WorkMode } from '../../constants/WorkModes';
 import { useGetAppointmentResultById, useUpdateAppointmentResultCommand } from '../../hooks/requests/appointmentResults';
 import { useUpdateAppointmentResultValidator } from '../../hooks/validators/appointmentResults/update';
-import { StyledForm, StyledOperationsButtons } from './AppointmentResultPage.styles';
 
 export const AppointmentResultPage = () => {
     const [workMode, setWorkMode] = useState<WorkMode>('view');

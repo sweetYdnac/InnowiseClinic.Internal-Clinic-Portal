@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AccountCircle } from '@mui/icons-material';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import jwt from 'jwt-decode';
 import { useMemo } from 'react';
@@ -11,6 +10,7 @@ import { Textfield } from '../../components/UI/Textfield';
 import { useInitialProfileQuery, useSignInQuery } from '../../hooks/requests/authorization';
 import { useLoginValidator } from '../../hooks/validators/authorization/signIn';
 import { IJwtToken } from '../../types/common/IJwtToken';
+import { StyledSignInForm } from './SignInPage.styles';
 
 export const SignInPage = () => {
     const { validationScheme, initialValues } = useLoginValidator();
@@ -49,20 +49,7 @@ export const SignInPage = () => {
     useInitialProfileQuery(token.accountId, token.role, !!tokenResponse?.accessToken);
 
     return (
-        <Box
-            onSubmit={handleSubmit(() => refetch())}
-            component='form'
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                height: '100%',
-            }}
-            noValidate
-            autoComplete='off'
-        >
+        <StyledSignInForm onSubmit={handleSubmit(() => refetch())} component='form' noValidate autoComplete='off'>
             <Typography variant='h4' sx={{ marginBottom: '50px' }} gutterBottom>
                 Sign In
             </Typography>
@@ -81,6 +68,6 @@ export const SignInPage = () => {
             <SubmitButton errors={errors} shouldBeTouched={[touchedFields.email, touchedFields.password]}>
                 Enter
             </SubmitButton>
-        </Box>
+        </StyledSignInForm>
     );
 };

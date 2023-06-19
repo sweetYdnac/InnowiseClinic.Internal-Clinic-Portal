@@ -2,9 +2,10 @@ import { Box, Button } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
-import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { AppRoutes } from '../../constants/AppRoutes';
+import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { IPagedRequest } from '../../types/common/Requests';
+import { Container } from './SpecializationsPage.styles';
 import { SpecializationsTable } from './SpecializationsTable/SpecializationsTable';
 
 export const SpecializationsPage = () => {
@@ -27,10 +28,10 @@ export const SpecializationsPage = () => {
     }, []);
 
     return (
-        <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Container>
+            <Container>
                 <Button onClick={() => navigate(AppRoutes.CreateSpecialization)}>Create</Button>
-            </Box>
+            </Container>
             <Box>
                 {specializations && (
                     <SpecializationsTable
@@ -47,6 +48,6 @@ export const SpecializationsPage = () => {
             </Box>
 
             {isSpecializationsFetching && <Loader />}
-        </Box>
+        </Container>
     );
 };

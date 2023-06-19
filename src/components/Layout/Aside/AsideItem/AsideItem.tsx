@@ -1,8 +1,9 @@
-import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { FunctionComponent } from 'react';
 import { useAppDispatch } from '../../../../hooks/store';
 import { switchAside } from '../../../../store/layoutSlice';
 import { AsideItemProps } from './AsideItem.interface';
+import { NavigationButton } from './AsideItem.styles';
 
 export const AsideItem: FunctionComponent<AsideItemProps> = ({ displayName, children, handleClick }: AsideItemProps) => {
     const dispatch = useAppDispatch();
@@ -14,10 +15,10 @@ export const AsideItem: FunctionComponent<AsideItemProps> = ({ displayName, chil
 
     return (
         <ListItem disablePadding onClick={handleOnClick}>
-            <ListItemButton style={{ margin: '10px 0px' }}>
+            <NavigationButton>
                 <ListItemIcon>{children}</ListItemIcon>
                 <ListItemText primary={displayName} />
-            </ListItemButton>
+            </NavigationButton>
         </ListItem>
     );
 };

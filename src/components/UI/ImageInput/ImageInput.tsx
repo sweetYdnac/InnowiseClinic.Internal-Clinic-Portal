@@ -3,7 +3,7 @@ import { Box, IconButton } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { ImageInputProps } from './ImageInput.interface';
 
-export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setImageUrl, workMode = 'edit' }: ImageInputProps) => {
+export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setImageUrl, workMode = 'edit' }) => {
     const onSubmitFile = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];

@@ -1,7 +1,8 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useLocation, useParams } from 'react-router-dom';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { Datepicker } from '../../components/UI/DatePicker';
 import { SubmitButton } from '../../components/UI/SubmitButton';
@@ -33,19 +34,7 @@ export const CreateAppointmentResultPage = () => {
 
     return (
         <>
-            <Box
-                onSubmit={handleSubmit(() => mutate())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='on'
-            >
+            <StyledForm onSubmit={handleSubmit(() => mutate())} component='form' noValidate autoComplete='on'>
                 <Typography variant='h5' gutterBottom>
                     Create Appointment Result
                 </Typography>
@@ -72,7 +61,7 @@ export const CreateAppointmentResultPage = () => {
                 >
                     Create
                 </SubmitButton>
-            </Box>
+            </StyledForm>
 
             {isLoading && <Loader />}
         </>

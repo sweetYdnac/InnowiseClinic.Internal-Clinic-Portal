@@ -1,13 +1,15 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
+import { TablePagination, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader';
+import { CustomCell, CustomTable } from '../../../components/Table';
 import { SelectStatus } from '../../../components/UI/SelectStatus';
+import { AppRoutes } from '../../../constants/AppRoutes';
 import { dateViewFormat } from '../../../constants/Formats';
 import { useChangeDoctorStatusCommand } from '../../../hooks/requests/doctors';
-import { AppRoutes } from '../../../constants/AppRoutes';
 import { DoctorsTableProps } from './DoctorsTable.interface';
+import { NoDoctorsContainer, StyledDoctorRow } from './DoctorsTable.styles';
 
 export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -17,48 +19,36 @@ export const DoctorsTable: FunctionComponent<DoctorsTableProps> = ({ doctors, pa
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Full name</TableCell>
-                            <TableCell align='center'>Specialization</TableCell>
-                            <TableCell align='center'>Status</TableCell>
-                            <TableCell align='center'>Date of birth</TableCell>
-                            <TableCell align='center'>Office address</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {doctors.map((doctor) => (
-                            <TableRow key={doctor.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
-                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
-                                    {doctor.fullName}
-                                </TableCell>
-                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
-                                    {doctor.specializationName}
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <SelectStatus
-                                        value={doctor.status}
-                                        handleChange={(value) => mutate({ id: doctor.id, status: value })}
-                                    />
-                                </TableCell>
-                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
-                                    {dayjs(doctor.dateOfBirth).format(dateViewFormat)}
-                                </TableCell>
-                                <TableCell onClick={() => handleRowClick(doctor.id)} align='center'>
-                                    {doctor.officeAddress}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Full name</CustomCell>
+                        <CustomCell>Specialization</CustomCell>
+                        <CustomCell>Status</CustomCell>
+                        <CustomCell>Date of birth</CustomCell>
+                        <CustomCell>Office address</CustomCell>
+                    </>
+                }
+            >
+                {doctors.map((doctor) => (
+                    <StyledDoctorRow key={doctor.id} hover>
+                        <CustomCell handleClick={() => handleRowClick(doctor.id)}>{doctor.fullName}</CustomCell>
+                        <CustomCell handleClick={() => handleRowClick(doctor.id)}>{doctor.specializationName}</CustomCell>
+                        <CustomCell>
+                            <SelectStatus value={doctor.status} handleChange={(value) => mutate({ id: doctor.id, status: value })} />
+                        </CustomCell>
+                        <CustomCell handleClick={() => handleRowClick(doctor.id)}>
+                            {dayjs(doctor.dateOfBirth).format(dateViewFormat)}
+                        </CustomCell>
+                        <CustomCell handleClick={() => handleRowClick(doctor.id)}>{doctor.officeAddress}</CustomCell>
+                    </StyledDoctorRow>
+                ))}
+            </CustomTable>
 
             {doctors.length === 0 ? (
-                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
-                    <Typography alignSelf={'center'}>No doctors</Typography>
-                </Box>
+                <NoDoctorsContainer>
+                    <Typography>No doctors</Typography>
+                </NoDoctorsContainer>
             ) : (
                 <TablePagination
                     component='div'

@@ -2,9 +2,10 @@ import { Box, Button } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
-import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { AppRoutes } from '../../constants/AppRoutes';
+import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { IPagedRequest } from '../../types/common/Requests';
+import { Container } from './OfficesPage.styles';
 import { OfficesTable } from './OfficesTable/OfficesTable';
 
 export const OfficesPage = () => {
@@ -29,10 +30,10 @@ export const OfficesPage = () => {
     }, []);
 
     return (
-        <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Container>
+            <Container>
                 <Button onClick={() => navigate(AppRoutes.CreateOffice)}>Create</Button>
-            </Box>
+            </Container>
             <Box>
                 {offices && (
                     <OfficesTable
@@ -49,6 +50,6 @@ export const OfficesPage = () => {
             </Box>
 
             {isOfficesFetching && <Loader />}
-        </Box>
+        </Container>
     );
 };

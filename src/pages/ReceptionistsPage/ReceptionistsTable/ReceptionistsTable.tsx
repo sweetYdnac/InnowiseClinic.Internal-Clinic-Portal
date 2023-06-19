@@ -1,24 +1,14 @@
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import {
-    Box,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { IconButton, TablePagination, Typography } from '@mui/material';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../../components/Dialog';
 import { Loader } from '../../../components/Loader';
-import { useRemoveReceptionistCommand } from '../../../hooks/requests/receptionists';
+import { CustomCell, CustomTable } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
+import { useRemoveReceptionistCommand } from '../../../hooks/requests/receptionists';
 import { ReceptionistsTableProps } from './ReceptionistsTable.interface';
+import { NoReceptionistContainer, StyledReceptionistRow } from './ReceptionistsTable.styles';
 
 export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({ receptionists, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -35,43 +25,32 @@ export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Full name</TableCell>
-                            <TableCell align='center'>Phone number</TableCell>
-                            <TableCell align='center'>Manage</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {receptionists.map((receptionist) => (
-                            <TableRow
-                                key={receptionist.id}
-                                hover
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}
-                            >
-                                <TableCell onClick={() => handleRowClick(receptionist.id)} align='center'>
-                                    {receptionist.fullName}
-                                </TableCell>
-                                <TableCell onClick={() => handleRowClick(receptionist.id)} align='center'>
-                                    {receptionist.officeAddress}
-                                </TableCell>
-                                <TableCell align='center' onClick={() => setDeleteReceptionistId(receptionist.id)}>
-                                    <IconButton>
-                                        <DeleteForeverIcon fontSize='medium' />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Full name</CustomCell>
+                        <CustomCell>Phone number</CustomCell>
+                        <CustomCell>Manage</CustomCell>
+                    </>
+                }
+            >
+                {receptionists.map((receptionist) => (
+                    <StyledReceptionistRow key={receptionist.id} hover>
+                        <CustomCell handleClick={() => handleRowClick(receptionist.id)}>{receptionist.fullName}</CustomCell>
+                        <CustomCell handleClick={() => handleRowClick(receptionist.id)}>{receptionist.officeAddress}</CustomCell>
+                        <CustomCell handleClick={() => setDeleteReceptionistId(receptionist.id)}>
+                            <IconButton>
+                                <DeleteForeverIcon fontSize='medium' />
+                            </IconButton>
+                        </CustomCell>
+                    </StyledReceptionistRow>
+                ))}
+            </CustomTable>
 
             {receptionists.length === 0 ? (
-                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
-                    <Typography alignSelf={'center'}>No receptionists</Typography>
-                </Box>
+                <NoReceptionistContainer>
+                    <Typography>No receptionists</Typography>
+                </NoReceptionistContainer>
             ) : (
                 <TablePagination
                     component='div'

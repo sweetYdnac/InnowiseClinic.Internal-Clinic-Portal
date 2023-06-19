@@ -1,8 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { Datepicker } from '../../components/UI/DatePicker';
@@ -104,19 +105,7 @@ export const RescheduleAppointmentPage = () => {
 
     return (
         <>
-            <Box
-                onSubmit={handleSubmit(() => rescheduleAppointment())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='on'
-            >
+            <StyledForm onSubmit={handleSubmit(() => rescheduleAppointment())} component='form' noValidate autoComplete='on'>
                 <Typography variant='h5' gutterBottom>
                     Reschedule Appointment
                 </Typography>
@@ -163,7 +152,7 @@ export const RescheduleAppointmentPage = () => {
                 />
 
                 <SubmitButton errors={errors}>Reschedule</SubmitButton>
-            </Box>
+            </StyledForm>
 
             {(isFetchingAppointment || isRescheduleAppointmentLoading) && <Loader />}
         </>

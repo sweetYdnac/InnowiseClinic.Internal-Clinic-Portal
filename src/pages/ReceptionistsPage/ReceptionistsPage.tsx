@@ -1,11 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Container } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { usePagedReceptionistsQuery } from '../../hooks/requests/receptionists';
 import { useGetReceptionistsValidator } from '../../hooks/validators/receptionists/getPaged';
-import { AppRoutes } from '../../constants/AppRoutes';
 import { IPagedRequest } from '../../types/common/Requests';
 import { ReceptionistsTable } from './ReceptionistsTable/ReceptionistsTable';
 
@@ -21,28 +21,26 @@ export const ReceptionistsPage = () => {
     const { data: receptionists, isFetching: isFetchigReceptionists } = usePagedReceptionistsQuery(watch(), true);
 
     return (
-        <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Button onClick={() => navigate(AppRoutes.CreateReceptionist)}>Create</Button>
-                </Box>
-                <Box>
-                    {receptionists && (
-                        <ReceptionistsTable
-                            receptionists={receptionists.items}
-                            pagingData={{
-                                currentPage: receptionists.currentPage,
-                                pageSize: receptionists.pageSize,
-                                totalCount: receptionists.totalCount,
-                                totalPages: receptionists.totalPages,
-                            }}
-                            handlePageChange={(_, page) => setValue('currentPage', page + 1)}
-                        />
-                    )}
-                </Box>
+        <Container>
+            <Container>
+                <Button onClick={() => navigate(AppRoutes.CreateReceptionist)}>Create</Button>
+            </Container>
+            <Box>
+                {receptionists && (
+                    <ReceptionistsTable
+                        receptionists={receptionists.items}
+                        pagingData={{
+                            currentPage: receptionists.currentPage,
+                            pageSize: receptionists.pageSize,
+                            totalCount: receptionists.totalCount,
+                            totalPages: receptionists.totalPages,
+                        }}
+                        handlePageChange={(_, page) => setValue('currentPage', page + 1)}
+                    />
+                )}
             </Box>
 
             {isFetchigReceptionists && <Loader />}
-        </Box>
+        </Container>
     );
 };

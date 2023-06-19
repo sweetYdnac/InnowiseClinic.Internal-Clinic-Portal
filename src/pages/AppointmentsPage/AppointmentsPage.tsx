@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box } from '@mui/material';
 import { FunctionComponent, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { Datepicker } from '../../components/UI/DatePicker';
@@ -13,7 +14,7 @@ import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { usePagedServicesQuery } from '../../hooks/requests/services';
 import { useAppointmentsValidator } from '../../hooks/validators/appointments/getPaged';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
-import { FiltersBody, StyledForm } from './AppointmentsPage.styles';
+import { FiltersBody } from './AppointmentsPage.styles';
 import { AppointmentsTable } from './AppointmentsTable/AppointmentsTable';
 
 export const AppointmentsPage: FunctionComponent = () => {

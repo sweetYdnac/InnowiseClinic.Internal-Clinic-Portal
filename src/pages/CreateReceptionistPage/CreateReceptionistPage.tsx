@@ -1,8 +1,9 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AccountCircle } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { ImageInput } from '../../components/UI/ImageInput';
@@ -72,19 +73,7 @@ export const CreateReceptionistPage = () => {
 
     return (
         <>
-            <Box
-                onSubmit={handleSubmit(() => onSubmit())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='on'
-            >
+            <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
                 <Typography variant='h5' gutterBottom>
                     Create Receptionist
                 </Typography>
@@ -129,7 +118,7 @@ export const CreateReceptionistPage = () => {
                 >
                     Create
                 </SubmitButton>
-            </Box>
+            </StyledForm>
 
             {(isCreatingAccount || isCreatingPhoto || isCreatingReceptionist) && <Loader />}
         </>

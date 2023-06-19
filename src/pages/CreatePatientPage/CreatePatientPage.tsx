@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { Datepicker } from '../../components/UI/DatePicker';
 import { SubmitButton } from '../../components/UI/SubmitButton';
@@ -27,19 +27,7 @@ export const CreatePatientPage = () => {
 
     return (
         <>
-            <Box
-                onSubmit={handleSubmit(() => createPatient())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='on'
-            >
+            <StyledForm onSubmit={handleSubmit(() => createPatient())} component='form' noValidate autoComplete='on'>
                 <Textfield id={register('firstName').name} control={control} displayName='First name' workMode='edit' />
                 <Textfield id={register('lastName').name} control={control} displayName='Last name' workMode='edit' />
                 <Textfield id={register('middleName').name} control={control} displayName='Middle name' workMode='edit' />
@@ -74,7 +62,7 @@ export const CreatePatientPage = () => {
                 >
                     Create
                 </SubmitButton>
-            </Box>
+            </StyledForm>
 
             {isCreatingPatient && <Loader />}
         </>

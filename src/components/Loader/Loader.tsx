@@ -1,15 +1,9 @@
-import { Backdrop, CircularProgress } from '@mui/material';
+import { StyledBackdrop, StyledLoader } from './Loader.styles';
 
 export const Loader = () => {
     return (
-        <Backdrop
-            sx={{
-                color: '#fff',
-                zIndex: (theme) => theme.zIndex.drawer + 1,
-            }}
-            open={true}
-        >
-            <CircularProgress color='inherit' />
-        </Backdrop>
+        <StyledBackdrop open={true}>
+            <StyledLoader />
+        </StyledBackdrop>
     );
 };

@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { FilterTextfield } from '../../components/UI/FilterTextfield';
+import { AppRoutes } from '../../constants/AppRoutes';
 import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';
 import { usePagedOfficesQuery } from '../../hooks/requests/offices';
 import { usePagedSpecializationsQuery } from '../../hooks/requests/specializations';
 import { useDoctorsValidator } from '../../hooks/validators/doctors/getPaged';
-import { AppRoutes } from '../../constants/AppRoutes';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
+import { Container } from './DoctorsPage.styles';
 import { DoctorsTable } from './DoctorsTable/DoctorsTable';
 
 export const DoctorsPage = () => {
@@ -57,81 +58,79 @@ export const DoctorsPage = () => {
     }, [watch('pageSize'), watch('officeId'), watch('specializationId'), watch('doctorValue')]);
 
     return (
-        <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Button onClick={() => navigate(AppRoutes.CreateDoctor)}>Create</Button>
-                    <FilterTextfield
-                        valueFieldName={register('doctorValue').name}
-                        inputFieldName={register('doctorInput').name}
-                        control={control}
-                        displayName='Doctor'
-                        debounceDelay={2000}
-                    />
+        <Container>
+            <Container>
+                <Button onClick={() => navigate(AppRoutes.CreateDoctor)}>Create</Button>
+                <FilterTextfield
+                    valueFieldName={register('doctorValue').name}
+                    inputFieldName={register('doctorInput').name}
+                    control={control}
+                    displayName='Doctor'
+                    debounceDelay={2000}
+                />
 
-                    <AutoComplete
-                        valueFieldName={register('officeId').name}
-                        control={control}
-                        displayName='Office'
-                        options={
-                            offices?.items?.map((item) => {
-                                return {
-                                    label: item.address,
-                                    id: item.id,
-                                } as IAutoCompleteItem;
-                            }) ?? []
+                <AutoComplete
+                    valueFieldName={register('officeId').name}
+                    control={control}
+                    displayName='Office'
+                    options={
+                        offices?.items?.map((item) => {
+                            return {
+                                label: item.address,
+                                id: item.id,
+                            } as IAutoCompleteItem;
+                        }) ?? []
+                    }
+                    isFetching={isOfficesFetching}
+                    handleOpen={() => {
+                        if (!getValues('officeId')) {
+                            fetchOffices();
                         }
-                        isFetching={isOfficesFetching}
-                        handleOpen={() => {
-                            if (!getValues('officeId')) {
-                                fetchOffices();
-                            }
-                        }}
-                        handleInputChange={() => fetchOffices()}
-                        inputFieldName={register('officeInput').name}
-                        debounceDelay={2000}
-                    />
+                    }}
+                    handleInputChange={() => fetchOffices()}
+                    inputFieldName={register('officeInput').name}
+                    debounceDelay={2000}
+                />
 
-                    <AutoComplete
-                        valueFieldName={register('specializationId').name}
-                        control={control}
-                        displayName='Specialization'
-                        options={
-                            specializations?.items.map((item) => {
-                                return {
-                                    label: item.title,
-                                    id: item.id,
-                                } as IAutoCompleteItem;
-                            }) ?? []
+                <AutoComplete
+                    valueFieldName={register('specializationId').name}
+                    control={control}
+                    displayName='Specialization'
+                    options={
+                        specializations?.items.map((item) => {
+                            return {
+                                label: item.title,
+                                id: item.id,
+                            } as IAutoCompleteItem;
+                        }) ?? []
+                    }
+                    isFetching={isSpecializationsFetching}
+                    handleOpen={() => {
+                        if (!getValues('specializationId')) {
+                            fetchSpecializations();
                         }
-                        isFetching={isSpecializationsFetching}
-                        handleOpen={() => {
-                            if (!getValues('specializationId')) {
-                                fetchSpecializations();
-                            }
+                    }}
+                    handleInputChange={() => fetchSpecializations()}
+                    inputFieldName={register('specializationInput').name}
+                    debounceDelay={2000}
+                />
+            </Container>
+            <Box>
+                {doctors && (
+                    <DoctorsTable
+                        doctors={doctors.items}
+                        pagingData={{
+                            currentPage: doctors.currentPage,
+                            pageSize: doctors.pageSize,
+                            totalCount: doctors.totalCount,
+                            totalPages: doctors.totalPages,
                         }}
-                        handleInputChange={() => fetchSpecializations()}
-                        inputFieldName={register('specializationInput').name}
-                        debounceDelay={2000}
+                        handlePageChange={(_, page) => setValue('currentPage', page + 1)}
                     />
-                </Box>
-                <Box>
-                    {doctors && (
-                        <DoctorsTable
-                            doctors={doctors.items}
-                            pagingData={{
-                                currentPage: doctors.currentPage,
-                                pageSize: doctors.pageSize,
-                                totalCount: doctors.totalCount,
-                                totalPages: doctors.totalPages,
-                            }}
-                            handlePageChange={(_, page) => setValue('currentPage', page + 1)}
-                        />
-                    )}
-                </Box>
+                )}
             </Box>
 
             {isFetchingDoctors && <Loader />}
-        </Box>
+        </Container>
     );
 };

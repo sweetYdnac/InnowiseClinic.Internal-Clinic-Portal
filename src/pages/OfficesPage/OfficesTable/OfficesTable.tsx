@@ -1,11 +1,13 @@
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from '@mui/material';
+import { TablePagination, Typography } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader';
+import { CustomCell, CustomTable } from '../../../components/Table';
 import { ToggleSwitch } from '../../../components/UI/ToggleSwitch';
-import { useChangeOfficeStatusCommand } from '../../../hooks/requests/offices';
 import { AppRoutes } from '../../../constants/AppRoutes';
+import { useChangeOfficeStatusCommand } from '../../../hooks/requests/offices';
 import { OfficesTableProps } from './OfficesTable.interface';
+import { NoOfficesContainer, StyledOfficeRow } from './OfficesTable.styles';
 
 export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -15,40 +17,30 @@ export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pa
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Address</TableCell>
-                            <TableCell align='center'>Status</TableCell>
-                            <TableCell align='center'>Phone number</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {offices.map((office) => (
-                            <TableRow key={office.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
-                                <TableCell onClick={() => handleRowClick(office.id)} align='center'>
-                                    {office.address}
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <ToggleSwitch
-                                        value={office.isActive}
-                                        handleChange={(value) => mutate({ id: office.id, isActive: value })}
-                                    />
-                                </TableCell>
-                                <TableCell onClick={() => handleRowClick(office.id)} align='center'>
-                                    {office.registryPhoneNumber}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Address</CustomCell>
+                        <CustomCell>Status</CustomCell>
+                        <CustomCell>Phone number</CustomCell>
+                    </>
+                }
+            >
+                {offices.map((office) => (
+                    <StyledOfficeRow key={office.id} hover>
+                        <CustomCell handleClick={() => handleRowClick(office.id)}>{office.address}</CustomCell>
+                        <CustomCell>
+                            <ToggleSwitch value={office.isActive} handleChange={(value) => mutate({ id: office.id, isActive: value })} />
+                        </CustomCell>
+                        <CustomCell handleClick={() => handleRowClick(office.id)}>{office.registryPhoneNumber}</CustomCell>
+                    </StyledOfficeRow>
+                ))}
+            </CustomTable>
 
             {offices.length === 0 ? (
-                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
-                    <Typography alignSelf={'center'}>No appointments</Typography>
-                </Box>
+                <NoOfficesContainer>
+                    <Typography>No Offices</Typography>
+                </NoOfficesContainer>
             ) : (
                 <TablePagination
                     component='div'

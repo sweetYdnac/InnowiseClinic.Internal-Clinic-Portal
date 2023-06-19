@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Box } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { ImageInput } from '../../components/UI/ImageInput';
 import { SubmitButton } from '../../components/UI/SubmitButton';
@@ -41,19 +41,7 @@ export const CreateOfficePage = () => {
 
     return (
         <>
-            <Box
-                onSubmit={handleSubmit(() => onSubmit())}
-                component='form'
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '100%',
-                }}
-                noValidate
-                autoComplete='on'
-            >
+            <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
                 <ImageInput imageUrl={photoUrl} setImageUrl={setPhotoUrl} />
 
                 <Textfield id={register('city').name} control={control} displayName='City' workMode='edit' disableWhiteSpace={true} />
@@ -97,7 +85,7 @@ export const CreateOfficePage = () => {
                 >
                     Create
                 </SubmitButton>
-            </Box>
+            </StyledForm>
 
             {(isCreateOfficeLoading || isCreatePhotoLoading) && <Loader />}
         </>

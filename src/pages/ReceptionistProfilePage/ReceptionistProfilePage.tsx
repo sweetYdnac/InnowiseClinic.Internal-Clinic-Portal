@@ -1,11 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { Box, Button, IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { deepEqual } from 'fast-equals';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { DialogWindow } from '../../components/Dialog';
+import { StyledForm, StyledOperationsButtons } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { ImageInput } from '../../components/UI/ImageInput';
@@ -150,19 +151,7 @@ export const ReceptionistProfilePage = () => {
                         </IconButton>
                     )}
 
-                    <Box
-                        onSubmit={handleSubmit(() => onSubmit())}
-                        component='form'
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '100%',
-                        }}
-                        noValidate
-                        autoComplete='on'
-                    >
+                    <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
                         <ImageInput imageUrl={photo} setImageUrl={setPhoto} workMode={workMode} />
 
                         <Textfield id={register('firstName').name} control={control} displayName='First name' workMode={workMode} />
@@ -189,21 +178,14 @@ export const ReceptionistProfilePage = () => {
                         <SelectFormStatus readonly={workMode === 'view'} id={register('status').name} control={control} />
 
                         {workMode === 'edit' && (
-                            <div
-                                style={{
-                                    width: '75%',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-evenly',
-                                }}
-                            >
+                            <StyledOperationsButtons>
                                 <Button variant='contained' color='error' onClick={() => setIsDiscardDialogOpen(true)}>
                                     Cancel
                                 </Button>
                                 <SubmitButton errors={errors}>Save changes</SubmitButton>
-                            </div>
+                            </StyledOperationsButtons>
                         )}
-                    </Box>
+                    </StyledForm>
 
                     <DialogWindow
                         isOpen={isDiscardDialogOpen}

@@ -9,6 +9,7 @@ import { usePagedPatientsQuery } from '../../hooks/requests/patients';
 import { useGetPatientsValidator } from '../../hooks/validators/patients/getPaged';
 import { AppRoutes } from '../../constants/AppRoutes';
 import { PatientsTable } from './PatientsTable/PatientsTable';
+import { Container } from './PatientsPage.styles';
 
 export const PatientsPage = () => {
     const navigate = useNavigate();
@@ -33,35 +34,33 @@ export const PatientsPage = () => {
     }, [watch('fullName')]);
 
     return (
-        <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box component={'div'} sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Button onClick={() => navigate(AppRoutes.CreatePatient)}>Create</Button>
-                    <FilterTextfield
-                        valueFieldName={register('fullName').name}
-                        inputFieldName={register('patientInput').name}
-                        control={control}
-                        displayName='Patient'
-                        debounceDelay={2000}
+        <Container>
+            <Container>
+                <Button onClick={() => navigate(AppRoutes.CreatePatient)}>Create</Button>
+                <FilterTextfield
+                    valueFieldName={register('fullName').name}
+                    inputFieldName={register('patientInput').name}
+                    control={control}
+                    displayName='Patient'
+                    debounceDelay={2000}
+                />
+            </Container>
+            <Box>
+                {patients && (
+                    <PatientsTable
+                        patients={patients.items}
+                        pagingData={{
+                            currentPage: patients.currentPage,
+                            pageSize: patients.pageSize,
+                            totalCount: patients.totalCount,
+                            totalPages: patients.totalPages,
+                        }}
+                        handlePageChange={(_, page) => setValue('currentPage', page + 1)}
                     />
-                </Box>
-                <Box>
-                    {patients && (
-                        <PatientsTable
-                            patients={patients.items}
-                            pagingData={{
-                                currentPage: patients.currentPage,
-                                pageSize: patients.pageSize,
-                                totalCount: patients.totalCount,
-                                totalPages: patients.totalPages,
-                            }}
-                            handlePageChange={(_, page) => setValue('currentPage', page + 1)}
-                        />
-                    )}
-                </Box>
+                )}
             </Box>
 
             {isFetchingPatients && <Loader />}
-        </Box>
+        </Container>
     );
 };

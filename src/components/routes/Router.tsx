@@ -1,5 +1,4 @@
-import { ReactNode } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Roles } from '../../constants/Roles';
 import { Layout } from '../Layout';
 
@@ -30,14 +29,11 @@ import {
     SpecializationsPage,
 } from '../../pages';
 import { ProtectedRoute } from './ProtectedRoute/ProtectedRoute';
-
-interface AppRouterProps {
-    children: ReactNode;
-}
+import { AppRouterProps } from './Router.interface';
 
 export const AppRouter = ({ children }: AppRouterProps) => {
     return (
-        <>
+        <BrowserRouter>
             <>{children}</>
             <Routes>
                 <Route path={AppRoutes.SignIn} element={<SignInPage />} />
@@ -214,6 +210,6 @@ export const AppRouter = ({ children }: AppRouterProps) => {
                     />
                 </Route>
             </Routes>
-        </>
+        </BrowserRouter>
     );
 };

@@ -2,8 +2,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { Divider, List } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../../../hooks/store';
 import { AppRoutes } from '../../../../constants/AppRoutes';
+import { useAppSelector } from '../../../../hooks/store';
 import { selectProfile } from '../../../../store/profileSlice';
 import { AsideItem } from '../AsideItem/AsideItem';
 

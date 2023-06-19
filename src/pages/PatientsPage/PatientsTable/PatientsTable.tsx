@@ -1,24 +1,14 @@
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import {
-    Box,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { IconButton, TablePagination, Typography } from '@mui/material';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../../components/Dialog';
 import { Loader } from '../../../components/Loader';
-import { useRemovePatientCommand } from '../../../hooks/requests/patients';
+import { CustomCell, CustomTable } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
+import { useRemovePatientCommand } from '../../../hooks/requests/patients';
 import { PatientsTableProps } from './PatientsTable.interface';
+import { NoPatientsContainer, StyledPatientRow } from './PatientsTable.styles';
 
 export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -35,39 +25,32 @@ export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients,
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Full name</TableCell>
-                            <TableCell align='center'>Phone number</TableCell>
-                            <TableCell align='center'>Manage</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {patients.map((patient) => (
-                            <TableRow key={patient.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
-                                <TableCell onClick={() => handleRowClick(patient.id)} align='center'>
-                                    {patient.fullName}
-                                </TableCell>
-                                <TableCell onClick={() => handleRowClick(patient.id)} align='center'>
-                                    {patient.phoneNumber}
-                                </TableCell>
-                                <TableCell align='center' onClick={() => setDeletePatientId(patient.id)}>
-                                    <IconButton>
-                                        <DeleteForeverIcon fontSize='medium' />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Full name</CustomCell>
+                        <CustomCell>Phone number</CustomCell>
+                        <CustomCell>Manage</CustomCell>
+                    </>
+                }
+            >
+                {patients.map((patient) => (
+                    <StyledPatientRow key={patient.id} hover>
+                        <CustomCell handleClick={() => handleRowClick(patient.id)}>{patient.fullName}</CustomCell>
+                        <CustomCell handleClick={() => handleRowClick(patient.id)}>{patient.phoneNumber}</CustomCell>
+                        <CustomCell handleClick={() => setDeletePatientId(patient.id)}>
+                            <IconButton>
+                                <DeleteForeverIcon fontSize='medium' />
+                            </IconButton>
+                        </CustomCell>
+                    </StyledPatientRow>
+                ))}
+            </CustomTable>
 
             {patients.length === 0 ? (
-                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
-                    <Typography alignSelf={'center'}>No patients</Typography>
-                </Box>
+                <NoPatientsContainer>
+                    <Typography>No patients</Typography>
+                </NoPatientsContainer>
             ) : (
                 <TablePagination
                     component='div'

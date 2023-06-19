@@ -1,22 +1,9 @@
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
 import { FunctionComponent, useState } from 'react';
-import { Control, useController } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import { IAutoCompleteItem } from '../../types/common/Autocomplete';
-
-interface AutoCompleteProps {
-    valueFieldName: string;
-    control: Control<any, any>;
-    displayName: string;
-    options: IAutoCompleteItem[];
-    isFetching: boolean;
-    handleOpen: () => void;
-    handleInputChange?: () => void;
-    disabled?: boolean;
-    readonly?: boolean;
-    inputFieldName?: string;
-    debounceDelay?: number;
-}
+import { AutoCompleteProps } from './AutoComplete.interface';
 
 export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
     valueFieldName,

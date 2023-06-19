@@ -1,26 +1,16 @@
 import DescriptionIcon from '@mui/icons-material/Description';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import {
-    Box,
-    Button,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Typography,
-} from '@mui/material';
+import { Button, TablePagination, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { timeSlotFormat } from '../../../constants/Formats';
+import { CustomCell, CustomTable } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
+import { timeSlotFormat } from '../../../constants/Formats';
 import { ICreateAppointmentResultDTO } from '../../../types/dto/appointmentResults';
 import { IDoctorScheduledAppointmentResponse } from '../../../types/response/doctors';
 import { DoctorScheduleTableProps } from './DoctorScheduleTable.interface';
+import { NoDoctorsContainer, StyledDoctorRow } from './DoctorScheduleTable.styles';
 
 export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = ({ appointments, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -47,58 +37,53 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Time</TableCell>
-                            <TableCell align='center'>Patient's full name</TableCell>
-                            <TableCell align='center'>Service</TableCell>
-                            <TableCell align='center'>Status</TableCell>
-                            <TableCell align='center'>Manage</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {appointments.map((item) => (
-                            <TableRow key={item.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell align='center'>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
-                                    item.endTime,
-                                    timeSlotFormat
-                                ).format(timeSlotFormat)}`}</TableCell>
-                                <TableCell align='center'>
-                                    {item.isApproved ? (
-                                        <Link to={AppRoutes.PatientProfile.replace(':id', `${item.patientId}`)}>
-                                            {item.patientFullName}
-                                        </Link>
-                                    ) : (
-                                        item.patientFullName
-                                    )}
-                                </TableCell>
-                                <TableCell align='center'>{item.serviceName}</TableCell>
-                                <TableCell align='center'>{item.isApproved ? 'Approved' : 'Not Approved'}</TableCell>
-                                <TableCell align='center'>
-                                    {item.resultId ? (
-                                        <Button onClick={() => handleOpenViewAppointmentResultPage(item.resultId)}>
-                                            View result
-                                            <DescriptionIcon fontSize='medium' />
-                                        </Button>
-                                    ) : (
-                                        <Button onClick={() => handleOpenCreateAppointmentResultPage(item)}>
-                                            Add result
-                                            <NoteAddIcon fontSize='medium' />
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Time</CustomCell>
+                        <CustomCell>Patient's full name</CustomCell>
+                        <CustomCell>Service</CustomCell>
+                        <CustomCell>Status</CustomCell>
+                        <CustomCell>Manage</CustomCell>
+                    </>
+                }
+            >
+                {appointments.map((item) => (
+                    <StyledDoctorRow key={item.id} hover>
+                        <CustomCell>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
+                            item.endTime,
+                            timeSlotFormat
+                        ).format(timeSlotFormat)}`}</CustomCell>
+                        <CustomCell>
+                            {item.isApproved ? (
+                                <Link to={AppRoutes.PatientProfile.replace(':id', `${item.patientId}`)}>{item.patientFullName}</Link>
+                            ) : (
+                                item.patientFullName
+                            )}
+                        </CustomCell>
+                        <CustomCell>{item.serviceName}</CustomCell>
+                        <CustomCell>{item.isApproved ? 'Approved' : 'Not Approved'}</CustomCell>
+                        <CustomCell>
+                            {item.resultId ? (
+                                <Button onClick={() => handleOpenViewAppointmentResultPage(item.resultId)}>
+                                    View result
+                                    <DescriptionIcon fontSize='medium' />
+                                </Button>
+                            ) : (
+                                <Button onClick={() => handleOpenCreateAppointmentResultPage(item)}>
+                                    Add result
+                                    <NoteAddIcon fontSize='medium' />
+                                </Button>
+                            )}
+                        </CustomCell>
+                    </StyledDoctorRow>
+                ))}
+            </CustomTable>
 
             {appointments.length === 0 ? (
-                <Box display={'flex'} justifyContent={'center'} marginTop={2}>
-                    <Typography alignSelf={'center'}>No appointments</Typography>
-                </Box>
+                <NoDoctorsContainer>
+                    <Typography>No Doctors</Typography>
+                </NoDoctorsContainer>
             ) : (
                 <TablePagination
                     component='div'

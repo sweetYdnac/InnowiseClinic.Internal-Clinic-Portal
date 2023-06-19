@@ -10,7 +10,7 @@ export const DialogWindow: FunctionComponent<DialogWindowProps> = ({
     handleDecline,
     submitText = 'Yes',
     declineText = 'No',
-}: DialogWindowProps) => {
+}) => {
     return (
         <Dialog open={isOpen} onClose={handleDecline}>
             <DialogTitle>{title}</DialogTitle>

@@ -6,8 +6,7 @@ import { useAppSelector } from '../../hooks/store';
 import { selectRole } from '../../store/roleSlice';
 import { PatientHistory } from './PatientHistory/PatientHistory';
 import { PatientInformation } from './PatientInformation/PatientInformation';
-
-type PatientProfileTab = 'information' | 'history';
+import { PatientProfileTab } from './types/PatientProfileTab';
 
 export const PatientProfilePage = () => {
     const [activeTab, setActiveTab] = useState<PatientProfileTab>('information');

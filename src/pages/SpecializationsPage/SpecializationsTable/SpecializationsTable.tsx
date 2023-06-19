@@ -1,11 +1,13 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import { TablePagination } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader';
+import { CustomCell, CustomTable } from '../../../components/Table';
 import { ToggleSwitch } from '../../../components/UI/ToggleSwitch';
-import { useChangeSpecializationStatusCommand } from '../../../hooks/requests/specializations';
 import { AppRoutes } from '../../../constants/AppRoutes';
+import { useChangeSpecializationStatusCommand } from '../../../hooks/requests/specializations';
 import { SpecializationsTableProps } from './SpecializationsTable.interface';
+import { StyledSpecializationRow } from './SpecializationsTable.styles';
 
 export const SpecializationsTable: FunctionComponent<SpecializationsTableProps> = ({ specializations, pagingData, handlePageChange }) => {
     const navigate = useNavigate();
@@ -14,31 +16,23 @@ export const SpecializationsTable: FunctionComponent<SpecializationsTableProps> 
 
     return (
         <>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size='small'>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align='center'>Title</TableCell>
-                            <TableCell align='center'>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {specializations.map((item) => (
-                            <TableRow key={item.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 }, cursor: 'pointer' }}>
-                                <TableCell onClick={() => handleRowClick(item.id)} align='center'>
-                                    {item.title}
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <ToggleSwitch
-                                        value={item.isActive}
-                                        handleChange={(value) => mutate({ id: item.id, isActive: value })}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomTable
+                header={
+                    <>
+                        <CustomCell>Title</CustomCell>
+                        <CustomCell>Status</CustomCell>
+                    </>
+                }
+            >
+                {specializations.map((item) => (
+                    <StyledSpecializationRow key={item.id} hover>
+                        <CustomCell handleClick={() => handleRowClick(item.id)}>{item.title}</CustomCell>
+                        <CustomCell>
+                            <ToggleSwitch value={item.isActive} handleChange={(value) => mutate({ id: item.id, isActive: value })} />
+                        </CustomCell>
+                    </StyledSpecializationRow>
+                ))}
+            </CustomTable>
 
             <TablePagination
                 component='div'
