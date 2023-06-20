@@ -1,7 +1,7 @@
-import { Button } from '@mui/material';
 import { useMemo } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { SubmitButtonProps } from './SubmitButton.interface';
+import { StyledSubmitButton } from './SubmitButton.styles';
 
 export const SubmitButton = <T extends FieldValues>({ errors, shouldBeTouched, children }: SubmitButtonProps<T>) => {
     const disabled = useMemo(
@@ -10,8 +10,8 @@ export const SubmitButton = <T extends FieldValues>({ errors, shouldBeTouched, c
     );
 
     return (
-        <Button type='submit' variant='contained' color='success' disabled={disabled}>
+        <StyledSubmitButton type='submit' variant='contained' disabled={disabled}>
             {children}
-        </Button>
+        </StyledSubmitButton>
     );
 };

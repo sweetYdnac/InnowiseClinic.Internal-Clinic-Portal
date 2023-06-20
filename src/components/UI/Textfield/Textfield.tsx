@@ -2,6 +2,7 @@ import { InputAdornment } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import { FunctionComponent } from 'react';
 import { Controller } from 'react-hook-form';
+import { useStyles } from '../styles';
 import { TextfieldProps } from './Textfield.interface';
 
 export const Textfield: FunctionComponent<TextfieldProps> = ({
@@ -15,6 +16,8 @@ export const Textfield: FunctionComponent<TextfieldProps> = ({
     startAdornment,
     endAdornment,
 }: TextfieldProps) => {
+    const { classes } = useStyles();
+
     if (workMode === 'view') {
         return (
             <Controller
@@ -23,7 +26,7 @@ export const Textfield: FunctionComponent<TextfieldProps> = ({
                 render={({ field }) => (
                     <TextField
                         {...field}
-                        sx={{ m: 1, width: '75%' }}
+                        className={classes.textField}
                         label={displayName}
                         variant='standard'
                         InputProps={{
@@ -47,7 +50,7 @@ export const Textfield: FunctionComponent<TextfieldProps> = ({
                 render={({ field, fieldState }) => (
                     <TextField
                         {...field}
-                        sx={{ m: 1, width: '75%' }}
+                        className={classes.textField}
                         variant='standard'
                         placeholder={placeholder}
                         color={fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success'}

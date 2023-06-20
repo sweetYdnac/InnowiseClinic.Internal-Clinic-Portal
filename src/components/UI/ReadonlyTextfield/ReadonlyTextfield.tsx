@@ -1,5 +1,6 @@
 import { InputAdornment, TextField } from '@mui/material';
 import { FunctionComponent } from 'react';
+import { useStyles } from '../styles';
 import { ReadonlyTextfieldProps } from './Readonlytextfield.interface';
 
 export const ReadonlyTextfield: FunctionComponent<ReadonlyTextfieldProps> = ({
@@ -9,9 +10,11 @@ export const ReadonlyTextfield: FunctionComponent<ReadonlyTextfieldProps> = ({
     startAdornment,
     endAdornment,
 }) => {
+    const { classes } = useStyles();
+
     return (
         <TextField
-            sx={{ m: 1, width: '75%' }}
+            className={classes.textField}
             value={value}
             label={displayName}
             variant='standard'

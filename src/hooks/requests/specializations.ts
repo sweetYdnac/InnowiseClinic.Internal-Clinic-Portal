@@ -3,8 +3,8 @@ import { AxiosError } from 'axios';
 import { useSnackbar } from 'notistack';
 import { UseFormSetError } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { SpecializationsQueries } from '../../constants/QueryKeys';
 import { AppRoutes } from '../../constants/AppRoutes';
+import { SpecializationsQueries } from '../../constants/QueryKeys';
 import { ICreatedResponse, INoContentResponse, IPagedResponse } from '../../types/common/Responses';
 import {
     ICreateSpecializationRequest,
@@ -61,7 +61,7 @@ export const usePagedSpecializationsQuery = (request: IGetPagedSpecializationsRe
     });
 };
 
-export const useCreateSpecializationCommand = (form: ISpecializationForm, setError: UseFormSetError<ISpecializationForm>) => {
+export const useCreateSpecializationCommand = (form: ISpecializationForm) => {
     const specializationService = useSpecializationsService();
     const queryClient = useQueryClient();
     const navigate = useNavigate();

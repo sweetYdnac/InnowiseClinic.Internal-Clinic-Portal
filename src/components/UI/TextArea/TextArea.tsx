@@ -2,9 +2,12 @@ import { Textarea, Typography } from '@mui/joy';
 import { FormControl, FormHelperText, FormLabel } from '@mui/material';
 import { FunctionComponent } from 'react';
 import { Controller } from 'react-hook-form';
+import { useStyles } from '../styles';
 import { TextAreaProps } from './TextArea.interface';
 
 export const TextArea: FunctionComponent<TextAreaProps> = ({ id, control, displayName, readonly = false }) => {
+    const { classes } = useStyles();
+
     return (
         <Controller
             name={id}
@@ -17,7 +20,7 @@ export const TextArea: FunctionComponent<TextAreaProps> = ({ id, control, displa
                     : 'success';
 
                 return (
-                    <FormControl sx={{ m: 1, width: '75%' }} variant='outlined'>
+                    <FormControl className={classes.textField} variant='outlined'>
                         <FormLabel>
                             <Typography level='body3' color={color}>
                                 {displayName}

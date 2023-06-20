@@ -3,6 +3,7 @@ import { FunctionComponent, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import { IAutoCompleteItem } from '../../../types/common/Autocomplete';
+import { useStyles } from '../styles';
 import { AutoCompleteProps } from './AutoComplete.interface';
 
 export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
@@ -18,6 +19,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
     inputFieldName,
     debounceDelay = 0,
 }) => {
+    const { classes } = useStyles();
     const [open, setOpen] = useState(false);
     const debounced = useDebouncedCallback(() => handleInputChange?.(), debounceDelay);
 
@@ -33,6 +35,7 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
 
     return (
         <Autocomplete
+            className={classes.textField}
             clearOnBlur={true}
             {...idField}
             disabled={disabled}
@@ -61,7 +64,6 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             getOptionLabel={(option: IAutoCompleteItem) => option.label}
             options={options}
             autoHighlight
-            sx={{ m: 1, width: '75%' }}
             renderInput={(params) => (
                 <TextField
                     {...params}

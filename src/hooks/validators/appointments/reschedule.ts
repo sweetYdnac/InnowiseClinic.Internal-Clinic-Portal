@@ -11,7 +11,7 @@ export interface IRescheduleAppointmentForm {
     time: dayjs.Dayjs | null;
 }
 
-export const useRescheduleAppointmentValidator = (appointment?: IRescheduleAppointmentResponse) => {
+export const useRescheduleAppointmentValidator = (appointment: IRescheduleAppointmentResponse | undefined) => {
     const initialValues = useMemo(
         () =>
             ({

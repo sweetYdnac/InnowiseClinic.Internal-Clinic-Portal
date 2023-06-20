@@ -1,7 +1,8 @@
 import { PhotoCamera } from '@mui/icons-material';
-import { Box, IconButton } from '@mui/material';
+import { Container, IconButton } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { ImageInputProps } from './ImageInput.interface';
+import { Image } from './ImageInput.styles';
 
 export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setImageUrl, workMode = 'edit' }) => {
     const onSubmitFile = useCallback(
@@ -23,8 +24,8 @@ export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setIm
     );
 
     return (
-        <Box display={'flex'} flexDirection={'row'}>
-            <img width='100' alt='profilePhoto' src={imageUrl} />
+        <Container>
+            <Image alt='profilePhoto' src={imageUrl} />
 
             {workMode === 'edit' && (
                 <IconButton color='primary' aria-label='upload picture' component='label'>
@@ -32,6 +33,6 @@ export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setIm
                     <PhotoCamera />
                 </IconButton>
             )}
-        </Box>
+        </Container>
     );
 };

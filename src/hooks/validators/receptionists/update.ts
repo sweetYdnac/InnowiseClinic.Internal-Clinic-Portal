@@ -13,7 +13,7 @@ export interface IUpdateReceptionistForm {
     status: number;
 }
 
-export const useReceptionistValidator = (receptionist?: IReceptionistsResponse) => {
+export const useReceptionistValidator = (receptionist: IReceptionistsResponse | undefined) => {
     const initialValues = useMemo(
         () =>
             ({

@@ -2,8 +2,8 @@ import { QueryKey, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
-import { ServiceCategoriesQueries } from '../../constants/QueryKeys';
 import { AppRoutes } from '../../constants/AppRoutes';
+import { ServiceCategoriesQueries } from '../../constants/QueryKeys';
 import { IServiceCategoryResponse } from '../../types/response/serviceCategories';
 import { useServiceCategoriesService } from '../services/useServicesCategories';
 
@@ -16,6 +16,7 @@ export const useGetServiceCategoryById = (id: string, enabled = false) => {
         queryKey: [ServiceCategoriesQueries.getById, id],
         queryFn: async () => await serviceCategoriesService.getById(id),
         retry: false,
+        enabled: enabled,
         onError: (error) => {
             if (error.response?.status === 400) {
                 navigate(AppRoutes.Home);

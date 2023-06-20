@@ -2,9 +2,12 @@ import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/
 import { FunctionComponent } from 'react';
 import { Controller } from 'react-hook-form';
 import { AccountStatuses, getStatusLabel } from '../../../constants/AccountStatuses';
+import { useStyles } from '../styles';
 import { SelectFormStatusProps } from './SelectFormStatus.interface';
 
 export const SelectFormStatus: FunctionComponent<SelectFormStatusProps> = ({ id, control, readonly }) => {
+    const { classes } = useStyles();
+
     return (
         <Controller
             name={id}
@@ -12,7 +15,7 @@ export const SelectFormStatus: FunctionComponent<SelectFormStatusProps> = ({ id,
             render={({ field, fieldState }) => (
                 <FormControl
                     variant='standard'
-                    sx={{ m: 1, width: '75%' }}
+                    className={classes.textField}
                     color={fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success'}
                     focused={!readonly && !fieldState.error?.message && (fieldState.isTouched || !!field.value)}
                     error={!!fieldState.error?.message && (fieldState.isTouched || !!field.value)}

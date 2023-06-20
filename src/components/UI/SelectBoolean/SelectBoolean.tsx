@@ -1,9 +1,12 @@
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material';
 import { FunctionComponent } from 'react';
 import { Controller } from 'react-hook-form';
+import { useStyles } from '../styles';
 import { SelectBooleanProps } from './SelectBoolean.interface';
 
 export const SelectBoolean: FunctionComponent<SelectBooleanProps> = ({ id, control, displayName }) => {
+    const { classes } = useStyles();
+
     return (
         <Controller
             name={id}
@@ -11,7 +14,7 @@ export const SelectBoolean: FunctionComponent<SelectBooleanProps> = ({ id, contr
             render={({ field, fieldState }) => (
                 <FormControl
                     variant='standard'
-                    sx={{ m: 1, width: '75%' }}
+                    className={classes.textField}
                     color={fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success'}
                     focused={!fieldState.error?.message && (fieldState.isTouched || !!field.value)}
                     error={!!fieldState.error?.message && (fieldState.isTouched || !!field.value)}

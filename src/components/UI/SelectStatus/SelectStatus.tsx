@@ -1,15 +1,17 @@
 import { MenuItem, Select } from '@mui/material';
 import { FunctionComponent, useState } from 'react';
 import { AccountStatuses, getStatusLabel } from '../../../constants/AccountStatuses';
+import { useStyles } from '../styles';
 import { SelectStatusProps } from './SelectStatus.interface';
 
 export const SelectStatus: FunctionComponent<SelectStatusProps> = ({ value, handleChange }) => {
+    const { classes } = useStyles();
     const [status, setStatus] = useState(value);
 
     return (
         <Select
             variant='standard'
-            sx={{ m: 1, width: '75%' }}
+            className={classes.textField}
             value={status}
             onChange={(e) => {
                 setStatus(e.target.value as number);

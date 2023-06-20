@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { FunctionComponent, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { timeSlotFormat } from '../../../constants/Formats';
+import { useStyles } from '../styles';
 import { TimeSlotPickerProps } from './TimeSlotPicker.interface';
 
 export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
@@ -17,6 +18,7 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
     disabled,
     isLoading,
 }) => {
+    const { classes } = useStyles();
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -56,7 +58,7 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                         onSelectedSectionsChange={() => field.onBlur()}
                         slotProps={{
                             textField: {
-                                sx: { m: 1, width: '75%' },
+                                className: classes.textField,
                                 variant: 'standard',
                                 color: fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success',
                                 focused: !fieldState.error?.message && (fieldState.isTouched || !!field.value),

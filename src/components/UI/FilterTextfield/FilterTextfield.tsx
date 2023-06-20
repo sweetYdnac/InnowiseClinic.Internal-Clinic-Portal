@@ -3,6 +3,7 @@ import TextField from '@mui/material/TextField';
 import { FunctionComponent } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
+import { useStyles } from '../styles';
 import { FilterTextfieldProps } from './FilterTextfield.interface';
 
 export const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
@@ -15,6 +16,8 @@ export const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
     startAdornment,
     endAdornment,
 }: FilterTextfieldProps) => {
+    const { classes } = useStyles();
+
     const { field: valueField, fieldState: valueFieldState } = useController({
         name: valueFieldName,
         control: control,
@@ -30,7 +33,7 @@ export const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
     return (
         <TextField
             {...valueField}
-            sx={{ m: 1, width: '75%' }}
+            className={classes.textField}
             variant='standard'
             color={valueFieldState.error?.message && (valueFieldState.isTouched || valueField.value) ? 'error' : 'success'}
             focused={!valueFieldState.error?.message && (valueFieldState.isTouched || !!valueField.value)}

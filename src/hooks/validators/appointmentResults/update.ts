@@ -4,7 +4,7 @@ import { dateApiFormat } from '../../../constants/Formats';
 import { IAppointmentResultResponse } from '../../../types/response/appointmentResults';
 import { IAppointmentResultForm, appointmentResultValidationScheme } from './common';
 
-export const useUpdateAppointmentResultValidator = (result?: IAppointmentResultResponse) => {
+export const useUpdateAppointmentResultValidator = (result: IAppointmentResultResponse | undefined) => {
     const initialValues = useMemo(
         () =>
             ({

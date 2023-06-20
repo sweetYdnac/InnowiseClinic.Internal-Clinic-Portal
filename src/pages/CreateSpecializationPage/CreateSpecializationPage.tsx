@@ -28,7 +28,6 @@ export const CreateSpecializationPage = () => {
         register,
         control,
         watch,
-        setError,
         handleSubmit,
         setValue,
         formState: { errors, touchedFields },
@@ -45,7 +44,7 @@ export const CreateSpecializationPage = () => {
         }));
     }, []);
 
-    const { mutate: createSpecialization, isLoading } = useCreateSpecializationCommand(watch(), setError);
+    const { mutate: createSpecialization, isLoading } = useCreateSpecializationCommand(watch());
     const { mutate: createService } = useCreateServiceCommand();
 
     const onSubmit = useCallback(() => {

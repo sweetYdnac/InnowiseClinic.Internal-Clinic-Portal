@@ -8,9 +8,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import { FunctionComponent, useState } from 'react';
 import { Controller } from 'react-hook-form';
+import { useStyles } from '../styles';
 import { PasswordInputProps } from './PasswordInput.interface';
 
 export const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, control, displayName }: PasswordInputProps) => {
+    const { classes } = useStyles();
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -19,7 +21,7 @@ export const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, contr
             control={control}
             render={({ field, fieldState }) => (
                 <FormControl
-                    sx={{ m: 1, width: '75%' }}
+                    className={classes.textField}
                     error={!!fieldState.error?.message && (fieldState.isTouched || !!field.value)}
                     color={fieldState.error?.message && (fieldState.isTouched || field.value) ? 'error' : 'success'}
                     focused={!fieldState.error?.message && (fieldState.isTouched || !!field.value)}
