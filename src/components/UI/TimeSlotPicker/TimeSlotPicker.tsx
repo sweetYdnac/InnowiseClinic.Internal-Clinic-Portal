@@ -1,9 +1,9 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { InputAdornment } from '@mui/material';
-import { LocalizationProvider, MobileTimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, MobileTimePicker, TimeView } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { timeSlotFormat } from '../../../constants/Formats';
 import { useStyles } from '../styles';
@@ -21,6 +21,26 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
     const { classes } = useStyles();
     const [isOpen, setIsOpen] = useState(false);
 
+    const onOpen = useCallback(() => {
+        setIsOpen(true);
+        handleOpen();
+    }, [handleOpen]);
+
+    const onClose = useCallback(() => setIsOpen(false), []);
+
+    const shouldDisableTime = useCallback(
+        (value: dayjs.Dayjs, view: TimeView) => {
+            if (view === 'hours') {
+                return !timeSlots.some((slot) => dayjs(slot.time, timeSlotFormat).hour() === value.hour());
+            } else if (view === 'minutes') {
+                return !timeSlots.some((slot) => slot.time === value.format(timeSlotFormat));
+            }
+
+            return false;
+        },
+        [timeSlots]
+    );
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Controller
@@ -30,11 +50,8 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                     <MobileTimePicker
                         {...field}
                         open={isOpen && !isLoading}
-                        onClose={() => setIsOpen(false)}
-                        onOpen={() => {
-                            setIsOpen(true);
-                            handleOpen();
-                        }}
+                        onOpen={onOpen}
+                        onClose={onClose}
                         disabled={disabled}
                         readOnly={disabled}
                         label={displayName}
@@ -42,20 +59,11 @@ export const TimeSlotPicker: FunctionComponent<TimeSlotPickerProps> = ({
                         minutesStep={10}
                         ampmInClock={true}
                         closeOnSelect={true}
-                        shouldDisableTime={(value: dayjs.Dayjs, view) => {
-                            if (view === 'hours') {
-                                return !timeSlots.some((slot) => dayjs(slot.time, timeSlotFormat).hour() === value.hour());
-                            } else if (view === 'minutes') {
-                                return !timeSlots.some((slot) => slot.time === value.format(timeSlotFormat));
-                            }
-
-                            return false;
-                        }}
+                        shouldDisableTime={shouldDisableTime}
                         defaultValue={field?.value ?? null}
                         value={field?.value ?? null}
-                        onChange={(time) => field.onChange(time)}
-                        onAccept={(time) => field.onBlur()}
-                        onSelectedSectionsChange={() => field.onBlur()}
+                        onAccept={field.onBlur}
+                        onSelectedSectionsChange={field.onBlur}
                         slotProps={{
                             textField: {
                                 className: classes.textField,

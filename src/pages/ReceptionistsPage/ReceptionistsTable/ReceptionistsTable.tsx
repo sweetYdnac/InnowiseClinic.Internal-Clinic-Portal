@@ -1,10 +1,10 @@
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { IconButton, TablePagination, Typography } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../../components/Dialog';
 import { Loader } from '../../../components/Loader';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { useRemoveReceptionistCommand } from '../../../hooks/requests/receptionists';
 import { ReceptionistsTableProps } from './ReceptionistsTable.interface';
@@ -31,20 +31,20 @@ export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({
                 header={
                     <>
                         {ReceptionistsTableHeader.map((title) => (
-                            <CustomCell key={title}>{title}</CustomCell>
+                            <StyledCell key={title}>{title}</StyledCell>
                         ))}
                     </>
                 }
             >
                 {receptionists.map((receptionist) => (
                     <StyledReceptionistRow key={receptionist.id} hover>
-                        <CustomCell handleClick={() => handleRowClick(receptionist.id)}>{receptionist.fullName}</CustomCell>
-                        <CustomCell handleClick={() => handleRowClick(receptionist.id)}>{receptionist.officeAddress}</CustomCell>
-                        <CustomCell handleClick={() => setDeleteReceptionistId(receptionist.id)}>
+                        <StyledCell onClick={() => handleRowClick(receptionist.id)}>{receptionist.fullName}</StyledCell>
+                        <StyledCell onClick={() => handleRowClick(receptionist.id)}>{receptionist.officeAddress}</StyledCell>
+                        <StyledCell onClick={() => setDeleteReceptionistId(receptionist.id)}>
                             <IconButton>
                                 <DeleteForeverIcon fontSize='medium' />
                             </IconButton>
-                        </CustomCell>
+                        </StyledCell>
                     </StyledReceptionistRow>
                 ))}
             </CustomTable>
@@ -54,14 +54,7 @@ export const ReceptionistsTable: FunctionComponent<ReceptionistsTableProps> = ({
                     <Typography>No receptionists</Typography>
                 </NoReceptionistContainer>
             ) : (
-                <TablePagination
-                    component='div'
-                    count={pagingData.totalCount}
-                    rowsPerPage={pagingData.pageSize}
-                    page={pagingData.currentPage - 1}
-                    rowsPerPageOptions={[]}
-                    onPageChange={handlePageChange}
-                />
+                <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
             )}
 
             <DialogWindow

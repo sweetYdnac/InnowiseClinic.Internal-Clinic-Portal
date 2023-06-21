@@ -1,8 +1,8 @@
 import { PhotoCamera } from '@mui/icons-material';
-import { Container, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { ImageInputProps } from './ImageInput.interface';
-import { Image } from './ImageInput.styles';
+import { Container, Image } from './ImageInput.styles';
 
 export const ImageInput: FunctionComponent<ImageInputProps> = ({ imageUrl, setImageUrl, workMode = 'edit' }) => {
     const onSubmitFile = useCallback(

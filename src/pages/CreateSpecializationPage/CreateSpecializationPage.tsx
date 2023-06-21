@@ -62,7 +62,7 @@ export const CreateSpecializationPage = () => {
                 <Textfield id={register('title').name} control={control} displayName='Title' workMode='edit' />
                 <ToggleSwitch
                     value={watch('isActive')}
-                    handleChange={(value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
+                    handleChange={(_, value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
                 />
 
                 <ServicesTable

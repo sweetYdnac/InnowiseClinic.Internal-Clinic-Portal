@@ -6,16 +6,7 @@ export const ToggleSwitch: FunctionComponent<ToggleSwitchProps> = ({ value, hand
     return (
         <FormControlLabel
             label={value ? 'Active' : 'Inactive'}
-            control={
-                <Switch
-                    disabled={disabled}
-                    color='warning'
-                    checked={value}
-                    onChange={(_, checked) => {
-                        handleChange?.(checked);
-                    }}
-                />
-            }
+            control={<Switch disabled={disabled} color='warning' checked={value} onChange={handleChange} />}
         />
     );
 };

@@ -1,6 +1,6 @@
 import { InputAdornment } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import { useStyles } from '../styles';
@@ -30,6 +30,14 @@ export const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
 
     const debounced = useDebouncedCallback((value: string) => valueField.onChange(value), debounceDelay);
 
+    const onChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            inputField.onChange(e.target.value);
+            debounced(e.target.value);
+        },
+        [debounced, inputField]
+    );
+
     return (
         <TextField
             {...valueField}
@@ -41,10 +49,7 @@ export const FilterTextfield: FunctionComponent<FilterTextfieldProps> = ({
             error={!!valueFieldState.error?.message && (valueFieldState.isTouched || !!valueField.value)}
             helperText={valueFieldState.error?.message}
             value={inputField.value}
-            onChange={(e) => {
-                inputField.onChange(e.target.value);
-                debounced(e.target.value);
-            }}
+            onChange={onChange}
             InputProps={{
                 inputMode: inputMode,
                 startAdornment: <InputAdornment position='start'>{startAdornment}</InputAdornment>,

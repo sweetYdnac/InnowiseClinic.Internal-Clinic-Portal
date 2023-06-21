@@ -1,7 +1,7 @@
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { IconButton, TableCell, TablePagination } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { FunctionComponent, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Modals } from '../../constants/Modals';
@@ -12,10 +12,12 @@ import { openModal } from '../../store/modalsSlice';
 import { clearServices, removeService, selectServices } from '../../store/servicesSlice';
 import { ToCurrency } from '../../utils/currencyFormatter';
 import { Loader } from '../Loader/Loader';
-import { CustomCell, CustomTable } from '../Table';
+import { CustomTable, StyledCell } from '../Table';
+import { Pagination } from '../Table/Pagination/Pagination';
 import { ToggleSwitch } from '../UI/ToggleSwitch';
 import { ServicesTableProps } from './ServicesTable.interface';
 import { AddServiceRow, StyledExistingServiceRow, StyledNewServiceRow } from './ServicesTable.styles';
+import { ServiceTableHeader } from './data/serviceTableHeader';
 
 export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
     existedServices,
@@ -24,101 +26,86 @@ export const ServicesTable: FunctionComponent<ServicesTableProps> = ({
     workMode = 'view',
 }) => {
     const { id } = useParams();
-    const { mutate, isLoading } = useChangeServiceStatusCommand(id as string);
+    const { mutate: changeStatus, isLoading } = useChangeServiceStatusCommand(id as string);
     const dispatch = useAppDispatch();
     const newServices = useAppSelector(selectServices);
 
     const handleOpenServiceInformationModal = useCallback(
-        (id: string) => dispatch(openModal({ name: Modals.Service, id: id, workMode: 'view' })),
+        (id: string) => () => dispatch(openModal({ name: Modals.Service, id: id, workMode: 'view' })),
         [dispatch]
     );
     const handleOpenEditServiceModal = useCallback(
-        (id: string) => dispatch(openModal({ name: Modals.Service, id: id, workMode: 'edit' })),
+        (id: string) => () => dispatch(openModal({ name: Modals.Service, id: id, workMode: 'edit' })),
         [dispatch]
     );
-    const handleRemoveService = useCallback((service: IServiceForm) => dispatch(removeService(service)), [dispatch]);
-    const handleOpenCreateServiceModal = useCallback(() => {
-        dispatch(openModal({ name: Modals.CreateService }));
-    }, [dispatch]);
+    const handleRemoveService = useCallback((service: IServiceForm) => () => dispatch(removeService(service)), [dispatch]);
+    const handleOpenCreateServiceModal = useCallback(() => dispatch(openModal({ name: Modals.CreateService })), [dispatch]);
 
-    useEffect(() => {
-        return () => {
+    useEffect(
+        () => () => {
             dispatch(clearServices());
-        };
-    }, [dispatch]);
+        },
+        [dispatch]
+    );
 
     return (
         <>
             <CustomTable
                 header={
                     <>
-                        <CustomCell>Title</CustomCell>
-                        <CustomCell>Price</CustomCell>
-                        <CustomCell>Category</CustomCell>
-                        <CustomCell>Status</CustomCell>
-                        <CustomCell>Manage</CustomCell>
+                        {ServiceTableHeader.map((item) => (
+                            <StyledCell key={item}>{item}</StyledCell>
+                        ))}
                     </>
                 }
             >
                 {workMode === 'edit' && (
                     <AddServiceRow hover>
-                        <TableCell colSpan={6} align='center' onClick={() => handleOpenCreateServiceModal()}>
+                        <StyledCell colSpan={6} onClick={handleOpenCreateServiceModal}>
                             Add Service
                             <IconButton>
                                 <AddBoxIcon fontSize='medium' />
                             </IconButton>
-                        </TableCell>
+                        </StyledCell>
                     </AddServiceRow>
                 )}
                 {newServices.map((service) => (
                     <StyledNewServiceRow key={`${service.title}${service.categoryId}`}>
-                        <CustomCell>{service.title}</CustomCell>
-                        <CustomCell>{ToCurrency(service.price)}</CustomCell>
-                        <CustomCell>{service.categoryInput}</CustomCell>
-                        <CustomCell>
+                        <StyledCell>{service.title}</StyledCell>
+                        <StyledCell>{ToCurrency(service.price)}</StyledCell>
+                        <StyledCell>{service.categoryInput}</StyledCell>
+                        <StyledCell>
                             <ToggleSwitch disabled={true} value={service.isActive} />
-                        </CustomCell>
-                        <CustomCell handleClick={() => handleRemoveService(service)}>
+                        </StyledCell>
+                        <StyledCell onClick={handleRemoveService(service)}>
                             <IconButton>
                                 <DeleteForeverIcon fontSize='medium' />
                             </IconButton>
-                        </CustomCell>
+                        </StyledCell>
                     </StyledNewServiceRow>
                 ))}
                 {existedServices &&
                     existedServices.map((service) => (
                         <StyledExistingServiceRow key={service.id} hover>
-                            <CustomCell handleClick={() => handleOpenServiceInformationModal(service.id)}>{service.title}</CustomCell>
-                            <CustomCell handleClick={() => handleOpenServiceInformationModal(service.id)}>
-                                {ToCurrency(service.price)}
-                            </CustomCell>
-                            <CustomCell handleClick={() => handleOpenServiceInformationModal(service.id)}>
-                                {service.categoryTitle}
-                            </CustomCell>
-                            <CustomCell>
+                            <StyledCell onClick={handleOpenServiceInformationModal(service.id)}>{service.title}</StyledCell>
+                            <StyledCell onClick={handleOpenServiceInformationModal(service.id)}>{ToCurrency(service.price)}</StyledCell>
+                            <StyledCell onClick={handleOpenServiceInformationModal(service.id)}>{service.categoryTitle}</StyledCell>
+                            <StyledCell>
                                 <ToggleSwitch
                                     value={service.isActive}
-                                    handleChange={(value) => mutate({ id: service.id, isActive: value })}
+                                    handleChange={(_, value) => changeStatus({ id: service.id, isActive: value })}
                                 />
-                            </CustomCell>
-                            <CustomCell>
-                                <IconButton onClick={() => handleOpenEditServiceModal(service.id)}>
+                            </StyledCell>
+                            <StyledCell>
+                                <IconButton onClick={handleOpenEditServiceModal(service.id)}>
                                     <ModeEditIcon fontSize='medium' />
                                 </IconButton>
-                            </CustomCell>
+                            </StyledCell>
                         </StyledExistingServiceRow>
                     ))}
             </CustomTable>
 
-            <TablePagination
-                component='div'
-                count={pagingData.totalCount}
-                rowsPerPage={pagingData.pageSize}
-                page={pagingData.currentPage - 1}
-                rowsPerPageOptions={[]}
-                onPageChange={handlePageChange}
-                sx={{ alignSelf: 'end' }}
-            />
+            <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
 
             {isLoading && <Loader />}
         </>

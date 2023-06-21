@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useCallback, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useStyles } from '../styles';
 import { PasswordInputProps } from './PasswordInput.interface';
@@ -14,6 +14,9 @@ import { PasswordInputProps } from './PasswordInput.interface';
 export const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, control, displayName }: PasswordInputProps) => {
     const { classes } = useStyles();
     const [showPassword, setShowPassword] = useState(false);
+
+    const displayPassword = useCallback((_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => setShowPassword(true), []);
+    const hidePassword = useCallback((_: React.MouseEvent<HTMLButtonElement, MouseEvent>) => setShowPassword(false), []);
 
     return (
         <Controller
@@ -38,7 +41,7 @@ export const PasswordInput: FunctionComponent<PasswordInputProps> = ({ id, contr
                         }
                         endAdornment={
                             <InputAdornment position='end'>
-                                <IconButton onClick={() => setShowPassword(true)} onMouseDown={() => setShowPassword(false)}>
+                                <IconButton onClick={displayPassword} onMouseDown={hidePassword}>
                                     {showPassword ? <VisibilityOff /> : <Visibility />}
                                 </IconButton>
                             </InputAdornment>

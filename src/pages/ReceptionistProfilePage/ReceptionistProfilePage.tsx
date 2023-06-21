@@ -10,7 +10,7 @@ import { StyledForm, StyledOperationsButtons } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { ImageInput } from '../../components/UI/ImageInput';
-import { SelectFormStatus } from '../../components/UI/SelectFormStatus';
+import { SelectFormStatus } from '../../components/UI/Selects/SelectFormStatus';
 import { SubmitButton } from '../../components/UI/SubmitButton';
 import { Textfield } from '../../components/UI/Textfield';
 import { Roles } from '../../constants/Roles';

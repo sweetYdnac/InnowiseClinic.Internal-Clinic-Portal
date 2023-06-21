@@ -1,16 +1,16 @@
 import { Box } from '@mui/material';
-import { AsideNavigationReducer } from '../../../reducers/AsideNavigationReducer';
 import { CustomDrawer } from './CustomDrawer/CustomDrawer';
+import { Navigation } from './Navigation/Navigation';
 
 export const Aside = () => {
     return (
         <Box component='nav'>
             <CustomDrawer variant='temporary'>
-                <AsideNavigationReducer />
+                <Navigation />
             </CustomDrawer>
 
             <CustomDrawer variant='permanent'>
-                <AsideNavigationReducer />
+                <Navigation />
             </CustomDrawer>
         </Box>
     );

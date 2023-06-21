@@ -1,4 +1,4 @@
-import { TableRow } from '@mui/material';
+import { Box, TableRow } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 
 export const StyledDoctorRow = withStyles(TableRow, {
@@ -7,7 +7,7 @@ export const StyledDoctorRow = withStyles(TableRow, {
     },
 });
 
-export const NoDoctorsContainer = withStyles(TableRow, (theme) => ({
+export const NoDoctorsContainer = withStyles(Box, (theme) => ({
     root: {
         display: 'flex',
         justifyContent: 'center',

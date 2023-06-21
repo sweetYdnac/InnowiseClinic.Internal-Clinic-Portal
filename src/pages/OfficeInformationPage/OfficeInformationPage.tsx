@@ -142,7 +142,7 @@ export const OfficeInformationPage = () => {
                         <ToggleSwitch
                             disabled={workMode === 'view'}
                             value={watch('isActive')}
-                            handleChange={(value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
+                            handleChange={(_, value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
                         />
 
                         {workMode === 'edit' && (

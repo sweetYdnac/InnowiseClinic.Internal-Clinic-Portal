@@ -5,6 +5,7 @@ export const Container = withStyles(Box, {
     root: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
     },
 });
 

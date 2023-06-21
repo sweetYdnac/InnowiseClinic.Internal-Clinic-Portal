@@ -6,7 +6,7 @@ import { StyledForm } from '../../components/Form';
 import { Loader } from '../../components/Loader';
 import { AutoComplete } from '../../components/UI/AutoComplete';
 import { Datepicker } from '../../components/UI/DatePicker';
-import { SelectBoolean } from '../../components/UI/SelectBoolean';
+import { SelectBoolean } from '../../components/UI/Selects/SelectBoolean';
 import { dateApiFormat } from '../../constants/Formats';
 import { usePagedAppointmentsQuery } from '../../hooks/requests/appointments';
 import { usePagedDoctorsQuery } from '../../hooks/requests/doctors';

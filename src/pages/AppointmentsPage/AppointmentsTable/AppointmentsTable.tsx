@@ -1,10 +1,10 @@
-import { Button, TablePagination, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../../components/Dialog';
 import { Loader } from '../../../components/Loader';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { timeSlotFormat } from '../../../constants/Formats';
 import { useApproveAppointmentCommand, useCancelAppointmentCommand } from '../../../hooks/requests/appointments';
@@ -31,24 +31,24 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
                 header={
                     <>
                         {AppointmentsTableHeader.map((item) => (
-                            <CustomCell key={item}>{item}</CustomCell>
+                            <StyledCell key={item}>{item}</StyledCell>
                         ))}
                     </>
                 }
             >
                 {appointments.map((item) => (
                     <StyledRow key={item.id} hover>
-                        <CustomCell>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
+                        <StyledCell>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
                             item.endTime,
                             timeSlotFormat
-                        ).format(timeSlotFormat)}`}</CustomCell>
-                        <CustomCell>{item.doctorFullName}</CustomCell>
-                        <CustomCell>
+                        ).format(timeSlotFormat)}`}</StyledCell>
+                        <StyledCell>{item.doctorFullName}</StyledCell>
+                        <StyledCell>
                             <Link to={AppRoutes.PatientProfile.replace(':id', `${item.patientId}`)}>{item.patientFullName}</Link>
-                        </CustomCell>
-                        <CustomCell>{item.patientPhoneNumber}</CustomCell>
-                        <CustomCell>{item.serviceName}</CustomCell>
-                        <CustomCell>
+                        </StyledCell>
+                        <StyledCell>{item.patientPhoneNumber}</StyledCell>
+                        <StyledCell>{item.serviceName}</StyledCell>
+                        <StyledCell>
                             {item.isApproved ? (
                                 <Button onClick={() => setCancelAppointmentId(item.id)}>Cancel</Button>
                             ) : (
@@ -59,7 +59,7 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
                                     <Button onClick={() => approveAppointment({ id: item.id })}>Approve</Button>
                                 </>
                             )}
-                        </CustomCell>
+                        </StyledCell>
                     </StyledRow>
                 ))}
             </CustomTable>
@@ -69,14 +69,7 @@ export const AppointmentsTable: FunctionComponent<AppointmentsListProps> = ({ da
                     <Typography>No appointments</Typography>
                 </NoAppointmentsContainer>
             ) : (
-                <TablePagination
-                    component='div'
-                    count={pagingData.totalCount}
-                    rowsPerPage={pagingData.pageSize}
-                    page={pagingData.currentPage - 1}
-                    rowsPerPageOptions={[]}
-                    onPageChange={handlePageChange}
-                />
+                <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
             )}
 
             <DialogWindow

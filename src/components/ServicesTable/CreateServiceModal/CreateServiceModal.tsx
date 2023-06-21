@@ -10,6 +10,7 @@ import { addService } from '../../../store/servicesSlice';
 import { IAutoCompleteItem } from '../../../types/common/Autocomplete';
 import { DialogWindow } from '../../Dialog';
 import { StyledForm, StyledOperationsButtons } from '../../Form';
+import { Loader } from '../../Loader';
 import { StyledModal } from '../../Modal/CustomModal.styles';
 import { AutoComplete } from '../../UI/AutoComplete';
 import { SubmitButton } from '../../UI/SubmitButton';
@@ -34,7 +35,7 @@ export const CreateServiceModal = () => {
         defaultValues: initialValues,
     });
 
-    const { data: categories, isFetching: isFetchingCategories, refetch: fetchCategories } = useGetAllServiceCategories();
+    const { data: categories, isFetching: isFetchingCategories } = useGetAllServiceCategories();
 
     const categoriesOptions = useMemo(
         () =>
@@ -52,18 +53,22 @@ export const CreateServiceModal = () => {
         setValue('categoryDuration', categories?.find((item) => item.id === watch('categoryId'))?.timeSlotSize ?? 0);
     }, [categories, watch('categoryId')]);
 
-    const handleClose = useCallback(() => {
+    const handleOpenDialog = useCallback(() => setIsDiscardDialogOpen(true), []);
+
+    const handleSubmitDialog = useCallback(() => {
         dispatch(closeModal());
     }, [dispatch]);
 
+    const handleDeclineDialog = useCallback(() => setIsDiscardDialogOpen(false), []);
+
     const onSubmit = useCallback(() => {
         dispatch(addService(watch()));
-        handleClose();
-    }, [dispatch, watch]);
+        handleSubmitDialog();
+    }, [dispatch, handleSubmitDialog, watch]);
 
     return (
         <StyledModal>
-            <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
+            <StyledForm onSubmit={handleSubmit(onSubmit)} component='form' noValidate autoComplete='on'>
                 <Typography variant='h5' gutterBottom>
                     Create Service
                 </Typography>
@@ -80,7 +85,7 @@ export const CreateServiceModal = () => {
 
                 <ToggleSwitch
                     value={watch('isActive')}
-                    handleChange={(value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
+                    handleChange={(_, value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
                 />
 
                 <AutoComplete
@@ -88,19 +93,10 @@ export const CreateServiceModal = () => {
                     control={control}
                     displayName='Category'
                     options={categoriesOptions}
-                    isFetching={isFetchingCategories}
-                    handleOpen={() => {
-                        if (!categories) {
-                            fetchCategories();
-                        }
-                    }}
-                    handleInputChange={() => fetchCategories()}
-                    inputFieldName={register('categoryInput').name}
-                    debounceDelay={2000}
                 />
 
                 <StyledOperationsButtons>
-                    <Button variant='contained' color='error' onClick={() => setIsDiscardDialogOpen(true)}>
+                    <Button variant='contained' color='error' onClick={handleOpenDialog}>
                         Cancel
                     </Button>
                     <SubmitButton errors={errors} shouldBeTouched={[touchedFields.title, touchedFields.price, touchedFields.categoryId]}>
@@ -113,11 +109,11 @@ export const CreateServiceModal = () => {
                 isOpen={isDiscardDialogOpen}
                 title='Discard changes?'
                 content='Do you really want to cancel? Entered data will not be saved.'
-                handleSubmit={() => {
-                    handleClose();
-                }}
-                handleDecline={() => setIsDiscardDialogOpen(false)}
+                handleSubmit={handleSubmitDialog}
+                handleDecline={handleDeclineDialog}
             />
+
+            {isFetchingCategories && <Loader />}
         </StyledModal>
     );
 };

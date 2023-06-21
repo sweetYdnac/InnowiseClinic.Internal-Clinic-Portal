@@ -1,8 +1,7 @@
-import { TablePagination } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { ToggleSwitch } from '../../../components/UI/ToggleSwitch';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { useChangeSpecializationStatusCommand } from '../../../hooks/requests/specializations';
@@ -21,29 +20,22 @@ export const SpecializationsTable: FunctionComponent<SpecializationsTableProps> 
                 header={
                     <>
                         {SpecializationsTableHeader.map((title) => (
-                            <CustomCell key={title}>{title}</CustomCell>
+                            <StyledCell key={title}>{title}</StyledCell>
                         ))}
                     </>
                 }
             >
                 {specializations.map((item) => (
                     <StyledSpecializationRow key={item.id} hover>
-                        <CustomCell handleClick={() => handleRowClick(item.id)}>{item.title}</CustomCell>
-                        <CustomCell>
-                            <ToggleSwitch value={item.isActive} handleChange={(value) => mutate({ id: item.id, isActive: value })} />
-                        </CustomCell>
+                        <StyledCell onClick={() => handleRowClick(item.id)}>{item.title}</StyledCell>
+                        <StyledCell>
+                            <ToggleSwitch value={item.isActive} handleChange={(_, value) => mutate({ id: item.id, isActive: value })} />
+                        </StyledCell>
                     </StyledSpecializationRow>
                 ))}
             </CustomTable>
 
-            <TablePagination
-                component='div'
-                count={pagingData.totalCount}
-                rowsPerPage={pagingData.pageSize}
-                page={pagingData.currentPage - 1}
-                rowsPerPageOptions={[]}
-                onPageChange={handlePageChange}
-            />
+            <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
 
             {isLoading && <Loader />}
         </>

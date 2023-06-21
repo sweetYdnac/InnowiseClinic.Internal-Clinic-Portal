@@ -8,7 +8,7 @@ export const CustomTable: FunctionComponent<CustomTableProps> = ({ header, child
         <TableContainer component={Paper}>
             <StyledTable size='small'>
                 <TableHead>
-                    <TableRow>{header}</TableRow>
+                    <TableRow>{header}</TableRow>y
                 </TableHead>
                 <TableBody>{children}</TableBody>
             </StyledTable>

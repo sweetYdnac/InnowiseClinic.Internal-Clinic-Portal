@@ -1,10 +1,10 @@
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { IconButton, TablePagination, Typography } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DialogWindow } from '../../../components/Dialog';
 import { Loader } from '../../../components/Loader';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { useRemovePatientCommand } from '../../../hooks/requests/patients';
 import { PatientsTableProps } from './PatientsTable.interface';
@@ -31,20 +31,20 @@ export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients,
                 header={
                     <>
                         {PatientsTableHeader.map((title) => (
-                            <CustomCell key={title}>{title}</CustomCell>
+                            <StyledCell key={title}>{title}</StyledCell>
                         ))}
                     </>
                 }
             >
                 {patients.map((patient) => (
                     <StyledPatientRow key={patient.id} hover>
-                        <CustomCell handleClick={() => handleRowClick(patient.id)}>{patient.fullName}</CustomCell>
-                        <CustomCell handleClick={() => handleRowClick(patient.id)}>{patient.phoneNumber}</CustomCell>
-                        <CustomCell handleClick={() => setDeletePatientId(patient.id)}>
+                        <StyledCell onClick={() => handleRowClick(patient.id)}>{patient.fullName}</StyledCell>
+                        <StyledCell onClick={() => handleRowClick(patient.id)}>{patient.phoneNumber}</StyledCell>
+                        <StyledCell onClick={() => setDeletePatientId(patient.id)}>
                             <IconButton>
                                 <DeleteForeverIcon fontSize='medium' />
                             </IconButton>
-                        </CustomCell>
+                        </StyledCell>
                     </StyledPatientRow>
                 ))}
             </CustomTable>
@@ -54,14 +54,7 @@ export const PatientsTable: FunctionComponent<PatientsTableProps> = ({ patients,
                     <Typography>No patients</Typography>
                 </NoPatientsContainer>
             ) : (
-                <TablePagination
-                    component='div'
-                    count={pagingData.totalCount}
-                    rowsPerPage={pagingData.pageSize}
-                    page={pagingData.currentPage - 1}
-                    rowsPerPageOptions={[]}
-                    onPageChange={handlePageChange}
-                />
+                <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
             )}
 
             <DialogWindow

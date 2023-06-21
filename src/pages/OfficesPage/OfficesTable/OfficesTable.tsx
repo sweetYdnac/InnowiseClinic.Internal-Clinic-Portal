@@ -1,8 +1,8 @@
-import { TablePagination, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { FunctionComponent, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { ToggleSwitch } from '../../../components/UI/ToggleSwitch';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { useChangeOfficeStatusCommand } from '../../../hooks/requests/offices';
@@ -22,18 +22,18 @@ export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pa
                 header={
                     <>
                         {OfficesTableHeader.map((title) => (
-                            <CustomCell key={title}>{title}</CustomCell>
+                            <StyledCell key={title}>{title}</StyledCell>
                         ))}
                     </>
                 }
             >
                 {offices.map((office) => (
                     <StyledOfficeRow key={office.id} hover>
-                        <CustomCell handleClick={() => handleRowClick(office.id)}>{office.address}</CustomCell>
-                        <CustomCell>
-                            <ToggleSwitch value={office.isActive} handleChange={(value) => mutate({ id: office.id, isActive: value })} />
-                        </CustomCell>
-                        <CustomCell handleClick={() => handleRowClick(office.id)}>{office.registryPhoneNumber}</CustomCell>
+                        <StyledCell onClick={() => handleRowClick(office.id)}>{office.address}</StyledCell>
+                        <StyledCell>
+                            <ToggleSwitch value={office.isActive} handleChange={(_, value) => mutate({ id: office.id, isActive: value })} />
+                        </StyledCell>
+                        <StyledCell onClick={() => handleRowClick(office.id)}>{office.registryPhoneNumber}</StyledCell>
                     </StyledOfficeRow>
                 ))}
             </CustomTable>
@@ -43,14 +43,7 @@ export const OfficesTable: FunctionComponent<OfficesTableProps> = ({ offices, pa
                     <Typography>No Offices</Typography>
                 </NoOfficesContainer>
             ) : (
-                <TablePagination
-                    component='div'
-                    count={pagingData.totalCount}
-                    rowsPerPage={pagingData.pageSize}
-                    page={pagingData.currentPage - 1}
-                    rowsPerPageOptions={[]}
-                    onPageChange={handlePageChange}
-                />
+                <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
             )}
 
             {isLoading && <Loader />}

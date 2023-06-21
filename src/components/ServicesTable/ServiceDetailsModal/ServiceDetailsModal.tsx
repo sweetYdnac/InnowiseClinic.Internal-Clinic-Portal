@@ -2,7 +2,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import CloseIcon from '@mui/icons-material/Close';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Button, IconButton, Typography } from '@mui/material';
-import Box from '@mui/material/Box';
 import { deepEqual } from 'fast-equals';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,9 +21,10 @@ import { SubmitButton } from '../../UI/SubmitButton';
 import { Textfield } from '../../UI/Textfield';
 import { ToggleSwitch } from '../../UI/ToggleSwitch';
 import { ServiceModalProps } from './ServiceDetailsModal.interface';
+import { ModalHeader } from './ServiceDetailsModal.styles';
 
 export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, initialWorkMode }: ServiceModalProps) => {
-    const [workMode, setMode] = useState<WorkMode>(initialWorkMode);
+    const [workMode, setWorkMode] = useState<WorkMode>(initialWorkMode);
     const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
     const { data: service, isFetching: isFetchingService } = useGetServiceByIdQuery(id);
     const { initialValues, formValidationScheme } = useServiceValidator(service);
@@ -49,7 +49,7 @@ export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, 
         reset(initialValues);
     }, [initialValues, reset]);
 
-    const { data: categories, isFetching: isFetchingCategories, refetch: fetchCategories } = useGetAllServiceCategories();
+    const { data: categories, isFetching: isFetchingCategories } = useGetAllServiceCategories();
 
     useEffect(() => {
         setValue('categoryDuration', categories?.find((item) => item.id === watch('categoryId'))?.timeSlotSize ?? 0);
@@ -75,9 +75,20 @@ export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, 
         [categories, service?.categoryId, service?.categoryTitle]
     );
 
+    const enableEditMode = useCallback(() => setWorkMode('edit'), []);
+
     const handleClose = useCallback(() => {
         dispatch(closeModal());
     }, [dispatch]);
+
+    const handleOpenDialog = useCallback(() => setIsDiscardDialogOpen(true), []);
+
+    const handleSubmitDialog = useCallback(() => {
+        reset();
+        handleClose();
+    }, [handleClose, reset]);
+
+    const handleDeclineDialog = useCallback(() => setIsDiscardDialogOpen(false), []);
 
     const { mutate: updateService, isLoading: isUpdatingService } = useUpdateServiceCommand(watch(), setError);
 
@@ -101,24 +112,18 @@ export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, 
             ) : (
                 <>
                     {workMode === 'view' && (
-                        <Box component='div' sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <IconButton onClick={() => setMode('edit')}>
+                        <ModalHeader>
+                            <IconButton onClick={enableEditMode}>
                                 <ModeEditIcon fontSize='medium' />
                             </IconButton>
 
-                            <IconButton
-                                onClick={() => {
-                                    if (workMode === 'view') {
-                                        handleClose();
-                                    }
-                                }}
-                            >
+                            <IconButton onClick={handleClose}>
                                 <CloseIcon fontSize='medium' />
                             </IconButton>
-                        </Box>
+                        </ModalHeader>
                     )}
 
-                    <StyledForm onSubmit={handleSubmit(() => onSubmit())} component='form' noValidate autoComplete='on'>
+                    <StyledForm onSubmit={handleSubmit(onSubmit)} component='form' noValidate autoComplete='on'>
                         <Typography variant='h5' gutterBottom>
                             Service
                         </Typography>
@@ -136,7 +141,7 @@ export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, 
                         <ToggleSwitch
                             disabled={workMode === 'view'}
                             value={watch('isActive')}
-                            handleChange={(value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
+                            handleChange={(_, value) => setValue('isActive', value, { shouldTouch: true, shouldValidate: true })}
                         />
 
                         <AutoComplete
@@ -145,20 +150,11 @@ export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, 
                             control={control}
                             displayName='Category'
                             options={categoriesOptions}
-                            isFetching={isFetchingCategories}
-                            handleOpen={() => {
-                                if (workMode === 'edit' && !categories) {
-                                    fetchCategories();
-                                }
-                            }}
-                            handleInputChange={() => fetchCategories()}
-                            inputFieldName={register('categoryInput').name}
-                            debounceDelay={2000}
                         />
 
                         {workMode === 'edit' && (
                             <StyledOperationsButtons>
-                                <Button variant='contained' color='error' onClick={() => setIsDiscardDialogOpen(true)}>
+                                <Button variant='contained' color='error' onClick={handleOpenDialog}>
                                     Cancel
                                 </Button>
                                 <SubmitButton errors={errors}>Save changes</SubmitButton>
@@ -170,11 +166,8 @@ export const ServiceDetailsModal: FunctionComponent<ServiceModalProps> = ({ id, 
                         isOpen={isDiscardDialogOpen}
                         title='Discard changes?'
                         content='Do you really want to cancel? Changes will not be saved.'
-                        handleSubmit={() => {
-                            reset();
-                            handleClose();
-                        }}
-                        handleDecline={() => setIsDiscardDialogOpen(false)}
+                        handleSubmit={handleSubmitDialog}
+                        handleDecline={handleDeclineDialog}
                     />
 
                     {isUpdatingService && <Loader />}

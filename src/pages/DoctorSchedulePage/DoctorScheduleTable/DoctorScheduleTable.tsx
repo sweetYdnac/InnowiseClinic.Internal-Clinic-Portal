@@ -1,10 +1,10 @@
 import DescriptionIcon from '@mui/icons-material/Description';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { Button, TablePagination, Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { FunctionComponent, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { timeSlotFormat } from '../../../constants/Formats';
 import { ICreateAppointmentResultDTO } from '../../../types/dto/appointmentResults';
@@ -42,27 +42,27 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
                 header={
                     <>
                         {DoctorScheduleTableHeader.map((title) => (
-                            <CustomCell key={title}>{title}</CustomCell>
+                            <StyledCell key={title}>{title}</StyledCell>
                         ))}
                     </>
                 }
             >
                 {appointments.map((item) => (
                     <StyledDoctorRow key={item.id} hover>
-                        <CustomCell>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
+                        <StyledCell>{`${dayjs(item.startTime, timeSlotFormat).format(timeSlotFormat)} - ${dayjs(
                             item.endTime,
                             timeSlotFormat
-                        ).format(timeSlotFormat)}`}</CustomCell>
-                        <CustomCell>
+                        ).format(timeSlotFormat)}`}</StyledCell>
+                        <StyledCell>
                             {item.isApproved ? (
                                 <Link to={AppRoutes.PatientProfile.replace(':id', `${item.patientId}`)}>{item.patientFullName}</Link>
                             ) : (
                                 item.patientFullName
                             )}
-                        </CustomCell>
-                        <CustomCell>{item.serviceName}</CustomCell>
-                        <CustomCell>{item.isApproved ? 'Approved' : 'Not Approved'}</CustomCell>
-                        <CustomCell>
+                        </StyledCell>
+                        <StyledCell>{item.serviceName}</StyledCell>
+                        <StyledCell>{item.isApproved ? 'Approved' : 'Not Approved'}</StyledCell>
+                        <StyledCell>
                             {item.resultId ? (
                                 <Button onClick={() => handleOpenViewAppointmentResultPage(item.resultId)}>
                                     View result
@@ -74,7 +74,7 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
                                     <NoteAddIcon fontSize='medium' />
                                 </Button>
                             )}
-                        </CustomCell>
+                        </StyledCell>
                     </StyledDoctorRow>
                 ))}
             </CustomTable>
@@ -84,14 +84,7 @@ export const DoctorScheduleTable: FunctionComponent<DoctorScheduleTableProps> = 
                     <Typography>No Doctors</Typography>
                 </NoDoctorsContainer>
             ) : (
-                <TablePagination
-                    component='div'
-                    count={pagingData.totalCount}
-                    rowsPerPage={pagingData.pageSize}
-                    page={pagingData.currentPage - 1}
-                    rowsPerPageOptions={[]}
-                    onPageChange={handlePageChange}
-                />
+                <Pagination pagingData={pagingData} handlePageChange={handlePageChange} />
             )}
         </>
     );

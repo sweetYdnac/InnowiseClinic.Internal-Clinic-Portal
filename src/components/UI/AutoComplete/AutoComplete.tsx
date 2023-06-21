@@ -1,5 +1,5 @@
-import { Autocomplete, CircularProgress, TextField } from '@mui/material';
-import { FunctionComponent, useState } from 'react';
+import { Autocomplete, AutocompleteInputChangeReason, CircularProgress, TextField } from '@mui/material';
+import { FunctionComponent, useCallback, useMemo, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import { IAutoCompleteItem } from '../../../types/common/Autocomplete';
@@ -33,6 +33,31 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
         control: control,
     });
 
+    const onOpen = useCallback(() => {
+        setOpen(true);
+        handleOpen?.();
+    }, [handleOpen]);
+
+    const handleClose = useCallback(() => setOpen(false), []);
+    const value = useMemo(() => options.find((option) => option.id === idField.value) || null, [idField.value, options]);
+    const handleValueChange = useCallback(
+        (_: React.SyntheticEvent<Element, Event>, value: IAutoCompleteItem | null) => idField.onChange(value?.id || ''),
+        [idField]
+    );
+    const onInputChange = useCallback(
+        (_: React.SyntheticEvent<Element, Event>, value: string, reason: AutocompleteInputChangeReason) => {
+            if (reason === 'input') {
+                inputField.onChange(value);
+                debounced?.();
+            } else if ((reason = 'clear')) {
+                inputField.onChange(value);
+            }
+        },
+        [debounced, inputField]
+    );
+    const isOptionEqualToValue = useCallback((option: IAutoCompleteItem, value: IAutoCompleteItem) => option.id === value.id, []);
+    const getOptionLabel = useCallback((option: IAutoCompleteItem) => option.label, []);
+
     return (
         <Autocomplete
             className={classes.textField}
@@ -42,26 +67,14 @@ export const AutoComplete: FunctionComponent<AutoCompleteProps> = ({
             readOnly={readonly}
             loading={isFetching || debounced.isPending()}
             open={open}
-            onOpen={() => {
-                setOpen(true);
-                handleOpen();
-            }}
-            onClose={() => setOpen(false)}
-            defaultValue={options.find((option) => option.id === idField.value) || null}
-            value={options.find((option) => option.id === idField.value) || null}
-            onChange={(_e, value) => {
-                idField.onChange(value?.id || '');
-            }}
-            onInputChange={(_, value, reason) => {
-                if (reason === 'input') {
-                    inputField.onChange(value);
-                    debounced?.();
-                } else if ((reason = 'clear')) {
-                    inputField.onChange(value);
-                }
-            }}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            getOptionLabel={(option: IAutoCompleteItem) => option.label}
+            onOpen={onOpen}
+            onClose={handleClose}
+            defaultValue={value}
+            value={value}
+            onChange={handleValueChange}
+            onInputChange={onInputChange}
+            isOptionEqualToValue={isOptionEqualToValue}
+            getOptionLabel={getOptionLabel}
             options={options}
             autoHighlight
             renderInput={(params) => (

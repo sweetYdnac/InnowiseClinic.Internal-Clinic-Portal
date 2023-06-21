@@ -1,5 +1,5 @@
 export interface ToggleSwitchProps {
     value: boolean;
-    handleChange?: (value: boolean) => void;
+    handleChange?: (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     disabled?: boolean;
 }

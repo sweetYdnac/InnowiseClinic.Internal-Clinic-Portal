@@ -1,16 +1,17 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { Button, TablePagination } from '@mui/material';
+import { Button } from '@mui/material';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader';
-import { CustomCell, CustomTable } from '../../../components/Table';
+import { CustomTable, Pagination, StyledCell } from '../../../components/Table';
 import { AppRoutes } from '../../../constants/AppRoutes';
 import { dateViewFormat, timeViewFormat } from '../../../constants/Formats';
 import { useGetPatientHistoryQuery } from '../../../hooks/requests/appointments';
 import { usePatientHistoryValidator } from '../../../hooks/validators/appointments/patientHistory';
 import { IPagedRequest } from '../../../types/common/Requests';
+import { IPagingData } from '../../../types/common/Responses';
 import { StyledPatientHistoryRow } from './PatientHistory.styles';
 import { PatientHistoryTableHeader } from './data/patientHistoryTableHeader';
 
@@ -42,7 +43,7 @@ export const PatientHistory = () => {
                 header={
                     <>
                         {PatientHistoryTableHeader.map((title) => (
-                            <CustomCell key={title}>{title}</CustomCell>
+                            <StyledCell key={title}>{title}</StyledCell>
                         ))}
                     </>
                 }
@@ -50,30 +51,21 @@ export const PatientHistory = () => {
                 {history &&
                     history.items.map((item) => (
                         <StyledPatientHistoryRow key={item.id} hover>
-                            <CustomCell>{item.date.format(dateViewFormat)}</CustomCell>
-                            <CustomCell>{`${item.startTime.format(timeViewFormat)} - ${item.endTime.format(timeViewFormat)}`}</CustomCell>
-                            <CustomCell>{item.doctorFullName}</CustomCell>
-                            <CustomCell>{item.serviceName}</CustomCell>
-                            <CustomCell>
+                            <StyledCell>{item.date.format(dateViewFormat)}</StyledCell>
+                            <StyledCell>{`${item.startTime.format(timeViewFormat)} - ${item.endTime.format(timeViewFormat)}`}</StyledCell>
+                            <StyledCell>{item.doctorFullName}</StyledCell>
+                            <StyledCell>{item.serviceName}</StyledCell>
+                            <StyledCell>
                                 <Button onClick={() => handleAppointmentResultClick(item.resultId as string)}>
                                     View result
                                     <DescriptionIcon fontSize='medium' />
                                 </Button>
-                            </CustomCell>
+                            </StyledCell>
                         </StyledPatientHistoryRow>
                     ))}
             </CustomTable>
 
-            {history && (
-                <TablePagination
-                    component='div'
-                    count={history.totalCount}
-                    rowsPerPage={history.totalPages}
-                    page={history.currentPage - 1}
-                    rowsPerPageOptions={[]}
-                    onPageChange={handlePageChange}
-                />
-            )}
+            {history && <Pagination pagingData={history as IPagingData} handlePageChange={handlePageChange} />}
 
             {isFetchingHistory && <Loader />}
         </>
